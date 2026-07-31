@@ -160,5 +160,11 @@
     "title": "盐铁论",
     "desc": "西汉·桓宽撰，记录汉昭帝时期盐铁专卖政策的辩论",
     "category": "ebook"
+  },
+  {
+    "slug": "mingchao-naxieshier",
+    "title": "明朝那些事儿",
+    "desc": "作者：当年明月",
+    "category": "ebook"
   }
 ]
