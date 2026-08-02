@@ -6,7 +6,7 @@ import { dirname } from 'path'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const distDir = join(root, 'dist')
-const base = '/Craftx-books.github.io/'
+const base = '/ReadBooks/'
 const port = Number(process.env.PORT || 4173)
 
 const mime = {

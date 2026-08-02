@@ -84,7 +84,7 @@ export default defineConfig({
   title: 'CraftX Books',
   description: '技术小册与电子书 — 沉浸式阅读体验',
   lang: 'zh-CN',
-  base: '/Craftx-books.github.io/',
+  base: '/ReadBooks/',
   outDir: '../dist',
   cleanUrls: true,
   ignoreDeadLinks: true,
@@ -123,7 +123,7 @@ export default defineConfig({
     sidebar: sidebarConfig,
 
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/Craftr-X/Craftx-books.github.io' },
+      { icon: 'github', link: 'https://github.com/Craftr-X/ReadBooks' },
     ],
 
     search: {

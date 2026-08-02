@@ -1,4 +1,4 @@
-# markdownlint-cli2 配置 —— Craftx-books VitePress 站点
+# markdownlint-cli2 配置 —— ReadBooks VitePress 站点
 #
 # 设计原则:
 # - 只管"纯格式"(空格/空行/换行/缩进),不碰结构(标题层级/首行 H1)和内容(代码语言/裸 HTML)

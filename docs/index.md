@@ -14,7 +14,7 @@ hero:
       link: /books/claude-code-dev/
     - theme: alt
       text: GitHub
-      link: https://github.com/Craftr-X/Craftx-books.github.io
+      link: https://github.com/Craftr-X/ReadBooks
 
 features:
   - icon: 🤖

@@ -24,7 +24,7 @@ function mountGiscus() {
   const script = document.createElement('script')
   script.src = 'https://giscus.app/client.js'
   script.async = true
-  script.setAttribute('data-repo', 'Craftr-X/Craftx-books.github.io')
+  script.setAttribute('data-repo', 'Craftr-X/ReadBooks')
   script.setAttribute('data-repo-id', 'R_kgDOSm7eVQ')
   script.setAttribute('data-category', 'Announcements')
   script.setAttribute('data-category-id', 'DIC_kwDOSm7eVc4C-wiu')
