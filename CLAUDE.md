@@ -40,7 +40,7 @@ The VitePress config (`docs/.vitepress/config.mts`) has a custom Markdown-it rul
 
 ### Theme & Config
 
-- **Config**: `docs/.vitepress/config.mts` — site title, base path (`/Craftx-books.github.io/`), nav, sidebar, search, outline.
+- **Config**: `docs/.vitepress/config.mts` — site title, base path (`/ReadBooks/`), nav, sidebar, search, outline.
 - **Theme entry**: `docs/.vitepress/theme/index.ts` — extends default theme, registers `medium-zoom` for image zoom and mounts the Giscus comment component.
 - **Comments**: `docs/.vitepress/theme/components/BookComment.vue` — Giscus integration, renders on chapter pages only (not on index/home pages).
 
@@ -128,6 +128,6 @@ All scripts in `scripts/` are ES modules (`.mjs`). Key exports from `import-book
 ## Important Notes
 
 - `ignoreDeadLinks: true` is set in config — broken internal links won't fail the build but should still be fixed.
-- The site base path is `/Craftx-books.github.io/` — all internal links must account for this.
+- The site base path is `/ReadBooks/` — all internal links must account for this.
 - `sidebar-generated.json` (~86KB) is **gitignored and never committed**; it is regenerated on every `npm run build` (via `prebuild` → `generate-sidebar.mjs`), or on demand by `npm run generate:sidebar` / the import script's `updateSidebarForBook()`. CI rebuilds it fresh, so it never appears in PR diffs.
 - Build may emit code-block language name downgrade warnings; these are non-blocking.

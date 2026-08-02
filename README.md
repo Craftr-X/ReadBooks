@@ -1,11 +1,11 @@
 # CraftX Books
 
 [![VitePress](https://img.shields.io/badge/VitePress-1.6.4-646cff?logo=vite&logoColor=white)](https://vitepress.dev/)
-[![GitHub Pages](https://img.shields.io/badge/Deploy-GitHub%20Pages-222?logo=github)](https://github.com/Craftr-X/Craftx-books.github.io/actions)
+[![GitHub Pages](https://img.shields.io/badge/Deploy-GitHub%20Pages-222?logo=github)](https://github.com/Craftr-X/ReadBooks/actions)
 
 CraftX Books 是一个基于 VitePress 构建的在线阅读站点，发布到 GitHub Pages。站点聚合技术小册和 EPUB 转 Markdown 的电子书，支持在线阅读、目录导航、本地搜索、深浅色主题切换和章节评论讨论，适合沉浸式阅读与系统化学习。
 
-> 仓库地址：<https://github.com/Craftr-X/Craftx-books.github.io>
+> 仓库地址：<https://github.com/Craftr-X/ReadBooks>
 
 ## ✨ 主要特性
 
@@ -102,7 +102,7 @@ docs/.vitepress/theme/components/BookComment.vue
 当前使用 Giscus，并绑定到以下 GitHub 仓库与 Discussions 分类：
 
 ```text
-repo: Craftr-X/Craftx-books.github.io
+repo: Craftr-X/ReadBooks
 category: Announcements
 mapping: pathname
 theme: preferred_color_scheme
@@ -113,7 +113,7 @@ lang: zh-CN
 
 ## 🖼️ 页面截图
 
-> 网站地址：<https://craftr-x.github.io/Craftx-books.github.io/>
+> 网站地址：<https://craftr-x.github.io/ReadBooks/>
 
 ![screenshot](./docs/public/index.png)
 
