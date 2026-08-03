@@ -6,7 +6,27 @@
     </linearGradient>
   </defs>
   <rect width="128" height="128" rx="28" fill="url(#grad)"/>
-  <path d="M36 44h56M36 64h56M36 84h36" stroke="white" stroke-width="6" stroke-linecap="round"/>
-  <circle cx="88" cy="84" r="12" fill="white" opacity="0.9"/>
-  <path d="M84 84l3 3 7-7" stroke="#6366f1" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- 打开的书本：以 x=64 为中轴左右镜像 -->
+  <!-- 左页外轮廓（书脊在 64，页面顶点在 44, 俯角到 30） -->
+  <path d="M64 44
+           C54 36 42 35 30 38
+           L30 82
+           C42 79 54 80 64 88
+           Z"
+        fill="white" fill-opacity="0.16" stroke="white" stroke-width="4"
+        stroke-linejoin="round" stroke-linecap="round"/>
+  <!-- 右页外轮廓（左页的水平镜像） -->
+  <path d="M64 44
+           C74 36 86 35 98 38
+           L98 82
+           C86 79 74 80 64 88
+           Z"
+        fill="white" fill-opacity="0.16" stroke="white" stroke-width="4"
+        stroke-linejoin="round" stroke-linecap="round"/>
+  <!-- 左页文字线（居中于左页 x≈30~64，中线约 47） -->
+  <path d="M38 52h18M38 62h18M38 72h12"
+        stroke="white" stroke-width="2.5" stroke-linecap="round" opacity="0.85"/>
+  <!-- 右页文字线（左页镜像，中线约 81） -->
+  <path d="M72 52h18M72 62h18M78 72h12"
+        stroke="white" stroke-width="2.5" stroke-linecap="round" opacity="0.85"/>
 </svg>

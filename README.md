@@ -111,6 +111,8 @@ lang: zh-CN
 
 评论默认在普通章节页渲染，首页、页面型内容以及各小册首页不会显示评论区。评论能力依赖目标仓库开启 GitHub Discussions，并正确安装或启用 Giscus。
 
+> ⚠️ **改仓库名/域名时务必同步迁移评论**：`mapping: pathname` 的匹配键是 `location.pathname`（含 VitePress `base` 前缀，去掉开头 `/`）。base 路径一旦变化（例如仓库改名导致 `base` 从 `/Craftx-books.github.io/` 改为 `/ReadBooks/`），term 就和旧 discussion 标题对不上，评论区会整体变空（**评论数据并未丢失**，仍在仓库的 Discussions 里）。恢复方式：把对应 discussion 的标题前缀（以及正文里的旧 URL）从旧前缀改成新前缀即可。本仓库从 `Craftx-books.github.io` 改名为 `ReadBooks` 时，曾通过迁移 discussion 标题前缀（`Craftx-books.github.io` → `ReadBooks`）恢复评论关联。
+
 ## 🖼️ 页面截图
 
 > 网站地址：<https://craftr-x.github.io/ReadBooks/>

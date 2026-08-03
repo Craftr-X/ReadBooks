@@ -14,6 +14,15 @@ const shouldRender = computed(() => {
   return frontmatter.value.comments !== false && layout !== 'home' && layout !== 'page' && !isBookIndex.value
 })
 
+// ⚠️ Giscus pathname 映射注意事项：
+// data-mapping="pathname" 的匹配键来自 client.js 的
+//   location.pathname.substring(1).replace(/\.\w+$/, "")
+// 即「去掉开头 / 的完整 pathname（含 VitePress base 前缀）」。
+// 因此 base 路径一变（如仓库改名导致 base 从 /Craftx-books.github.io/ 改为 /ReadBooks/），
+// term 就和旧 discussion 标题对不上，评论区会整体变空（评论数据并未丢失）。
+// 改仓库名/域名后，需同步把旧 discussion 标题里的旧前缀改成新前缀。
+// 历史事件：仓库 Craftx-books.github.io → ReadBooks 改名后，曾靠迁移 discussion
+// 标题前缀（Craftx-books.github.io → ReadBooks）恢复评论关联。
 function mountGiscus() {
   if (container.value) {
     container.value.innerHTML = ''
