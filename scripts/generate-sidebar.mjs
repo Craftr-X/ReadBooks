@@ -5,47 +5,6 @@ import { readJson, walkMarkdown, sortMarkdown } from './content-utils.mjs'
 
 const defaultRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 
-const displayTextByBookAndLink = {
-  'renzhi-qudong': new Map([
-    ['/books/renzhi-qudong/02-扉页', '扉页'],
-    ['/books/renzhi-qudong/03-版权信息', '版权信息'],
-    ['/books/renzhi-qudong/06-前言-为什么我们很努力却总是看不到希望', '前言'],
-    ['/books/renzhi-qudong/07-上篇-做成一件事的心法', '上篇　做成一件事的心法'],
-    ['/books/renzhi-qudong/08-第一章-价值——改变自己的关键是创造价值', '01-第一章-价值——改变自己的关键是创造价值'],
-    ['/books/renzhi-qudong/09-第一节-复制：不要浪费生命给你的无限可能', '02-第一节-复制：不要浪费生命给你的无限可能'],
-    ['/books/renzhi-qudong/10-第二节-价值：用价值规律看问题，你的人生会发生巨变', '03-第二节-价值：用价值规律看问题，你的人生会发生巨变'],
-    ['/books/renzhi-qudong/11-第三节-利他：毋庸置疑，利他是最好的人生', '04-第三节-利他：毋庸置疑，利他是最好的人生'],
-    ['/books/renzhi-qudong/12-第四节-镜子：所有的社交都是一面镜子', '05-第四节-镜子：所有的社交都是一面镜子'],
-    ['/books/renzhi-qudong/13-第五节-内向：被动社交，内向成长者的制胜之道', '06-第五节-内向：被动社交，内向成长者的制胜之道'],
-    ['/books/renzhi-qudong/14-第二章-身份——一切从信念开始', '07-第二章-身份——一切从信念开始'],
-    ['/books/renzhi-qudong/15-第一节-层次：你在这个世界的哪一层', '08-第一节-层次：你在这个世界的哪一层'],
-    ['/books/renzhi-qudong/16-第二节-身份：改变自己的终极力量', '09-第二节-身份：改变自己的终极力量'],
-    ['/books/renzhi-qudong/17-第三节-语言：美好人生从好好说话开始', '10-第三节-语言：美好人生从好好说话开始'],
-    ['/books/renzhi-qudong/18-第四节-理性：成功，最怕一开始就对自己说不可能', '11-第四节-理性：成功，最怕一开始就对自己说不可能'],
-    ['/books/renzhi-qudong/19-第三章-心理——清除成事路上的情绪障碍', '12-第三章-心理——清除成事路上的情绪障碍'],
-    ['/books/renzhi-qudong/20-第一节-负面偏好：为什么你总是不快乐', '13-第一节-负面偏好：为什么你总是不快乐'],
-    ['/books/renzhi-qudong/21-第二节-二元对立：恭喜你走出二元对立，来到真正的成人世界', '14-第二节-二元对立：恭喜你走出二元对立，来到真正的成人世界'],
-    ['/books/renzhi-qudong/22-第三节-一劳永逸：想要一劳永逸？还是死了这条心吧', '15-第三节-一劳永逸：想要一劳永逸？还是死了这条心吧'],
-    ['/books/renzhi-qudong/23-下篇-做成一件事的技法', '下篇　做成一件事的技法'],
-    ['/books/renzhi-qudong/24-第四章-策略——方法和路径', '16-第四章-策略——方法和路径'],
-    ['/books/renzhi-qudong/25-第一节-认知驱动：做一个真正的长期主义者', '17-第一节-认知驱动：做一个真正的长期主义者'],
-    ['/books/renzhi-qudong/26-第二节-写下来：我们都低估了“写下来”的力量', '18-第二节-写下来：我们都低估了“写下来”的力量'],
-    ['/books/renzhi-qudong/27-第三节-假设：什么能力可以让自己快速进步', '19-第三节-假设：什么能力可以让自己快速进步'],
-    ['/books/renzhi-qudong/28-第四节-降低期待：命运一定钟爱那些愿意慢慢变好的人', '20-第四节-降低期待：命运一定钟爱那些愿意慢慢变好的人'],
-    ['/books/renzhi-qudong/29-第五节-深度练习：跨越从普通到卓越的分水岭', '21-第五节-深度练习：跨越从普通到卓越的分水岭'],
-    ['/books/renzhi-qudong/30-第六节-跨界：如果你想与众不同，不妨试着跨界潜行', '22-第六节-跨界：如果你想与众不同，不妨试着跨界潜行'],
-    ['/books/renzhi-qudong/31-第五章-战略——环境与多维', '23-第五章-战略——环境与多维'],
-    ['/books/renzhi-qudong/32-第一节-环境：真相扎心了，“偷懒”比努力更重要', '24-第一节-环境：真相扎心了，“偷懒”比努力更重要'],
-    ['/books/renzhi-qudong/33-第二节-多维：不读书的人，没什么好焦虑的', '25-第二节-多维：不读书的人，没什么好焦虑的'],
-    ['/books/renzhi-qudong/34-第六章-成事——做到，是最高等级的成长', '26-第六章-成事——做到，是最高等级的成长'],
-    ['/books/renzhi-qudong/35-第一节-目标觉醒：如何找到自己的人生目标', '27-第一节-目标觉醒：如何找到自己的人生目标'],
-    ['/books/renzhi-qudong/36-第二节-成事之旅：如何达成自己的人生目标', '28-第二节-成事之旅：如何达成自己的人生目标'],
-    ['/books/renzhi-qudong/37-结语-顶级的生活不是奢华，而是创造', '结语'],
-    ['/books/renzhi-qudong/38-后记-你的一生至少要主动做成一件对他人很有用的事', '后记　你的一生至少要主动做成一件对他人很有用的事'],
-    ['/books/renzhi-qudong/39-参考文献', '参考文献'],
-  ]),
-}
-
 function titleFromMarkdown(file) {
   return basename(file, '.md').replace(/^\d+-/, '')
 }
@@ -147,26 +106,61 @@ function groupByDecade(items) {
 }
 
 /**
+ * 从 index.md 目录区块抽取 segment → text 映射，作为 sidebar 显示文本的首选来源。
+ * 让 index.md 成为显示文本的单一真相源，避免在代码里硬编码每本书的章节标题。
+ * 返回的 map 以「不带后缀的 segment」（如 08-第一章-xxx）为 key。
+ */
+function indexTextsForBook(root, slug) {
+  const indexPath = join(root, 'docs', 'books', slug, 'index.md')
+  if (!existsSync(indexPath)) return new Map()
+  const original = readFileSync(indexPath, 'utf8')
+  if (!TOC_HEADING_RE.test(original)) return new Map()
+  // 仅扫描目录区块：## 目录 到下一个 ## 之间
+  const lines = original.split('\n')
+  let startIdx = -1
+  for (let i = 0; i < lines.length; i += 1) {
+    if (TOC_HEADING_RE.test(lines[i])) { startIdx = i; break }
+  }
+  if (startIdx === -1) return new Map()
+  let endIdx = lines.length
+  for (let i = startIdx + 1; i < lines.length; i += 1) {
+    if (/^## /.test(lines[i])) { endIdx = i; break }
+  }
+  const blockContent = lines.slice(startIdx, endIdx).join('\n')
+  const entries = existingEntriesBySegment(blockContent)
+  const map = new Map()
+  for (const [segment, entry] of entries) {
+    if (entry.text) map.set(segment, entry.text)
+  }
+  return map
+}
+
+/**
  * 构建单本书的扁平章节 items（未分组）。
  * 抽取自 generateSidebar / updateSidebarForBook，避免分组逻辑修改时两处不同步。
+ *
+ * 显示文本优先级：index.md 目录区块手写文本 > 旧 sidebar 文本 > 文件名。
+ * index.md 是真相源：在那里改标题，sidebar 自动跟随，无需改代码。
  *
  * @param docsBooksDir docs/books 绝对路径
  * @param book 书籍元数据（含 slug/title）
  * @param existingTexts 可选：旧 sidebar 的 link→text 映射，用于保留已存在的显示文本
+ * @param indexTexts 可选：index.md 目录区块的 segment→text 映射（首选来源）
  * @returns 扁平的 [{text, link}]（未分组；分组由调用方按需用 groupByDecade 处理）
  */
-function buildBookItems(docsBooksDir, book, existingTexts) {
+function buildBookItems(docsBooksDir, book, existingTexts, indexTexts) {
   const bookDir = join(docsBooksDir, book.slug)
   return walkMarkdown(bookDir)
     .sort(sortMarkdown)
     .filter(sidebarVisible)
     .map(file => {
       const link = toLink(docsBooksDir, book.slug, file)
-      const fallback = (existingTexts && existingTexts.get(link)) || titleFromMarkdown(file)
-      return {
-        text: displayTextForLink(book, link, fallback),
-        link,
-      }
+      const segment = link.split(`/books/${book.slug}/`)[1] || ''
+      const text =
+        (indexTexts && indexTexts.get(segment)) ||
+        (existingTexts && existingTexts.get(link)) ||
+        titleFromMarkdown(file)
+      return { text, link }
     })
 }
 
@@ -176,10 +170,6 @@ function existingTextByLink(sidebarEntry) {
     if (node.link && node.text) map.set(node.link, node.text)
   }
   return map
-}
-
-function displayTextForLink(book, link, fallback) {
-  return displayTextByBookAndLink[book.slug]?.get(link) || fallback
 }
 
 function pathsFor(root) {
@@ -300,7 +290,8 @@ function generateSidebar(options = {}) {
     activeBookKeys.add(key)
 
     const existingTexts = existingTextByLink(sidebar[key])
-    const items = buildBookItems(docsBooksDir, book, existingTexts)
+    const indexTexts = indexTextsForBook(root, book.slug)
+    const items = buildBookItems(docsBooksDir, book, existingTexts, indexTexts)
 
     sidebar[key] = [
       {
@@ -338,7 +329,7 @@ export function updateSidebarForBook(book, options = {}) {
   if (!existsSync(bookDir)) throw new Error(`书籍目录不存在：${bookDir}`)
 
   const sidebar = readJson(sidebarPath, {})
-  const items = buildBookItems(docsBooksDir, book)
+  const items = buildBookItems(docsBooksDir, book, undefined, indexTextsForBook(root, book.slug))
 
   sidebar[`/books/${book.slug}/`] = [
     {

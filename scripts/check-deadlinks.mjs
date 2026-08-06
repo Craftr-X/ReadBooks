@@ -139,11 +139,45 @@ function resolveTarget(fromFile, target, docsDir) {
   return { candidates, anchor };
 }
 
+/**
+ * 校验 books.json 登记的每个 slug 在 docs/books/ 下都有目录与 index.md。
+ *
+ * 这是纯 Markdown 链接扫描覆盖不到的盲区：HomePage.vue 按 books.json 渲染出
+ * /books/<slug>/ 链接，但这类链接不出现在任何 .md 里，extractLinkTargets 抓不到。
+ * slug 拼错或目录缺失时，只有这里能发现。
+ *
+ * @param {string} booksPath books.json 绝对路径
+ * @param {string} docsBooksDir docs/books 绝对路径
+ * @param {string} root 仓库根，用于把路径转成相对路径
+ * @returns {Array<{slug:string, title:string, missing:string}>} 缺失项；为空表示全部正常
+ */
+function checkBooksRegistry(booksPath, docsBooksDir, root) {
+  if (!existsSync(booksPath)) return [];
+  let books;
+  try {
+    books = JSON.parse(readFileSync(booksPath, 'utf-8'));
+  } catch {
+    return [];
+  }
+  const missing = [];
+  for (const book of Array.isArray(books) ? books : []) {
+    const slug = book.slug;
+    if (!slug) continue;
+    const bookDir = join(docsBooksDir, slug);
+    if (!existsSync(bookDir)) {
+      missing.push({ slug, title: book.title || '', missing: '目录缺失', dir: relative(root, join(docsBooksDir, slug)) });
+    } else if (!existsSync(join(bookDir, 'index.md'))) {
+      missing.push({ slug, title: book.title || '', missing: 'index.md 缺失', dir: relative(root, join(bookDir, 'index.md')) });
+    }
+  }
+  return missing;
+}
+
 function scan(options = {}) {
   const docsDir = options.docsDir || DOCS_DIR;
   const root = options.root || ROOT;
   if (!existsSync(docsDir)) {
-    return { files: 0, dead: [], error: 'docs/ 目录不存在' };
+    return { files: 0, dead: [], missingBooks: [], error: 'docs/ 目录不存在' };
   }
   const mdFiles = collectMarkdownFiles(docsDir);
   const dead = [];
@@ -165,7 +199,10 @@ function scan(options = {}) {
       }
     }
   }
-  return { files: mdFiles.length, dead };
+  // books.json 的 slug 校验：覆盖 HomePage.vue 渲染出的 /books/<slug>/ 链接盲区。
+  const booksPath = options.booksPath || join(root, 'books.json');
+  const missingBooks = checkBooksRegistry(booksPath, join(docsDir, 'books'), root);
+  return { files: mdFiles.length, dead, missingBooks };
 }
 
 const args = parseArgs(process.argv.slice(2));
@@ -174,6 +211,8 @@ const report = {
   scannedFiles: result.files,
   deadLinkCount: result.dead.length,
   dead: result.dead,
+  missingBookCount: result.missingBooks.length,
+  missingBooks: result.missingBooks,
   ...(result.error ? { error: result.error } : {}),
 };
 
@@ -205,8 +244,17 @@ if (args.json) {
   } else {
     console.log('✓ 未发现内部死链。');
   }
+  if (result.missingBooks.length > 0) {
+    console.log('');
+    console.log(`▼ books.json 中 ${result.missingBooks.length} 个 slug 缺失对应目录或 index.md：`);
+    for (const m of result.missingBooks) {
+      console.log(`  ${m.slug}${m.title ? `（${m.title}）` : ''}  ${m.missing}：${m.dir}`);
+    }
+  } else {
+    console.log('✓ books.json 登记的 slug 全部有对应目录。');
+  }
 }
 
-if (result.dead.length > 0) process.exit(1);
+if (result.dead.length > 0 || result.missingBooks.length > 0) process.exit(1);
 
-export { scan, extractLinkTargets, shouldSkip };
+export { scan, checkBooksRegistry, extractLinkTargets, shouldSkip };
