@@ -8,14 +8,14 @@ This repository is a VitePress books site. Main site content lives in `docs/`, w
 
 - `npm install`: install dependencies for local development.
 - `npm run dev`: start the VitePress dev server for `docs/`.
-- `npm run build`: run prebuild content fixes and build the static site to `dist/`.
+- `npm run build`: run prebuild (regenerate gitignored `sidebar-generated.json` and `content-stats.json`) and build the static site to `dist/`. The build does not modify source Markdown.
 - `npm run preview`: preview the built site locally.
 - `npm run generate:sidebar`: regenerate `sidebar-generated.json` after content structure changes. This file is gitignored (a build-time artifact); `config.mts` regenerates it on demand if missing, and `prebuild` refreshes it before every build.
 - `npm run import:book -- ./path/to/book --slug my-book`: import a Markdown folder or EPUB into `docs/books/`.
 - `npm run check:deadlinks`: scan all internal markdown links and image references under `docs/` for broken targets (external http(s) links are not checked).
 - `npm run lint`: check all Markdown formatting via markdownlint-cli2 (configured in `.markdownlint-cli2.yaml`; runs in CI). Structural rules for the EPUB/juejin book sources are intentionally disabled.
 - `npm run lint:fix`: auto-fix Markdown formatting issues (trailing spaces, blank lines, newlines). Run independently of `prebuild`; do not wire it into the build flow.
-- `node --test scripts/import-book.test.mjs`: run the Node test suite for the import script.
+- `npm test`: run the Node test suite (`node --test scripts/*.test.mjs`) for import, sidebar, deadlinks, reading-time/progress, and codeblock-lang logic.
 - `node scripts/verify-import.mjs <slug>`: run post-import verification (pass/fail JSON report).
 
 ## Coding Style & Naming Conventions

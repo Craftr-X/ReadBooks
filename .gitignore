@@ -21,6 +21,7 @@ Thumbs.db
 migrate.mjs
 fix-vue-syntax.mjs
 sidebar-generated.json
+content-stats.json
 
 # Logs
 /logs/

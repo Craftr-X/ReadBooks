@@ -28,6 +28,10 @@ jobs:
 
       - name: Build
         run: npm run build
+        env:
+          # VitePress 渲染 1000+ 页面 + 构建本地搜索索引很吃内存，CI runner
+          # 默认 Node 堆上限（~2GB）会 OOM。提高上限以匹配 runner 可用内存。
+          NODE_OPTIONS: --max-old-space-size=4096
 
       - name: Check dead links
         run: npm run check:deadlinks

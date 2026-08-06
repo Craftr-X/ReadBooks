@@ -29,6 +29,29 @@ const navItems = (category: string) => books
   .filter(book => (book.category || 'booklet') === category)
   .map(book => ({ text: book.title, link: `/books/${book.slug}/` }))
 
+// 打断 {{ / }}，避免 VitePress 把 Markdown 正文里的双花括号当作 Vue 模板插值渲染。
+// 历史上由 scripts/escape-vitepress-braces.mjs 在 prebuild 阶段就地改写源文件实现，
+// 现迁移为运行时 markdown-it 转换：build 不再修改源文件。
+const BRACE_OPEN = '{\u200b{'
+const BRACE_CLOSE = '}\u200b}'
+function escapeVueBraces(md: any) {
+  md.core.ruler.after('inline', 'escape_vue_braces', state => {
+    for (const token of state.tokens) {
+      if (token.type !== 'inline' || !token.children) continue
+      for (const child of token.children) {
+        if (child.type !== 'text') continue
+        const c = child.content
+        if (!c.includes('{{') && !c.includes('}}') && !c.includes('&#123;&#123;') && !c.includes('&#125;&#125;')) continue
+        child.content = c
+          .replaceAll('&#123;&#123;', BRACE_OPEN)
+          .replaceAll('&#125;&#125;', BRACE_CLOSE)
+          .replaceAll('{{', BRACE_OPEN)
+          .replaceAll('}}', BRACE_CLOSE)
+      }
+    }
+  })
+}
+
 function renderMissingAssetPlaceholders(md: any) {
   const pattern = /\[(图片|缺失资源)：([^\]]+)\]/g
 
@@ -167,6 +190,7 @@ export default defineConfig({
       lazyLoading: true,
     },
     config(md) {
+      escapeVueBraces(md)
       renderMissingAssetPlaceholders(md)
     },
   },

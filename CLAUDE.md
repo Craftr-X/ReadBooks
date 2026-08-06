@@ -29,14 +29,17 @@ The import script (`scripts/import-book.mjs`) writes all three: book content to 
 
 ### Prebuild Pipeline
 
-`npm run build` runs `prebuild` first, which executes four scripts in order:
+`npm run build` runs `prebuild` first, which executes two scripts that produce **gitignored build artifacts** (no source Markdown is modified):
 
-1. `scripts/generate-sidebar.mjs` — regenerates the gitignored `sidebar-generated.json` from the `docs/books/` directory structure.
-2. `scripts/generate-content-stats.mjs` — recomputes chapter counts and reading minutes into `content-stats.json` (this one IS committed, so the import writes it and the build refreshes it).
-3. `scripts/escape-vitepress-braces.mjs` — replaces `{{` / `}}` in Markdown with zero-width-space-escaped versions to prevent VitePress/Vue template interpolation errors.
-4. `scripts/normalize-missing-assets.mjs` — converts image/audio references pointing to nonexistent `_assets/` or `images/` files into placeholder text like `[缺失资源：path]`.
+1. `scripts/generate-sidebar.mjs` — regenerates `sidebar-generated.json` from the `docs/books/` directory structure.
+2. `scripts/generate-content-stats.mjs` — recomputes chapter counts and reading minutes into `content-stats.json`.
 
-The VitePress config (`docs/.vitepress/config.mts`) has a custom Markdown-it rule `renderMissingAssetPlaceholders` that renders those placeholders as styled cards in the browser.
+Both JSON files are gitignored and regenerated on every build; neither is committed.
+
+Two transformations that used to run in `prebuild` (and mutated source `.md` files) have been migrated so the build is a pure function:
+
+- **Vue brace escaping** (`{{` → `{\u200b{`) now runs at render time via the `escapeVueBraces` markdown-it rule in `docs/.vitepress/config.mts`.
+- **Missing-asset normalization** (rewriting `![](path)` → `[缺失资源：path]` when the file is absent) is now an on-demand fixer: `npm run fix:missing-assets` (run it after importing a new book). The matching placeholder card is still rendered at runtime by `renderMissingAssetPlaceholders` in `config.mts`.
 
 ### Theme & Config
 
