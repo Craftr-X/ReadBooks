@@ -148,16 +148,17 @@ lang: zh-CN
 
 ## 🛠️ 构建说明
 
-`npm run build` 会先执行 `prebuild`：
+`npm run build` 会先执行 `prebuild`，生成两份构建期产物（均已 gitignore，不入库）：
 
-```bash
-node scripts/escape-vitepress-braces.mjs
-node scripts/normalize-missing-assets.mjs
-```
+- `sidebar-generated.json` — 各书左侧章节目录
+- `content-stats.json` — 首页统计卡片数据
 
-这两个脚本用于处理 VitePress 构建前的 Markdown 内容兼容问题和缺失资源占位问题。最终产物输出到 `dist/`。
+构建本身是纯产出函数，**不会修改源 Markdown 文件**。历史上曾有的两处就地改写已迁移：
 
-构建过程中可能出现代码块语言名降级警告，例如部分 Markdown 使用了不标准的语言标识。这类警告不影响站点发布。
+- **花括号转义**（防 VitePress 把正文 `{{ }}` 当 Vue 模板）→ 迁移到 `docs/.vitepress/config.mts` 的运行时 markdown-it 转换。
+- **缺失资源占位**（把指向不存在文件的 `![](path)` 改写为占位文本）→ 改为按需修复命令 `npm run fix:missing-assets`，主要在导入新书后运行；配套的占位卡片渲染仍在运行时由 `config.mts` 完成。
+
+最终产物输出到 `dist/`。构建过程中可能出现代码块语言名降级警告，例如部分 Markdown 使用了不标准的语言标识。这类警告不影响站点发布。
 
 ## 🧹 Markdown Lint
 
@@ -174,7 +175,7 @@ npm run lint:fix   # 自动修复可修复的格式问题（行尾空格、空�
 - **关闭的结构性规则**：MD001（标题跳级）、MD025（多 H1）、MD041（首行须 H1）—— 中文小册源（EPUB/掘金）的标题结构已定，章节标题由文件名承载。
 - **关闭的内容治理类规则**：见下方 TODO。
 
-lint 与 `prebuild` 隔离，不会修改 `escape-vitepress-braces.mjs` / `normalize-missing-assets.mjs` 的产物；`lint:fix` 应在本地独立运行后再提交。
+lint 与构建隔离：`npm run lint:fix` 会就地修改源 Markdown，应在本地独立运行后再提交；`npm run fix:missing-assets` 同理（仅导入新书后按需运行）。`prebuild` 只生成 JSON 产物，不触碰源文件。
 
 ### 待治理的内容问题（未纳入 lint）
 

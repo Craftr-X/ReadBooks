@@ -7,12 +7,13 @@
     "import:book": "node scripts/import-book.mjs",
     "generate:sidebar": "node scripts/generate-sidebar.mjs",
     "generate:stats": "node scripts/generate-content-stats.mjs",
-    "prebuild": "node scripts/generate-sidebar.mjs && node scripts/generate-content-stats.mjs && node scripts/escape-vitepress-braces.mjs && node scripts/normalize-missing-assets.mjs",
+    "prebuild": "node scripts/generate-sidebar.mjs && node scripts/generate-content-stats.mjs",
     "build": "vitepress build docs",
     "preview": "vitepress preview docs",
     "check:deadlinks": "node scripts/check-deadlinks.mjs",
     "lint": "markdownlint-cli2",
     "lint:fix": "markdownlint-cli2 --fix",
+    "fix:missing-assets": "node scripts/normalize-missing-assets.mjs",
     "test": "node --test scripts/*.test.mjs"
   },
   "devDependencies": {
