@@ -57,7 +57,7 @@ function slugify(value) {
 }
 
 function titleFileSegment(value) {
-  const segment = cleanTitle(value)
+  const segment = (cleanTitle(value) || numberedChapterLabel(value))
     .normalize('NFC')
     .replace(/[\\/:*?"<>|]/g, '-')
     .replace(/[\u0000-\u001f]/g, '')
@@ -234,6 +234,18 @@ function cleanTitle(value) {
   return title
 }
 
+// cleanTitle 会把 "Chapter 3"、"CHAPTER 01"、"第 3 章" 这类纯编号标题当垃圾
+// 过滤（为掘金类 EPUB 的噪音目录设计）。但小说类 EPUB 的章节本来就无题，
+// NCX 里这类编号就是唯一可用的真实标题。此函数识别“纯章节编号标记”并返回
+// 规范化形式（Chapter-01 / 第3章），供目录标题与文件名兜底使用。
+function numberedChapterLabel(value) {
+  const label = decodeHtml(String(value || '')).replace(/\s+/g, ' ').trim()
+  if (/^第\s*[0-9一二三四五六七八九十百零〇]{1,4}\s*章$/.test(label)) return label.replace(/\s+/g, '')
+  const match = label.match(/^(?:chapter|chap\.?)[ \t\-_·]*(\d{1,4})$/i)
+  if (match) return `Chapter-${String(Number(match[1])).padStart(2, '0')}`
+  return ''
+}
+
 function dirnamePosix(path) {
   const index = path.lastIndexOf('/')
   return index === -1 ? '' : path.slice(0, index)
@@ -308,11 +320,13 @@ function parseNcxToc(ncxXml, ncxPath = '') {
     const src = decodeHtml(match[1])
     const label = firstChildTagContent(labelBlock, 'text')
     const href = normalizeHref(src, ncxDir)
-    const title = cleanTitle(label)
+    const fragment = src.includes('#') ? src.split('#').slice(1).join('#') : ''
+    // 指向整文件的 NCX 条目：纯编号标记（Chapter 3 / 第3章）也保留为标题，
+    // 因为它映射到 spine 文件本身，比 chapter-NN 兜底文件名更真实。
+    // 带锚点的条目仍走 cleanTitle 严格过滤，避免影响锚点拆分行为。
+    const title = cleanTitle(label) || (!fragment ? numberedChapterLabel(label) : '')
     if (href && title && !toc.has(href)) toc.set(href, title)
     // Track anchor-based entries for splitting multi-chapter HTML files
-    const rawSrc = src
-    const fragment = rawSrc.includes('#') ? rawSrc.split('#').slice(1).join('#') : ''
     if (fragment && href && title) {
       if (!anchors.has(href)) anchors.set(href, [])
       anchors.get(href).push({ fragment, title })
@@ -422,8 +436,13 @@ function htmlToMarkdown(html, assets, chapterPath, links = new Map()) {
     const label = decodeHtml(stripTags(content)).trim()
     const decodedHref = decodeHtml(href)
     const baseDir = dirnamePosix(chapterPath)
-    const target = links.get(normalizeHrefWithFragment(decodedHref, baseDir)) || links.get(normalizeHref(decodedHref, baseDir)) || decodedHref
-    return `[${label}](${target})`
+    const target = links.get(normalizeHrefWithFragment(decodedHref, baseDir)) || links.get(normalizeHref(decodedHref, baseDir)) || ''
+    // <a> 直接包裹图片资产（如目录页的“封面”链接）：重写到抽取后的本地路径
+    if (!target) {
+      const asset = assets.get(normalizeHref(decodedHref, baseDir))
+      if (asset) return `[${label}](${asset})`
+    }
+    return `[${label}](${target || decodedHref})`
   })
   body = body.replace(/<\/(p|div|section|article|header|footer|blockquote)>/gi, '\n\n')
   body = body.replace(/<br\s*\/?>/gi, '\n')
@@ -464,12 +483,26 @@ function detectEpub(inputPath, args) {
     desc: args.desc || (opf.creator ? `作者：${opf.creator}` : ''),
     slug: slugify(args.slug || title),
     chapterCount: (() => {
-      if (!opf.fileAnchors || opf.fileAnchors.size === 0) return opf.spine.length
+      // 与 importEpub 的规划逻辑保持一致：锚点文件按锚点数拆分；有目录标题的
+      // 文件各成一章；目录标题之后的无标题文件并入上一章（续写分片）；首个
+      // 目录标题之前的前置页独立成章。
       let total = 0
+      let open = false
       for (const item of opf.spine) {
         const href = normalizeHref(item.href)
-        const anchors = opf.fileAnchors.get(href)
-        total += (anchors && anchors.length > 0) ? anchors.length : 1
+        const anchors = (opf.fileAnchors && opf.fileAnchors.get(href)) || []
+        if (anchors.length > 0) {
+          total += anchors.length
+          open = false
+          continue
+        }
+        if (opf.tocTitleMap.has(href)) {
+          total += 1
+          open = true
+          continue
+        }
+        if (open) continue
+        total += 1
       }
       return total
     })(),
@@ -500,14 +533,21 @@ function importEpub(tempDir, info) {
   const usedFileNames = new Set()
   const plannedChapters = []
   let chapterIndex = 0
+  // planChapter 返回计划对象；parts 保存该章节的各段 HTML（含并入的续写分片），
+  // 每段保留自己的源路径，内部链接按各自基准目录解析。
   const planChapter = (title, item, html, fragment = '') => {
     const fileName = safeFileName(chapterIndex, title, usedFileNames)
     chapterIndex += 1
     const targetPath = join(tempDir, fileName)
-    plannedChapters.push({ title, item, html, targetPath, fileName, fragment })
+    const planned = { title, item, parts: [{ html, href: item.href }], targetPath, fileName, fragment }
+    plannedChapters.push(planned)
     chapters.push(targetPath)
-    return fileName
+    return planned
   }
+  // 最近一个“由目录标题开启”的章节；后续没有目录标题的 spine 文件视为该章的
+  // 续写分片并入（单章拆成多个 HTML 文件的 EPUB 常见）。首个目录标题之前的
+  // 前置页（封面/版权等）保持独立章节，不参与合并。
+  let mergeTarget = null
   info.opf.spine.forEach((item) => {
     const html = textEntry(info.entries, item.href)
     if (!html) {
@@ -516,8 +556,9 @@ function importEpub(tempDir, info) {
     }
     const normalizedHref = normalizeHref(item.href)
     const itemAnchors = (info.opf.fileAnchors && info.opf.fileAnchors.get(normalizedHref)) || []
+    const tocTitle = info.opf.tocTitleMap.get(normalizedHref) || ''
     const h1 = html.match(/<h1\b[^>]*>[\s\S]*?<\/h1>/i)?.[0] || ''
-    const fallbackTitle = cleanTitle(info.opf.tocTitleMap.get(normalizedHref) || '') || tagText(html, 'title') || cleanTitle(h1) || `第 ${chapterIndex + 1} 章`
+    const fallbackTitle = tocTitle || tagText(html, 'title') || cleanTitle(h1) || `第 ${chapterIndex + 1} 章`
 
     if (itemAnchors.length > 0) {
       const bodyHtml = html.match(/<body\b[^>]*>([\s\S]*?)<\/body>/i)?.[1] || html
@@ -540,27 +581,41 @@ function importEpub(tempDir, info) {
           const chunk = bodyHtml.slice(start, end)
           planChapter(splitPoints[i].title, item, chunk, splitPoints[i].fragment || '')
         }
+        mergeTarget = null
         return
       }
 
       info.warnings.push(`章节锚点未匹配，已按完整章节导入：${item.href}`)
-    } else {
       planChapter(fallbackTitle, item, html)
+      mergeTarget = null
       return
     }
 
-    planChapter(fallbackTitle, item, html)
+    if (!tocTitle && mergeTarget) {
+      mergeTarget.parts.push({ html, href: item.href })
+      return
+    }
+
+    const planned = planChapter(fallbackTitle, item, html)
+    mergeTarget = tocTitle ? planned : null
   })
 
   const links = new Map()
   for (const chapter of plannedChapters) {
-    const href = normalizeHref(chapter.item.href)
     const local = `./${chapter.fileName}`
-    if (!links.has(href)) links.set(href, local)
-    if (chapter.fragment) links.set(`${href}#${chapter.fragment}`, local)
+    for (const part of chapter.parts) {
+      const href = normalizeHref(part.href)
+      if (!links.has(href)) links.set(href, local)
+    }
+    if (chapter.fragment) {
+      links.set(`${normalizeHref(chapter.item.href)}#${chapter.fragment}`, local)
+    }
   }
   for (const chapter of plannedChapters) {
-    const md = htmlToMarkdown(chapter.html, assets, chapter.item.href, links)
+    const md = chapter.parts
+      .map(part => htmlToMarkdown(part.html, assets, part.href, links))
+      .filter(Boolean)
+      .join('\n\n')
     writeFileSync(chapter.targetPath, md || `# ${chapter.title}\n`, 'utf8')
   }
 
@@ -700,6 +755,7 @@ export {
   lintFixBook,
   cleanTitle,
   normalizeHref,
+  numberedChapterLabel,
   parseNavDocToc,
   parseNcxToc,
   parseOpf,
