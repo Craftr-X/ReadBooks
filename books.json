@@ -166,5 +166,23 @@
     "title": "明朝那些事儿",
     "desc": "作者：当年明月",
     "category": "ebook"
+  },
+  {
+    "slug": "wosuo-lijie-de-shenghuo",
+    "title": "我所理解的生活",
+    "desc": "作者：韩寒",
+    "category": "ebook"
+  },
+  {
+    "slug": "sanzhongmen",
+    "title": "三重门",
+    "desc": "作者：韩寒",
+    "category": "ebook"
+  },
+  {
+    "slug": "1988",
+    "title": "1988：我想和这个世界谈谈",
+    "desc": "作者：韩寒",
+    "category": "ebook"
   }
 ]

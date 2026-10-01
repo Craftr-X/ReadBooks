@@ -9,6 +9,7 @@ import {
   importEpub,
   lintFixBook,
   normalizeHref,
+  numberedChapterLabel,
   parseNavDocToc,
   parseNcxToc,
   parseOpf,
@@ -136,6 +137,94 @@ test('cleans noisy titles and keeps Chinese punctuation', () => {
   assert.equal(cleanTitle('chapter-118'), '')
   assert.equal(cleanTitle('&#x5b9e;&#36341;&#35770;（一九三七年七月）'), '实践论（一九三七年七月）')
   assert.equal(titleFileSegment('中国革命战争的战略问题（一九三六年十二月）'), '中国革命战争的战略问题（一九三六年十二月）')
+})
+
+test('rescues numbered chapter markers for NCX whole-file entries only', () => {
+  const result = parseNcxToc(`
+    <ncx>
+      <navMap>
+        <navPoint>
+          <navLabel><text>CHAPTER 01</text></navLabel>
+          <content src="Text/chapter001.xhtml"/>
+        </navPoint>
+        <navPoint>
+          <navLabel><text>第一章</text></navLabel>
+          <content src="Text/chapter002.xhtml"/>
+        </navPoint>
+        <navPoint>
+          <navLabel><text>chapter-118</text></navLabel>
+          <content src="Text/chapter003.xhtml#sec1"/>
+        </navPoint>
+      </navMap>
+    </ncx>
+  `, 'OPS/toc.ncx')
+
+  assert.equal(result.toc.get('OPS/Text/chapter001.xhtml'), 'Chapter-01')
+  assert.equal(result.toc.get('OPS/Text/chapter002.xhtml'), '第一章')
+  // 带锚点的条目保持严格过滤，不参与标题拯救
+  assert.equal(result.toc.get('OPS/Text/chapter003.xhtml'), undefined)
+})
+
+test('numbered chapter labels survive titleFileSegment', () => {
+  assert.equal(numberedChapterLabel('CHAPTER 01'), 'Chapter-01')
+  assert.equal(numberedChapterLabel('chapter 3'), 'Chapter-03')
+  assert.equal(numberedChapterLabel('第 3 章'), '第3章')
+  assert.equal(numberedChapterLabel('第一章'), '第一章')
+  assert.equal(numberedChapterLabel('chapter-118'), 'Chapter-118')
+  assert.equal(numberedChapterLabel('实践论'), '')
+  assert.equal(titleFileSegment('第 3 章'), '第3章')
+  assert.equal(titleFileSegment('Chapter 01'), 'Chapter-01')
+})
+
+test('imports untitled spine files as continuations of the previous NCX chapter', () => {
+  const tempDir = mkdtempSync(join(tmpdir(), 'import-book-continuation-'))
+  try {
+    const info = {
+      title: '续写书',
+      desc: '测试',
+      warnings: [],
+      entries: new Map([
+        ['OPS/Text/cover.xhtml', Buffer.from('<html><body><img src="../Images/cover.jpg" alt="封面"/><p><a href="../Images/cover.jpg">封面大图</a></p></body></html>')],
+        ['OPS/Text/chapter01.xhtml', Buffer.from('<html><body><h1>第一章</h1><p>第一章开头</p></body></html>')],
+        ['OPS/Text/chapter01b.xhtml', Buffer.from('<html><body><p>第一章续写</p></body></html>')],
+        ['OPS/Text/chapter02.xhtml', Buffer.from('<html><body><h1>第二章</h1><p>第二章开头</p></body></html>')],
+        ['OPS/Images/cover.jpg', Buffer.from('fake-jpg-bytes')],
+      ]),
+      opf: {
+        manifest: new Map([
+          ['img-cover', { id: 'img-cover', href: 'OPS/Images/cover.jpg', mediaType: 'image/jpeg', properties: '' }],
+        ]),
+        spine: [
+          { href: 'OPS/Text/cover.xhtml' },
+          { href: 'OPS/Text/chapter01.xhtml' },
+          { href: 'OPS/Text/chapter01b.xhtml' },
+          { href: 'OPS/Text/chapter02.xhtml' },
+        ],
+        tocTitleMap: new Map([
+          ['OPS/Text/chapter01.xhtml', '第一章'],
+          ['OPS/Text/chapter02.xhtml', '第二章'],
+        ]),
+        fileAnchors: new Map(),
+      },
+    }
+
+    importEpub(tempDir, info)
+
+    const files = readdirSync(tempDir).filter(file => file.endsWith('.md')).sort()
+    // 封面无目录标题且位于首个目录章节之前 → 独立成章；
+    // chapter01b 无目录标题且前面有目录章节 → 并入第一章
+    assert.deepEqual(files, ['01-第1章.md', '02-第一章.md', '03-第二章.md', 'index.md'])
+    const coverMd = readFileSync(join(tempDir, '01-第1章.md'), 'utf8')
+    assert.match(coverMd, /!\[封面\]\(_assets\/image-001\.jpg\)/)
+    // <a> 包裹图片资产时重写到本地抽取路径，避免死链
+    assert.match(coverMd, /\[封面大图\]\(_assets\/image-001\.jpg\)/)
+    const merged = readFileSync(join(tempDir, '02-第一章.md'), 'utf8')
+    assert.match(merged, /第一章开头/)
+    assert.match(merged, /第一章续写/)
+    assert.equal(info.chapterCount, 3)
+  } finally {
+    rmSync(tempDir, { recursive: true, force: true })
+  }
 })
 
 test('normalizes hrefs and creates title-based filenames', () => {
