@@ -190,5 +190,29 @@
     "title": "幸福的方法",
     "desc": "哈佛大学最受欢迎的幸福课，作者：[美] 泰勒・本-沙哈尔",
     "category": "ebook"
+  },
+  {
+    "slug": "yizuo-chengchi",
+    "title": "一座城池",
+    "desc": "作者：韩寒",
+    "category": "ebook"
+  },
+  {
+    "slug": "ta-de-guo",
+    "title": "他的国",
+    "desc": "作者：韩寒",
+    "category": "ebook"
+  },
+  {
+    "slug": "shidai-sanbuqu",
+    "title": "时代三部曲",
+    "desc": "作者：王小波，收录《黄金时代》《白银时代》《青铜时代》",
+    "category": "ebook"
+  },
+  {
+    "slug": "yun-zhong-ren",
+    "title": "云中人",
+    "desc": "作者：路内，《少年巴比伦》作者的首部悬疑推理长篇",
+    "category": "ebook"
   }
 ]
