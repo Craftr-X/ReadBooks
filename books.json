@@ -214,5 +214,11 @@
     "title": "云中人",
     "desc": "作者：路内，《少年巴比伦》作者的首部悬疑推理长篇",
     "category": "ebook"
+  },
+  {
+    "slug": "wanli-shiwunian",
+    "title": "万历十五年",
+    "desc": "黄仁宇经典史学著作，以万历朝为切面剖析明代政治制度与社会运行逻辑",
+    "category": "ebook"
   }
 ]
