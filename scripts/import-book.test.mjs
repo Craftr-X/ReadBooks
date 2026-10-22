@@ -66,7 +66,7 @@ test('imports EPUB spine files split by NCX anchors', () => {
         ['OPS/Text/vol.xhtml', Buffer.from(`
           <html><body>
             <p><a href="vol.xhtml#chapter-two">跳到第二章</a></p>
-            <p>卷首内容</p>
+            <p>卷首内容卷首内容卷首内容卷首内容卷首内容卷首内容卷首内容卷首内容卷首内容卷首内容卷首内容卷首内容卷首内容卷首内容卷首内容卷首内容卷首内容卷首内容卷首内容卷首内容卷首内容卷首内容卷首内容卷首内容卷首内容卷首内容卷首内容卷首内容卷首内容卷首内容卷首内容</p>
             <h2 id="chapter-one">第一章</h2><p>第一章正文</p>
             <h2 name="chapter-two">第二章</h2><p>第二章正文</p>
           </body></html>
@@ -176,6 +176,90 @@ test('numbered chapter labels survive titleFileSegment', () => {
   assert.equal(titleFileSegment('Chapter 01'), 'Chapter-01')
 })
 
+test('four-digit numeric titles survive cleanTitle but page numbers do not', () => {
+  assert.equal(cleanTitle('2015'), '2015')
+  assert.equal(cleanTitle('1984'), '1984')
+  assert.equal(cleanTitle('92'), '')
+  assert.equal(cleanTitle('page3'), '')
+})
+
+test('titleFileSegment merges hyphens between Han characters', () => {
+  assert.equal(titleFileSegment('自 序'), '自序')
+  assert.equal(titleFileSegment('说 明'), '说明')
+  assert.equal(titleFileSegment('上篇 我的舅舅'), '上篇我的舅舅')
+  assert.equal(titleFileSegment('Chapter 01'), 'Chapter-01')
+})
+
+test('skips title-only prelude before the first NCX anchor', () => {
+  const tempDir = mkdtempSync(join(tmpdir(), 'import-book-shell-prelude-'))
+  try {
+    const info = {
+      title: '空壳前置书',
+      desc: '测试',
+      warnings: [],
+      entries: new Map([
+        ['OPS/Text/vol.xhtml', Buffer.from(`
+          <html><body>
+            <h1>卷名标题</h1>
+            <h2 id="chapter-one">第一章</h2><p>第一章正文第一章正文第一章正文第一章正文第一章正文</p>
+            <h2 name="chapter-two">第二章</h2><p>第二章正文第二章正文第二章正文第二章正文第二章正文</p>
+          </body></html>
+        `)],
+      ]),
+      opf: {
+        manifest: new Map(),
+        spine: [{ href: 'OPS/Text/vol.xhtml' }],
+        tocTitleMap: new Map(),
+        fileAnchors: new Map([[
+          'OPS/Text/vol.xhtml',
+          [
+            { fragment: 'chapter-one', title: '第一章' },
+            { fragment: 'chapter-two', title: '第二章' },
+          ],
+        ]]),
+      },
+    }
+
+    importEpub(tempDir, info)
+
+    const files = readdirSync(tempDir).filter(file => file.endsWith('.md')).sort()
+    assert.deepEqual(files, ['01-第一章.md', '02-第二章.md', 'index.md'])
+    assert.equal(info.chapterCount, 2)
+  } finally {
+    rmSync(tempDir, { recursive: true, force: true })
+  }
+})
+
+test('skips whole-file shell pages that contain only a repeated title', () => {
+  const tempDir = mkdtempSync(join(tmpdir(), 'import-book-shell-page-'))
+  try {
+    const info = {
+      title: '空壳页书',
+      desc: '测试',
+      warnings: [],
+      entries: new Map([
+        ['OPS/Text/fly.xhtml', Buffer.from('<html><body><h1>某书名</h1></body></html>')],
+        ['OPS/Text/ch1.xhtml', Buffer.from('<html><body><h1>第一章</h1><p>正文正文正文正文正文正文正文正文正文正文正文正文正文正文正文正文正文正文正文正文正文正文</p></body></html>')],
+      ]),
+      opf: {
+        manifest: new Map(),
+        spine: [{ href: 'OPS/Text/fly.xhtml' }, { href: 'OPS/Text/ch1.xhtml' }],
+        tocTitleMap: new Map([['OPS/Text/ch1.xhtml', '第一章']]),
+        fileAnchors: new Map(),
+      },
+    }
+
+    importEpub(tempDir, info)
+
+    const files = readdirSync(tempDir).filter(file => file.endsWith('.md')).sort()
+    assert.deepEqual(files, ['01-第一章.md', 'index.md'])
+    assert.match(info.warnings.join('\n'), /空壳页面已跳过/)
+    assert.equal(info.chapterCount, 1)
+  } finally {
+    rmSync(tempDir, { recursive: true, force: true })
+  }
+})
+
 test('imports untitled spine files as continuations of the previous NCX chapter', () => {
   const tempDir = mkdtempSync(join(tmpdir(), 'import-book-continuation-'))
   try {
@@ -185,9 +269,9 @@ test('imports untitled spine files as continuations of the previous NCX chapter'
       warnings: [],
       entries: new Map([
         ['OPS/Text/cover.xhtml', Buffer.from('<html><body><img src="../Images/cover.jpg" alt="封面"/><p><a href="../Images/cover.jpg">封面大图</a></p></body></html>')],
-        ['OPS/Text/chapter01.xhtml', Buffer.from('<html><body><h1>第一章</h1><p>第一章开头</p></body></html>')],
-        ['OPS/Text/chapter01b.xhtml', Buffer.from('<html><body><p>第一章续写</p></body></html>')],
-        ['OPS/Text/chapter02.xhtml', Buffer.from('<html><body><h1>第二章</h1><p>第二章开头</p></body></html>')],
+        ['OPS/Text/chapter01.xhtml', Buffer.from('<html><body><h1>第一章</h1><p>第一章开头第一章开头第一章开头第一章开头第一章开头第一章开头第一章开头第一章开头</p></body></html>')],
+        ['OPS/Text/chapter01b.xhtml', Buffer.from('<html><body><p>第一章续写第一章续写第一章续写第一章续写第一章续写第一章续写第一章续写第一章续写</p></body></html>')],
+        ['OPS/Text/chapter02.xhtml', Buffer.from('<html><body><h1>第二章</h1><p>第二章开头第二章开头第二章开头第二章开头第二章开头第二章开头第二章开头第二章开头</p></body></html>')],
         ['OPS/Images/cover.jpg', Buffer.from('fake-jpg-bytes')],
       ]),
       opf: {

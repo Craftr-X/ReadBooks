@@ -64,6 +64,9 @@ function titleFileSegment(value) {
     .replace(/\s+/g, '-')
     .replace(/-+/g, '-')
     .replace(/^-+|-+$/g, '')
+    // 中文标题里的空格（"自 序"、"说 明"）转连字符后读起来像两个词，
+    // 汉字之间的连字符直接合并；英文单词边界不受影响。
+    .replace(/(\p{Script=Han})-(\p{Script=Han})/gu, '$1$2')
     .slice(0, 80)
   return segment
 }
@@ -228,8 +231,9 @@ function cleanTitle(value) {
   if (!title) return ''
   if (/^chapter[-_\s]*\d+$/i.test(title)) return ''
   if (/^第\s*\d+\s*章$/.test(title)) return ''
-  if (/^#?[a-z]*\d{1,4}$/i.test(title)) return ''
-  if (/^[\[\]().#\-\s\d]+$/.test(title)) return ''
+  // 1-3 位纯数字视为页码/编号噪音；4 位（"2015"、"1984"）可能是真实篇名
+  if (/^#?[a-z]*\d{1,3}$/i.test(title)) return ''
+  if (/^[\[\]().#\-\s\d]+$/.test(title) && !/^\d{4}$/.test(title)) return ''
   if (/^a-class-[a-z0-9-]+$/i.test(title)) return ''
   return title
 }
@@ -458,6 +462,26 @@ function htmlToMarkdown(html, assets, chapterPath, links = new Map()) {
   return body ? `${body}\n` : ''
 }
 
+// zlib 转制 EPUB 常见"空壳页"：整个 HTML 只有一行重复书名/章节名的标题，
+// 转成 Markdown 后没有任何正文。用它判定锚点前置段和整页文件是否有实质内容。
+// 阈值取 30：足以滤掉纯标题行，又不会误杀约 40 字的真实题记页。
+const MIN_BODY_CHARS = 30
+
+function visibleTextLength(html) {
+  const text = decodeHtml(
+    String(html || '')
+      .replace(/<script\b[\s\S]*?<\/script>/gi, '')
+      .replace(/<style\b[\s\S]*?<\/style>/gi, '')
+      .replace(/<[^>]+>/g, ''),
+  )
+  return text.replace(/\s+/g, '').length
+}
+
+// 含图片的页面（封面/插图页）可见文本天然很少，不算空壳
+function isShellPage(html) {
+  return !/<img\b/i.test(String(html || '')) && visibleTextLength(html) < MIN_BODY_CHARS
+}
+
 function safeFileName(index, title, used = new Set()) {
   const compact = titleFileSegment(title)
   const fallback = `chapter-${String(index + 1).padStart(2, '0')}`
@@ -490,6 +514,8 @@ function detectEpub(inputPath, args) {
       let open = false
       for (const item of opf.spine) {
         const href = normalizeHref(item.href)
+        const html = textEntry(entries, item.href)
+        if (html && isShellPage(html)) continue
         const anchors = (opf.fileAnchors && opf.fileAnchors.get(href)) || []
         if (anchors.length > 0) {
           total += anchors.length
@@ -570,7 +596,9 @@ function importEpub(tempDir, info) {
         if (m) splitPoints.push({ pos: m.index, title: anc.title, fragment: anc.fragment })
       }
       splitPoints.sort((a, b) => a.pos - b.pos)
-      if (fallbackTitle && splitPoints.length > 0 && splitPoints[0].pos > 0) {
+      // 锚点前的"前置段"只有标题没有正文时不独立成章（zlib 转制 EPUB 每页
+      // 开头的重复书名行），否则会产生只含一行标题的空壳 Markdown 文件。
+      if (splitPoints.length > 0 && splitPoints[0].pos > 0 && !isShellPage(bodyHtml.slice(0, splitPoints[0].pos))) {
         splitPoints.unshift({ pos: 0, title: fallbackTitle })
       }
 
@@ -593,6 +621,12 @@ function importEpub(tempDir, info) {
 
     if (!tocTitle && mergeTarget) {
       mergeTarget.parts.push({ html, href: item.href })
+      return
+    }
+
+    // 整页只有一行重复标题的空壳文件（分册扉页等）：跳过，不占章节编号
+    if (isShellPage(html)) {
+      info.warnings.push(`空壳页面已跳过：${item.href}`)
       return
     }
 
