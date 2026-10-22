@@ -646,15 +646,98 @@ function importEpub(tempDir, info) {
     }
   }
   for (const chapter of plannedChapters) {
-    const md = chapter.parts
+    const md = normalizeProseBlocks(chapter.parts
       .map(part => htmlToMarkdown(part.html, assets, part.href, links))
       .filter(Boolean)
-      .join('\n\n')
+      .join('\n\n'))
     writeFileSync(chapter.targetPath, md || `# ${chapter.title}\n`, 'utf8')
   }
 
   info.chapterCount = chapters.length
   writeIndex(tempDir, info.title, info.desc, chapters)
+}
+
+// zlib 转制 EPUB 的正文常带两类排版遗留：
+// 1. 段首 4 个半角空格（TXT 首行缩进的残留）——CommonMark 会把 ≥4 空格缩进的
+//    行渲染成代码块，页面上表现为等宽字体、不随页宽换行（横向滚动）。
+// 2. 长段落在源里被按固定宽度硬折行成多个段落，断点常落在词中间。
+// normalizeProseBlocks 去掉段首缩进（围栏代码块内除外），并把"句未结束却被
+// 断开的散文段"拼回一段，供 EPUB 导入流程与存量书籍修复脚本共用。
+// 仅适用于散文书籍（EPUB 小说等）：掘金类技术书源里的缩进代码块是有意的，
+// 不能对其运行本函数。
+
+// 段落以这些字符结尾视为句读完整，不再与下一段合并。破折号“——”视为句读
+// 完整：小说常用它引出歌词/引用（“歌词是这样的——”），若继续合并会把随后
+// 逐行排版的歌词全部连锁并成一段。
+const PROSE_TERMINAL = /[。！？…”』」）》〉…；：!?;:—]$/
+// CJK/全角字符：合并断行时直接拼接，不加空格
+const CJK_CHAR = /[\u3000-\u30ff\u3400-\u9fff\uf900-\ufaff\uff00-\uffef]/
+
+function isProseBlock(block) {
+  const lines = block.split('\n').filter(line => line.trim())
+  if (lines.length === 0) return false
+  if (/^(#{1,6}\s|[-*+]\s|\d{1,9}[.)]\s|>|!?\[|<|\||`{3,}|~{3,})/.test(lines[0])) return false
+  // 分隔线（---- / **** 等），无论是整块还是块的最后一行，都不参与合并
+  if (/^[-*_~=.\s]{3,}$/.test(lines[0]) || /^[-*_~=.\s]{3,}$/.test(lines[lines.length - 1])) return false
+  // 纯符号块（※、· 之类场景分隔符）不是散文
+  if (!/[一-鿿A-Za-z0-9]/.test(block)) return false
+  return true
+}
+
+function openQuoteDepth(text) {
+  const opens = (text.match(/“/g) || []).length
+  const closes = (text.match(/”/g) || []).length
+  return opens - closes
+}
+
+function joinFragments(a, b) {
+  if (!a) return b
+  if (CJK_CHAR.test(a[a.length - 1]) || CJK_CHAR.test(b[0])) return a + b
+  return `${a} ${b}`
+}
+
+// 块尾没有句末标点时，仅当"结尾处于未闭合引号内"或"块长 ≥30 字"才与下一块
+// 合并。歌词、题记、版权信息等有意的短行（无句末标点但不满足上述条件）保持
+// 原样分行。
+function wantsJoin(text) {
+  if (PROSE_TERMINAL.test(text)) return false
+  return openQuoteDepth(text) > 0 || [...text].length >= 30
+}
+
+function normalizeProseBlocks(markdown) {
+  const lines = String(markdown || '')
+    .replace(/\r\n?/g, '\n')
+    .split('\n')
+    .map(line => line.replace(/[ \t]+$/, ''))
+
+  // 去段首缩进（围栏内除外）
+  let inFence = false
+  const stripped = lines.map((line) => {
+    if (/^\s*(`{3,}|~{3,})/.test(line)) {
+      inFence = !inFence
+      return line
+    }
+    return inFence ? line : line.replace(/^[ \t]+/, '')
+  })
+
+  const normalized = stripped.join('\n').replace(/\n{3,}/g, '\n\n').trim()
+  if (!normalized) return ''
+  const blocks = normalized.split(/\n\n+/)
+  const out = []
+  for (const block of blocks) {
+    const prose = isProseBlock(block)
+    const text = prose
+      ? block.split('\n').reduce((acc, line) => joinFragments(acc, line.trim()), '')
+      : block
+    const prev = out[out.length - 1]
+    if (prev && prev.joinable && prose) {
+      prev.text = joinFragments(prev.text, text)
+      prev.joinable = wantsJoin(prev.text)
+    } else {
+      out.push({ text, joinable: prose ? wantsJoin(text) : false })
+    }
+  }
+  return `${out.map(block => block.text).join('\n\n').trim()}\n`
 }
 
 function copyBuffer(buffer, target) {
@@ -788,12 +871,15 @@ function main() {
 export {
   lintFixBook,
   cleanTitle,
+  decodeHtml,
   normalizeHref,
+  normalizeProseBlocks,
   numberedChapterLabel,
   parseNavDocToc,
   parseNcxToc,
   parseOpf,
   importEpub,
+  readZipEntries,
   safeFileName,
   titleFileSegment,
 }
