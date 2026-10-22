@@ -9,6 +9,7 @@ import {
   importEpub,
   lintFixBook,
   normalizeHref,
+  normalizeProseBlocks,
   numberedChapterLabel,
   parseNavDocToc,
   parseNcxToc,
@@ -383,4 +384,193 @@ test('lintFixBook folds consecutive blank lines and surrounds headings with blan
   } finally {
     rmSync(testDir, { recursive: true, force: true })
   }
+})
+
+test('normalizeProseBlocks removes paragraph indentation that becomes code blocks', () => {
+  const input = [
+    '### 一座城池',
+    '',
+    '    火车慢慢停下。这又是一个全新的地方。地方不似商品，全新总是不好。',
+    '',
+  ].join('\n')
+
+  const output = normalizeProseBlocks(input)
+  assert.ok(!/^ {4,}/m.test(output), '段首 4 空格缩进应被去掉')
+  assert.match(output, /火车慢慢停下。/)
+})
+
+test('normalizeProseBlocks joins hard-wrapped prose chunks into one paragraph', () => {
+  const input = [
+    '    老板说：“没问题，只要你站着别动，信号绝对好。”我立定，拨打电话。拨半天没动静。老板说：“你站的朝向不对。你看，这城里的发射站在那',
+    '',
+    '',
+    '',
+    '    头，你要面对那座塔站。”我说：“这信号又不是靠我的脸接收的，天线不还是朝着',
+    '',
+    '',
+    '',
+    '    老地方嘛！”老板说：“不定的，不定的。”于是我转过脸朝向远处最高的一栋建筑。',
+    '',
+  ].join('\n')
+
+  const output = normalizeProseBlocks(input)
+  assert.match(output, /发射站在那头，你要面对那座塔站/)
+  assert.match(output, /天线不还是朝着老地方嘛/)
+  // 合并后的三块应只剩一个段落：以句号结尾的完整段落
+  const paragraphs = output.trim().split(/\n\n+/)
+  assert.equal(paragraphs.length, 1)
+})
+
+test('normalizeProseBlocks joins short chunks that end inside an unclosed quote', () => {
+  const input = [
+    '    我说：“肯定是要抓我们俩的，因为只有我们俩带刀',
+    '',
+    '    抓到了，我就说是我干的。”',
+    '',
+  ].join('\n')
+
+  const output = normalizeProseBlocks(input)
+  assert.match(output, /只有我们俩带刀抓到了/)
+})
+
+test('normalizeProseBlocks keeps deliberate short lines separate (epigraph and lyrics)', () => {
+  const input = [
+    '这是个关于城市的故事，',
+    '',
+    '    城市寄托了我们的大多数希望，',
+    '',
+    '    可终究，',
+    '',
+    '    每一座城池都不是我们的。',
+    '',
+    '    姐妹出来混啊',
+    '',
+    '    只为钓凯子啊',
+    '',
+  ].join('\n')
+
+  const output = normalizeProseBlocks(input)
+  const nonBlank = output.trim().split('\n').filter(line => line.trim())
+  assert.equal(nonBlank.length, 6, '题记与歌词的每一行都应保持独立')
+  assert.match(output, /城市寄托了我们的大多数希望，\n\n可终究，/)
+})
+
+test('normalizeProseBlocks does not merge prose into headings or lists', () => {
+  const input = [
+    '    这一整段还没有讲完就被断开了，正在朝三十个字以上的长度走去，然后',
+    '',
+    '### 小标题',
+    '',
+    '- 列表项',
+    '',
+  ].join('\n')
+
+  const output = normalizeProseBlocks(input)
+  assert.match(output, /然后\n\n### 小标题/)
+  assert.match(output, /### 小标题\n\n- 列表项/)
+})
+
+test('normalizeProseBlocks keeps fenced code blocks untouched', () => {
+  const input = [
+    '```text',
+    '    indented inside fence stays',
+    '```',
+    '',
+    '    正常段落。正常结束。',
+    '',
+  ].join('\n')
+
+  const output = normalizeProseBlocks(input)
+  assert.match(output, /```text\n    indented inside fence stays\n```/)
+})
+
+test('normalizeProseBlocks joins wrapped ASCII words with a space and CJK without', () => {
+  const output = normalizeProseBlocks([
+    '    The quick brown fox jumps over the lazy dog and keeps',
+    '',
+    '    running through the forest.',
+    '',
+  ].join('\n'))
+  assert.match(output, /keeps running through the forest\./)
+})
+
+test('normalizeProseBlocks collapses extra blank lines and returns empty for empty input', () => {
+  assert.equal(normalizeProseBlocks(''), '')
+  assert.equal(normalizeProseBlocks('   \n\n\n'), '')
+  const output = normalizeProseBlocks('第一段。\n\n\n\n第二段。\n')
+  assert.match(output, /第一段。\n\n第二段。\n/)
+})
+
+test('importEpub normalizes indented wrapped paragraphs from EPUB sources', () => {
+  const tempDir = mkdtempSync(join(tmpdir(), 'import-book-prose-normalize-'))
+  try {
+    const info = {
+      title: '断段书',
+      desc: '测试',
+      warnings: [],
+      entries: new Map([
+        ['OPS/Text/c1.xhtml', Buffer.from([
+          '<html><body>',
+          '<p>    老板说：“没问题，只要你站着别动，信号绝对好。”我立定，拨打电话。拨半天没动静。老板说：“你站的朝向不对。你看，这城里的发射站在那</p>',
+          '<p>    头，你要面对那座塔站。”我说：“这信号又不是靠我的脸接收的，天线不还是朝着</p>',
+          '<p>    老地方嘛！”老板说：“不定的，不定的。”</p>',
+          '</body></html>',
+        ].join(''))],
+      ]),
+      opf: {
+        manifest: new Map(),
+        spine: [{ href: 'OPS/Text/c1.xhtml' }],
+        tocTitleMap: new Map([['OPS/Text/c1.xhtml', '第一章']]),
+        fileAnchors: new Map(),
+      },
+    }
+
+    importEpub(tempDir, info)
+
+    const chapter = readFileSync(join(tempDir, '01-第一章.md'), 'utf8')
+    assert.ok(!/^ {4,}/m.test(chapter), 'EPUB 源的段首缩进不应变成代码块')
+    assert.match(chapter, /发射站在那头，你要面对那座塔站/)
+    assert.match(chapter, /天线不还是朝着老地方嘛/)
+  } finally {
+    rmSync(tempDir, { recursive: true, force: true })
+  }
+})
+
+test('normalizeProseBlocks stops at em dash introductions and keeps lyric lines separate', () => {
+  const input = [
+    '    学校里的DJ永不停歇，不停放歌。不幸中的万幸是那DJ似乎不是很摇滚，劣质的广播里居然传来邓',
+    '',
+    '    丽君的声音——',
+    '',
+    '    如果没有遇见你我将会是在哪里',
+    '',
+    '    我回去一听，歌词是这样的——',
+    '',
+    '    每一首想你的诗',
+    '',
+    '    写在雨后的玻璃窗前',
+    '',
+  ].join('\n')
+
+  const output = normalizeProseBlocks(input)
+  // “邓/丽君”是词中的硬折行，应拼回
+  assert.match(output, /传来邓丽君的声音——/)
+  // “——”引出的歌词逐行排版，不应并入正文或互相合并
+  assert.match(output, /声音——\n\n如果没有遇见你我将会是在哪里/)
+  assert.match(output, /歌词是这样的——\n\n每一首想你的诗/)
+  assert.match(output, /每一首想你的诗\n\n写在雨后的玻璃窗前/)
+})
+
+test('normalizeProseBlocks treats symbol-only separators as non-prose', () => {
+  const input = [
+    '    这一段话说到一半就被折断了，长度早已经超过三十个字的门槛，然后',
+    '',
+    '    ※',
+    '',
+    '    下一段从这里开始。',
+    '',
+  ].join('\n')
+
+  const output = normalizeProseBlocks(input)
+  assert.match(output, /然后\n\n※\n\n下一段从这里开始。/)
 })
