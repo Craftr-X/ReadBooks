@@ -17,6 +17,7 @@ This repository is a VitePress books site. Main site content lives in `docs/`, w
 - `npm run lint:fix`: auto-fix Markdown formatting issues (trailing spaces, blank lines, newlines). Run independently of `prebuild`; do not wire it into the build flow.
 - `npm test`: run the Node test suite (`node --test scripts/*.test.mjs`) for import, sidebar, deadlinks, reading-time/progress, and codeblock-lang logic.
 - `node scripts/verify-import.mjs <slug>`: run post-import verification (pass/fail JSON report).
+- `npm run audit:content -- <slug> <source.epub>`: reconcile the source EPUB against the imported Markdown (total visible-character delta + per-spine-file sample matching) to prove no content was silently dropped. Run while the source EPUB is still at hand.
 
 ## Coding Style & Naming Conventions
 
@@ -72,6 +73,7 @@ Use this spec whenever importing a technical booklet, Markdown source, or EPUB e
   ```
 
 - Validate local Markdown links and image references from each imported Markdown file. Build success alone is not enough because `ignoreDeadLinks: true` is enabled.
+- Run `npm run audit:content -- <slug> <source.epub>` when importing from an EPUB to confirm no content was silently dropped (structural checks cannot detect content loss).
 - If importer logic changes, add focused tests in `scripts/import-book.test.mjs` and run `node --test scripts/import-book.test.mjs`.
 - Always run `npm run build`; existing code-block language warnings are non-blocking only when the build exits successfully.
 - Run `npm run check:deadlinks` to confirm no internal links or image references are broken across the site.
@@ -86,6 +88,7 @@ The import is complete only when all are true:
 - `node scripts/verify-import.mjs <slug>` reports all checks passed.
 - `node --test scripts/import-book.test.mjs` passes if import code changed.
 - `npm run check:deadlinks` reports no dead links across the site.
+- `npm run audit:content -- <slug> <source.epub>` reports zero missing samples for EPUB imports.
 - `npm run build` passes.
 - Existing books and shared site behavior were not changed outside the documented scope.
 
