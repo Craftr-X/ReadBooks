@@ -11,6 +11,7 @@
     "build": "vitepress build docs",
     "preview": "vitepress preview docs",
     "check:deadlinks": "node scripts/check-deadlinks.mjs",
+    "audit:content": "node scripts/audit-content.mjs",
     "lint": "markdownlint-cli2",
     "lint:fix": "markdownlint-cli2 --fix",
     "fix:missing-assets": "node scripts/normalize-missing-assets.mjs",
