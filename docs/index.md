@@ -25,34 +25,10 @@ features:
     title: MySQL 底层原理
     details: 从根儿上理解 MySQL，InnoDB 存储引擎、索引、事务、锁
     link: /books/mysql-running/
-  - icon: 🔷
-    title: TypeScript 进阶
-    details: 类型系统、泛型编程、类型体操，从入门到精通
-    link: /books/typescript-advanced/
-  - icon: 🔴
-    title: 深入 Redis 7
-    details: 数据结构、内核解析、持久化、主从同步、集群
-    link: /books/redis7/
-  - icon: 🐳
-    title: Docker 实践指南
-    details: 容器化技术从入门到实践，镜像、Compose、网络
-    link: /books/docker-guide/
-  - icon: 🚀
-    title: CI/CD 流程
-    details: Jenkins + Kubernetes，从 0 到 1 持续集成部署
-    link: /books/cicd-guide/
-  - icon: 🧩
-    title: 低代码产品
-    details: 从 0 打造通用型低代码平台，架构设计到落地实现
-    link: /books/low-code-platform/
-  - icon: 💼
-    title: 程序员职业规划
-    details: 求职、职业发展、技术方向选择，程序员的成长之路
-    link: /books/career-guide/
-  - icon: 🤖
-    title: 从0开始构建AgentHarness
-    details: 从零开始构建 Agent Harness 的完整指南
-    link: /books/build-agent-harness/
+  - icon: 📖
+    title: 万历十五年
+    details: 黄仁宇经典史学著作，站内电子书代表作
+    link: /books/wanli-shiwunian/
 ---
 
 <HomePage />
