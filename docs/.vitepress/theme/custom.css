@@ -90,7 +90,10 @@
 
 .VPNavBar {
   backdrop-filter: blur(12px) !important;
+  /* 旧内核不支持 color-mix 时回落到原先的深色半透明（渐进增强） */
   background: rgba(10, 10, 26, 0.8) !important;
+  /* 跟随明暗主题的半透明背景；此前硬编码深色导致浅色模式下顶栏发黑 */
+  background: color-mix(in srgb, var(--vp-c-bg) 82%, transparent) !important;
   border-bottom: 1px solid var(--vp-c-divider);
 }
 
@@ -112,6 +115,13 @@
 div[class*='language-'] {
   border-radius: 8px;
   border: 1px solid var(--vp-c-divider);
+}
+
+/* VitePress 只对带语言标注的围栏代码块做横向滚动约束；
+   缩进式裸 pre（常见于列表内代码块）长行会把整页撑出横向滚动条，需自行兜底 */
+.vp-doc pre {
+  overflow-x: auto;
+  max-width: 100%;
 }
 
 /* ========== 内容区域 ========== */
@@ -226,13 +236,15 @@ div[class*='language-'] {
 
 /* ========== 底部导航美化 ========== */
 
-.VPDocFooter .pager {
+/* 边框挂在 pager-link 上；pager 是始终存在的占位容器，
+   挂在容器上会让无"上一篇"的页面渲染出一个空框 */
+.VPDocFooter .pager-link {
   border-radius: 12px;
   border: 1px solid var(--vp-c-divider);
   transition: all 0.3s ease;
 }
 
-.VPDocFooter .pager:hover {
+.VPDocFooter .pager-link:hover {
   border-color: var(--vp-c-brand-1);
   box-shadow: 0 0 16px rgba(99, 102, 241, 0.1);
 }
