@@ -11,7 +11,7 @@ CraftX Books 是一个基于 VitePress 构建的在线阅读站点，发布到 G
 
 - 📚 技术小册与电子书在线阅读：所有内容统一放在 `docs/books/` 下，按目录生成阅读路径。
 - 🧭 自动化导航：通过 VitePress 导航、侧边栏和页面目录提供清晰的章节浏览体验。
-- 🗂️ 内容分类：`books.json` 使用 `category` 区分 `booklet` 技术小册和 `ebook` 电子书，顶部导航和首页统计会自动分组。
+- 🗂️ 内容分类：`books.json` 使用 `category` 区分 `booklet` 技术小册和 `ebook` 电子书（来源类型，导入/校验依赖）；可选的 `genre` 字段决定展示分类（AI 与智能体 / 前端与调试 / 文学小说 / 历史人文等，注册表见 `docs/.vitepress/genres.ts`），顶部导航与首页分区按 `genre` 自动分组，缺省时按 `category` 兜底。
 - 🔎 本地搜索：使用 VitePress 内置 local search，支持站内内容检索。
 - 💬 评论讨论：章节页接入 Giscus，基于 GitHub Discussions 承载读者交流。
 - 🌓 主题切换：沿用 VitePress 深色/浅色模式，评论主题跟随系统偏好。
@@ -246,6 +246,7 @@ npm run import:book -- ./path/to/book.epub --slug my-book
 
 - Markdown 文件夹导入默认写入 `category: "booklet"`，归入顶部导航的“技术小册”，首页技术小册数量自动更新。
 - EPUB 文件导入默认写入 `category: "ebook"`，归入顶部导航的“电子书”，首页电子书数量自动更新。
+- 展示分类（genre）与来源分类（category）相互独立：导入不写 `genre`，新书会先落入兜底分组（技术小册下拉的“其他”、电子书的“电子书”栏），需要精细分组时在 `books.json` 手动补 `"genre"` 并重启构建，取值须是 `docs/.vitepress/genres.ts` 注册表里的 key。显式写了 genre 的书跨 category 生效（如 EPUB 来源的技术书可归入“技术小册”下拉的分组），首页统计与分区数字均按展示分组口径计算。
 
 完整说明见：[`docs/local-import-guide.md`](./docs/local-import-guide.md)
 

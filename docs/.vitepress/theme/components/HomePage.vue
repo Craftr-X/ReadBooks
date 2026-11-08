@@ -3,13 +3,7 @@ import { computed } from 'vue'
 import { useData } from 'vitepress'
 import books from '../../../../books.json'
 import contentStats from '../../../../content-stats.json'
-
-interface BookEntry {
-  slug: string
-  title: string
-  desc: string
-  category: 'booklet' | 'ebook'
-}
+import { groupBooks, type BookEntry } from '../../genres'
 
 const { site } = useData()
 const base = computed(() => site.value.base)
@@ -17,12 +11,17 @@ const base = computed(() => site.value.base)
 // 拼接带 base 前缀的书籍路由
 const bookHref = (slug: string) => `${base.value}books/${slug}/`
 
-const booklets = computed(() =>
-  (books as BookEntry[]).filter(b => (b.category || 'booklet') === 'booklet')
-)
-const ebooks = computed(() =>
-  (books as BookEntry[]).filter(b => b.category === 'ebook')
-)
+// 大区与顶部导航共用 genre 注册表：显式 genre 跨 category 生效，
+// 未归类的书按 category 兜底（booklet → 技术小册区，ebook → 电子书区）。
+const bookletGroups = computed(() => groupBooks(books as BookEntry[], 'group'))
+const ebookGroups = computed(() => groupBooks(books as BookEntry[], 'top'))
+const groupLabel = (genre: { icon: string; label: string } | null) =>
+  genre ? `${genre.icon} ${genre.label}` : '其他'
+
+const sideCount = (groups: { books: BookEntry[] }[]) =>
+  groups.reduce((n, g) => n + g.books.length, 0)
+const booklets = computed(() => sideCount(bookletGroups.value))
+const ebooks = computed(() => sideCount(ebookGroups.value))
 
 const formatMinutes = (min: number): string => {
   if (min < 60) return `${min} 分`
@@ -34,12 +33,13 @@ const formatMinutes = (min: number): string => {
   return `${hours + 1} 小时`
 }
 
-const stats = [
-  { label: '技术小册', value: contentStats.bookletCount, icon: '📚' },
-  { label: '电子书', value: contentStats.ebookCount, icon: '📖' },
+// 统计卡的前两项与下方分区用同一口径（按展示分组求和），避免同页数字打架
+const stats = computed(() => [
+  { label: '技术小册', value: booklets.value, icon: '📚' },
+  { label: '电子书', value: ebooks.value, icon: '📖' },
   { label: '文章总数', value: contentStats.chapterCount, icon: '📄' },
   { label: '总阅读时长', value: formatMinutes(contentStats.totalReadingMinutes), icon: '⏱' },
-]
+])
 </script>
 
 <template>
@@ -58,21 +58,27 @@ const stats = [
       <h2 class="section-title">
         <span class="section-icon">📚</span>
         技术小册
-        <span class="section-count">{{ booklets.length }} 本</span>
+        <span class="section-count">{{ booklets }} 本</span>
       </h2>
-      <div class="book-grid">
-        <a
-          v-for="book in booklets"
-          :key="book.slug"
-          :href="bookHref(book.slug)"
-          class="book-card"
-        >
-          <div class="book-card-body">
-            <h3 class="book-title">{{ book.title }}</h3>
-            <p class="book-desc">{{ book.desc }}</p>
-          </div>
-          <span class="book-arrow" aria-hidden="true">→</span>
-        </a>
+      <div v-for="group in bookletGroups" :key="group.genre?.key || 'other'" class="genre-group">
+        <h3 class="genre-subtitle">
+          {{ groupLabel(group.genre) }}
+          <span class="genre-count">{{ group.books.length }} 本</span>
+        </h3>
+        <div class="book-grid">
+          <a
+            v-for="book in group.books"
+            :key="book.slug"
+            :href="bookHref(book.slug)"
+            class="book-card"
+          >
+            <div class="book-card-body">
+              <h3 class="book-title">{{ book.title }}</h3>
+              <p class="book-desc">{{ book.desc }}</p>
+            </div>
+            <span class="book-arrow" aria-hidden="true">→</span>
+          </a>
+        </div>
       </div>
     </section>
 
@@ -81,21 +87,27 @@ const stats = [
       <h2 class="section-title">
         <span class="section-icon">📖</span>
         电子书
-        <span class="section-count">{{ ebooks.length }} 本</span>
+        <span class="section-count">{{ ebooks }} 本</span>
       </h2>
-      <div class="book-grid">
-        <a
-          v-for="book in ebooks"
-          :key="book.slug"
-          :href="bookHref(book.slug)"
-          class="book-card"
-        >
-          <div class="book-card-body">
-            <h3 class="book-title">{{ book.title }}</h3>
-            <p class="book-desc">{{ book.desc }}</p>
-          </div>
-          <span class="book-arrow" aria-hidden="true">→</span>
-        </a>
+      <div v-for="group in ebookGroups" :key="group.genre?.key || 'other'" class="genre-group">
+        <h3 class="genre-subtitle">
+          {{ groupLabel(group.genre) }}
+          <span class="genre-count">{{ group.books.length }} 本</span>
+        </h3>
+        <div class="book-grid">
+          <a
+            v-for="book in group.books"
+            :key="book.slug"
+            :href="bookHref(book.slug)"
+            class="book-card"
+          >
+            <div class="book-card-body">
+              <h3 class="book-title">{{ book.title }}</h3>
+              <p class="book-desc">{{ book.desc }}</p>
+            </div>
+            <span class="book-arrow" aria-hidden="true">→</span>
+          </a>
+        </div>
       </div>
     </section>
   </div>
@@ -158,6 +170,35 @@ const stats = [
 /* ========== 书籍分区 ========== */
 .book-section {
   margin-top: 48px;
+}
+
+/* ========== genre 子分组 ========== */
+.genre-group {
+  margin-top: 20px;
+}
+
+.genre-group:first-of-type {
+  margin-top: 0;
+}
+
+.genre-subtitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 12px;
+  color: var(--vp-c-text-1);
+}
+
+.genre-count {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--vp-c-text-2);
+  background: var(--vp-c-bg-soft);
+  border: 1px solid var(--vp-c-divider);
+  padding: 1px 8px;
+  border-radius: 10px;
 }
 
 .section-title {
