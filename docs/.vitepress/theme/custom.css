@@ -1,11 +1,30 @@
-/* ========== 科技感主题定制 ========== */
+/* ========== 纸感书卷阅读主题 ========== */
 
 :root {
-  /* 主色调 - 靛蓝紫 */
-  --vp-c-brand-1: #818cf8;
-  --vp-c-brand-2: #6366f1;
-  --vp-c-brand-3: #4f46e5;
-  --vp-c-brand-soft: rgba(99, 102, 241, 0.14);
+  /* 主色调 - 靛蓝紫（与 logo 一致，用于链接/选中态等点睛处） */
+  --vp-c-brand-1: #6d6af5;
+  --vp-c-brand-2: #5b58ee;
+  --vp-c-brand-3: #4a47d6;
+  --vp-c-brand-soft: rgba(99, 102, 241, 0.13);
+
+  /* 浅色 = 米白纸色，暖色低对比，长时间阅读不刺眼 */
+  --vp-c-bg: #faf8f2;
+  --vp-c-bg-alt: #f3f0e8;
+  --vp-c-bg-elv: #fffdf8;
+  --vp-c-bg-soft: #f0ece0;
+
+  /* 暖灰文字，替代默认偏蓝的灰 */
+  --vp-c-text-1: #38342e;
+  --vp-c-text-2: #6d675d;
+  --vp-c-text-3: #9a9284;
+
+  --vp-c-divider: #e6e1d4;
+  --vp-c-divider-soft: #eeeade;
+  --vp-c-gutter: #f3f0e8;
+
+  /* 中文衬线书卷字体栈：优先思源宋体系，全部随系统字体，不加载网络字体 */
+  --font-serif-sc: 'Noto Serif SC', 'Source Han Serif SC', 'Songti SC', 'STSong',
+    'NSimSun', 'SimSun', Georgia, 'Times New Roman', serif;
 
   /* 首页 Hero 渐变 */
   --vp-home-hero-name-color: transparent;
@@ -21,11 +40,19 @@
   --vp-c-brand-3: #6366f1;
   --vp-c-brand-soft: rgba(129, 140, 248, 0.14);
 
-  /* 暗黑模式背景 */
-  --vp-c-bg: #0a0a1a;
-  --vp-c-bg-alt: #0f0f2a;
-  --vp-c-bg-elv: #14142b;
-  --vp-c-bg-soft: #1a1a3e;
+  /* 暗色 = 暖石黑，弃蓝紫黑；低亮度暖底减少夜间阅读的对比刺激 */
+  --vp-c-bg: #1c1917;
+  --vp-c-bg-alt: #221e1b;
+  --vp-c-bg-elv: #282420;
+  --vp-c-bg-soft: #2e2925;
+
+  --vp-c-text-1: #ece7de;
+  --vp-c-text-2: #b8b0a3;
+  --vp-c-text-3: #857c6e;
+
+  --vp-c-divider: #38322c;
+  --vp-c-divider-soft: #2e2925;
+  --vp-c-gutter: #221e1b;
 }
 
 /* ========== 首页美化 ========== */
@@ -91,7 +118,7 @@
 .VPNavBar {
   backdrop-filter: blur(12px) !important;
   /* 旧内核不支持 color-mix 时回落到原先的深色半透明（渐进增强） */
-  background: rgba(10, 10, 26, 0.8) !important;
+  background: rgba(28, 25, 23, 0.8) !important;
   /* 跟随明暗主题的半透明背景；此前硬编码深色导致浅色模式下顶栏发黑 */
   background: color-mix(in srgb, var(--vp-c-bg) 82%, transparent) !important;
   border-bottom: 1px solid var(--vp-c-divider);
@@ -124,14 +151,44 @@ div[class*='language-'] {
   max-width: 100%;
 }
 
-/* ========== 内容区域 ========== */
+/* ========== 内容区域：书卷排版 ========== */
+
+/* 正文用衬线字体、17px、行高 2.0，接近纸质书排版；
+   导航/侧边栏等 UI 保持无衬线，界面与正文形成层次 */
+.vp-doc {
+  font-family: var(--font-serif-sc);
+  font-size: 17px;
+  line-height: 1.9;
+}
+
+/* 段落与列表行距放宽，段间距略大于行间距形成阅读节奏 */
+.vp-doc p,
+.vp-doc li {
+  line-height: 2;
+}
+
+.vp-doc p {
+  margin: 1.1em 0;
+}
+
+/* 代码块、行内代码、表格数字等内容保持等宽/无衬线，技术册可读性优先 */
+.vp-doc code,
+.vp-doc pre,
+.vp-doc kbd {
+  font-family: var(--vp-font-family-mono);
+}
+
+/* 行宽放宽到 720px（VitePress 默认 688px），配合 17px 字号约每行 38 个汉字 */
+@media (min-width: 768px) {
+  .VPDoc .content-container {
+    max-width: 720px;
+  }
+}
 
 .vp-doc h1 {
-  background: linear-gradient(135deg, var(--vp-c-brand-1), #06b6d4);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  font-weight: 800;
+  color: var(--vp-c-text-1);
+  font-weight: 700;
+  letter-spacing: 0.01em;
 }
 
 .vp-doc h2 {
@@ -258,22 +315,16 @@ div[class*='language-'] {
 
 /* ========== 动画 ========== */
 
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.VPContent {
-  animation: fadeInUp 0.4s ease-out;
-}
+/* 撤掉整页 fadeInUp 入场动画：连续翻章阅读时的逐页位移动画会打断视线 */
 
 /* ========== 响应式 ========== */
+
+/* 移动端字号回落 16px：小屏 17px 衬线显字偏大 */
+@media (max-width: 768px) {
+  .vp-doc {
+    font-size: 16px;
+  }
+}
 
 @media (max-width: 768px) {
   .VPHero .tagline {
