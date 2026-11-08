@@ -15,6 +15,7 @@ CraftX Books 是一个基于 VitePress 构建的在线阅读站点，发布到 G
 - 🔎 本地搜索：使用 VitePress 内置 local search，支持站内内容检索。
 - 💬 评论讨论：章节页接入 Giscus，基于 GitHub Discussions 承载读者交流。
 - 🌓 主题切换：沿用 VitePress 深色/浅色模式，评论主题跟随系统偏好。
+- 🔤 字号调节：章节页右下角 A−/A+ 浮动控件（14–22px），localStorage 持久化，点击中间数字恢复默认。
 - 🧩 内容预处理：构建前自动处理 Markdown 兼容问题和缺失资源占位。
 - 🚀 自动部署：推送到 `main` 分支后通过 GitHub Actions 构建并发布到 GitHub Pages。
 

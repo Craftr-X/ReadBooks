@@ -150,6 +150,9 @@ export default defineConfig({
 
   head: [
     ['link', { rel: 'icon', href: `${BASE}favicon.svg` }],
+    // 首帧前套用用户保存的阅读字号，避免刷新时正文先大后小的闪烁；与
+    // theme/components/FontSizeControl.vue 使用同一 localStorage key
+    ['script', {}, `(function(){try{var s=localStorage.getItem('reading-font-size');if(s){var n=Number(s);if(n>=14&&n<=22)document.documentElement.style.setProperty('--reading-font-size',n+'px')}}catch(e){}})()`],
     ['meta', { name: 'referrer', content: 'no-referrer' }],
     ['meta', { name: 'theme-color', content: '#6366f1' }],
     ['meta', { name: 'og:type', content: 'website' }],
