@@ -103,11 +103,15 @@ function renderMissingAssetPlaceholders(md: any) {
   })
 }
 
+// GitHub Pages 项目站点部署在 /ReadBooks/ 子路径下。
+// head 里的静态资源 href 不会被 VitePress 自动补 base，必须在这里显式拼接。
+const BASE = '/ReadBooks/'
+
 export default defineConfig({
   title: 'CraftX Books',
   description: '技术小册与电子书 — 沉浸式阅读体验',
   lang: 'zh-CN',
-  base: '/ReadBooks/',
+  base: BASE,
   outDir: '../dist',
   cleanUrls: true,
   ignoreDeadLinks: true,
@@ -119,7 +123,7 @@ export default defineConfig({
   },
 
   head: [
-    ['link', { rel: 'icon', href: '/favicon.svg' }],
+    ['link', { rel: 'icon', href: `${BASE}favicon.svg` }],
     ['meta', { name: 'referrer', content: 'no-referrer' }],
     ['meta', { name: 'theme-color', content: '#6366f1' }],
     ['meta', { name: 'og:type', content: 'website' }],
