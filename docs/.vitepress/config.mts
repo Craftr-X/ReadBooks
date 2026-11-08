@@ -2,6 +2,7 @@ import { defineConfig } from 'vitepress'
 import { existsSync, readFileSync } from 'fs'
 import { join } from 'path'
 import { generateSidebar } from '../../scripts/generate-sidebar.mjs'
+import { groupBooks, FALLBACK } from './genres'
 
 // 读取生成的侧边栏配置；若文件缺失（如 fresh clone 后未跑 prebuild），构建期兜底生成。
 const sidebarPath = join(__dirname, '../../sidebar-generated.json')
@@ -25,9 +26,34 @@ try {
   books = []
 }
 
-const navItems = (category: string) => books
-  .filter(book => (book.category || 'booklet') === category)
-  .map(book => ({ text: book.title, link: `/books/${book.slug}/` }))
+// 顶部导航由 genre 展示分类驱动（注册表见 ./genres.ts）：
+// - 「技术小册」合并为一个顶级项，下拉内按 genre 分组
+// - top 侧 genre（文学小说 / 历史人文 / …）各自独立成顶级栏
+// 显式 genre 跨 category 生效；未归类的书按 category 兜底，保证新导入的书不丢入口。
+const bookLink = (book: { title: string; slug: string }) => ({
+  text: book.title,
+  link: `/books/${book.slug}/`,
+})
+
+const techGroups = groupBooks(books, 'group')
+const ebookGroups = groupBooks(books, 'top')
+
+const nav: Array<any> = [{ text: '首页', link: '/' }]
+if (techGroups.length > 0) {
+  nav.push({
+    text: '技术小册',
+    items: techGroups.map(group => ({
+      text: group.genre ? `${group.genre.icon} ${group.genre.label}` : FALLBACK.group,
+      items: group.books.map(bookLink),
+    })),
+  })
+}
+for (const group of ebookGroups) {
+  nav.push({
+    text: group.genre ? group.genre.label : FALLBACK.top,
+    items: group.books.map(bookLink),
+  })
+}
 
 // 打断 {{ / }}，避免 VitePress 把 Markdown 正文里的双花括号当作 Vue 模板插值渲染。
 // 历史上由 scripts/escape-vitepress-braces.mjs 在 prebuild 阶段就地改写源文件实现，
@@ -135,17 +161,7 @@ export default defineConfig({
     logo: '/logo.svg',
     siteTitle: 'CraftX Books',
 
-    nav: [
-      { text: '首页', link: '/' },
-      {
-        text: '技术小册',
-        items: navItems('booklet')
-      },
-      {
-        text: '电子书',
-        items: navItems('ebook')
-      },
-    ],
+    nav,
 
     sidebar: sidebarConfig,
 
