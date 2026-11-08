@@ -7,6 +7,7 @@ import BookComment from './components/BookComment.vue'
 import ReadingProgressBar from './components/ReadingProgressBar.vue'
 import BookIndexProgress from './components/BookIndexProgress.vue'
 import ChapterReadingTime from './components/ChapterReadingTime.vue'
+import FontSizeControl from './components/FontSizeControl.vue'
 import { installImageFallback } from './imageFallback'
 import { installImageZoom } from './imageZoom'
 import { installSidebarAutoExpand } from './sidebarAutoExpand'
@@ -20,7 +21,8 @@ export default {
       h(BookIndexProgress),
       h(ChapterReadingTime),
     ]),
-    'layout-top': () => h(ReadingProgressBar),
+    // 两个 fixed 控件都借 layout-top 注入；字号控件组件内部按路由自判是否渲染
+    'layout-top': () => h(Fragment, null, [h(ReadingProgressBar), h(FontSizeControl)]),
   }),
   enhanceApp({ app, router }) {
     // 注册全局组件

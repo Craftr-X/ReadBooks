@@ -157,7 +157,9 @@ div[class*='language-'] {
    导航/侧边栏等 UI 保持无衬线，界面与正文形成层次 */
 .vp-doc {
   font-family: var(--font-serif-sc);
-  font-size: 17px;
+  /* --reading-font-size 由章节页右下角字号控件写入（localStorage 持久化），
+     未调节时走默认值；head 内联脚本在首帧前套用避免刷新闪烁 */
+  font-size: var(--reading-font-size, 17px);
   line-height: 1.9;
 }
 
@@ -319,10 +321,10 @@ div[class*='language-'] {
 
 /* ========== 响应式 ========== */
 
-/* 移动端字号回落 16px：小屏 17px 衬线显字偏大 */
+/* 移动端默认字号回落 16px：小屏 17px 衬线显字偏大；用户显式调节过的值优先 */
 @media (max-width: 768px) {
   .vp-doc {
-    font-size: 16px;
+    font-size: var(--reading-font-size, 16px);
   }
 }
 
