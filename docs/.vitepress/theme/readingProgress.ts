@@ -58,6 +58,11 @@ export function getProgress(path: string): ChapterProgress | null {
   return readAll()[path] || null
 }
 
+/** 读取整张进度表（key 为章节归一化路径），供「继续阅读」等全局视图使用。 */
+export function getAllProgress(): ProgressMap {
+  return readAll()
+}
+
 /** 更新某章节的滚动进度。 */
 export function updateProgress(path: string, scrollRatio: number) {
   if (typeof window === 'undefined') return
