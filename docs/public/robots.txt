@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://craftr-x.github.io/ReadBooks/sitemap.xml
