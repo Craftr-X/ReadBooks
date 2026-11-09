@@ -155,10 +155,29 @@ export default defineConfig({
     ['script', {}, `(function(){try{var s=localStorage.getItem('reading-font-size');if(s){var n=Number(s);if(n>=14&&n<=22)document.documentElement.style.setProperty('--reading-font-size',n+'px')}}catch(e){}})()`],
     ['meta', { name: 'referrer', content: 'no-referrer' }],
     ['meta', { name: 'theme-color', content: '#6366f1' }],
-    ['meta', { name: 'og:type', content: 'website' }],
-    ['meta', { name: 'og:title', content: 'CraftX Books' }],
-    ['meta', { name: 'og:description', content: '技术小册与电子书 — 沉浸式阅读体验' }],
+    // Open Graph 协议规定 og:* 用 property 属性（name 是非标准写法，部分抓取器不识别）；
+    // og:image / og:url 必须是绝对 URL，拼接部署域名 + base
+    ['meta', { property: 'og:type', content: 'website' }],
+    ['meta', { property: 'og:site_name', content: 'CraftX Books' }],
+    ['meta', { property: 'og:title', content: 'CraftX Books' }],
+    ['meta', { property: 'og:description', content: '技术小册与电子书 — 沉浸式阅读体验' }],
+    ['meta', { property: 'og:url', content: `https://craftr-x.github.io${BASE}` }],
+    ['meta', { property: 'og:image', content: `https://craftr-x.github.io${BASE}og-image.png` }],
+    ['meta', { property: 'og:image:width', content: '1200' }],
+    ['meta', { property: 'og:image:height', content: '630' }],
+    ['meta', { property: 'og:image:alt', content: 'CraftX Books — 技术小册与电子书' }],
+    ['meta', { property: 'og:locale', content: 'zh_CN' }],
+    // Twitter/X 分享卡：summary_large_image 展示大图
+    ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
+    ['meta', { name: 'twitter:title', content: 'CraftX Books' }],
+    ['meta', { name: 'twitter:description', content: '技术小册与电子书 — 沉浸式阅读体验' }],
+    ['meta', { name: 'twitter:image', content: `https://craftr-x.github.io${BASE}og-image.png` }],
   ],
+
+  // sitemap：VitePress 按干净 URL 生成全站 sitemap.xml（含每本书每个章节页）
+  sitemap: {
+    hostname: `https://craftr-x.github.io${BASE}`,
+  },
 
   themeConfig: {
     logo: '/logo.svg',
