@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useData } from 'vitepress'
 import { useNormalizedPath } from '../routePath'
 
@@ -10,12 +10,14 @@ import { useNormalizedPath } from '../routePath'
  *   档位 14–22px，步进 1px，未调节时走 CSS 默认（桌面 17px / 移动 16px）
  * - 持久化到 localStorage；config.mts head 里有同 key 的内联脚本提前套用，避免刷新闪烁
  * - 点击中间数字恢复默认字号
+ * - 移动端内容列全宽，固定悬浮会压住滚动经过的正文：滚动时淡出、停止 1.5s 后淡入
  */
 
 const STORAGE_KEY = 'reading-font-size'
 const MIN = 14
 const MAX = 22
 const DESKTOP_DEFAULT = 17
+const REAPPEAR_DELAY_MS = 1500
 
 const { frontmatter } = useData()
 const path = useNormalizedPath()
@@ -31,9 +33,20 @@ const shouldRender = computed(
 // localStorage 只能在客户端读；首帧挂 mounted 后再渲染，避免 SSR 水合不一致
 const mounted = ref(false)
 const size = ref<number | null>(null)
+const hiddenByScroll = ref(false)
+
+let reappearTimer: ReturnType<typeof setTimeout> | undefined
+function onScroll() {
+  hiddenByScroll.value = true
+  if (reappearTimer) clearTimeout(reappearTimer)
+  reappearTimer = setTimeout(() => {
+    hiddenByScroll.value = false
+  }, REAPPEAR_DELAY_MS)
+}
 
 onMounted(() => {
   mounted.value = true
+  window.addEventListener('scroll', onScroll, { passive: true })
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
     const n = raw === null ? NaN : Number(raw)
@@ -41,6 +54,11 @@ onMounted(() => {
   } catch {
     // 隐私模式等 localStorage 不可用时静默降级为仅本次会话生效
   }
+})
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', onScroll)
+  if (reappearTimer) clearTimeout(reappearTimer)
 })
 
 function apply(next: number | null) {
@@ -72,7 +90,13 @@ function reset() {
 </script>
 
 <template>
-  <div v-if="mounted && shouldRender" class="font-size-control" role="group" aria-label="正文字号调节">
+  <div
+    v-if="mounted && shouldRender"
+    class="font-size-control"
+    :class="{ 'is-scrolling': hiddenByScroll }"
+    role="group"
+    aria-label="正文字号调节"
+  >
     <button
       type="button"
       class="fs-btn"
@@ -122,6 +146,17 @@ function reset() {
   .font-size-control {
     background: var(--vp-c-bg-elv);
   }
+}
+
+/* 滚动中淡出：移动端内容列全宽，悬浮控件会压住正文；停止滚动 1.5s 后淡入 */
+.font-size-control.is-scrolling {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease-out;
+}
+
+.font-size-control {
+  transition: opacity 0.4s ease-in;
 }
 
 .fs-btn,
