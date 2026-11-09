@@ -47,7 +47,7 @@ Use this spec whenever importing a technical booklet, Markdown source, or EPUB e
 **Required output**
 
 - `docs/books/<slug>/` must contain an `index.md` and numbered chapter Markdown files. Chapter filenames should be readable and ordered, for example `01-开篇.md`.
-- `books.json` is the source registry. Use `category: "booklet"` for Markdown folders and `category: "ebook"` for EPUBs unless the user says otherwise. Use stable lowercase kebab-case slugs.
+- `books.json` is the source registry. Use `category: "booklet"` for Markdown folders and `category: "ebook"` for EPUBs unless the user says otherwise. Use stable lowercase kebab-case slugs. Optionally pass `--genre <key>` (registry: `docs/.vitepress/genres-registry.mjs`) to assign the display category used by nav/homepage grouping; unassigned books fall back to category-based groups.
 - `sidebar-generated.json` (gitignored, regenerated on build) must resolve `/books/<slug>/` so the left chapter sidebar shows all chapters in reading order. The import flow updates it in place via `updateSidebarForBook`; `prebuild` and `config.mts` keep it fresh.
 - Each book's `index.md` should keep a `## 目录` block linking to its chapters. `npm run generate:sidebar` (run by `prebuild`) refreshes this block idempotently alongside the sidebar, preserving any hand-written display text and chapter order; do not hand-edit chapter links inside it.
 - Chapter Markdown should render as normal VitePress Markdown, not raw EPUB HTML fragments. Preserve meaningful headings so the right page outline can work. Do not disable `aside` on chapter pages; a book `index.md` may use `aside: false`.

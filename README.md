@@ -247,7 +247,7 @@ npm run import:book -- ./path/to/book.epub --slug my-book
 
 - Markdown 文件夹导入默认写入 `category: "booklet"`，归入顶部导航的“技术小册”，首页技术小册数量自动更新。
 - EPUB 文件导入默认写入 `category: "ebook"`，归入顶部导航的“电子书”，首页电子书数量自动更新。
-- 展示分类（genre）与来源分类（category）相互独立：导入不写 `genre`，新书会先落入兜底分组（技术小册下拉的“其他”、电子书的“电子书”栏），需要精细分组时在 `books.json` 手动补 `"genre"` 并重启构建，取值须是 `docs/.vitepress/genres.ts` 注册表里的 key。显式写了 genre 的书跨 category 生效（如 EPUB 来源的技术书可归入“技术小册”下拉的分组），首页统计与分区数字均按展示分组口径计算。
+- 展示分类（genre）与来源分类（category）相互独立：导入时可加 `--genre <key>` 直接指定（如 `--genre literature`），也可以之后在 `books.json` 手动补 `"genre"`；未指定的书会先落入兜底分组（技术小册下拉的“其他”、电子书的“电子书”栏），`verify-import` 会对非法 genre 报错。取值须是 `docs/.vitepress/genres-registry.mjs` 注册表里的 key。显式写了 genre 的书跨 category 生效（如 EPUB 来源的技术书可归入“技术小册”下拉的分组），首页统计与分区数字均按展示分组口径计算。
 
 完整说明见：[`docs/local-import-guide.md`](./docs/local-import-guide.md)
 

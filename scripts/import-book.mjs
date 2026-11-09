@@ -5,6 +5,7 @@ import { inflateRawSync } from 'zlib'
 import { fileURLToPath } from 'url'
 import { updateSidebarForBook } from './generate-sidebar.mjs'
 import { readJson, walkMarkdown, sortMarkdown } from './content-utils.mjs'
+import { GENRES, genreKeys } from '../docs/.vitepress/genres-registry.mjs'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const docsBooksDir = join(root, 'docs', 'books')
@@ -20,6 +21,7 @@ function parseArgs(argv) {
     else if (arg === '--slug') args.slug = argv[++i]
     else if (arg === '--title') args.title = argv[++i]
     else if (arg === '--desc') args.desc = argv[++i]
+    else if (arg === '--genre') args.genre = argv[++i]
     else if (arg === '--help' || arg === '-h') args.help = true
     else if (arg.startsWith('--')) throw new Error(`未知参数：${arg}`)
     else positionals.push(arg)
@@ -30,10 +32,19 @@ function parseArgs(argv) {
 
 function usage() {
   return [
-    '用法：node scripts/import-book.mjs <markdown-folder|book.epub> [--slug slug] [--title title] [--desc desc] [--force] [--dry-run]',
+    '用法：node scripts/import-book.mjs <markdown-folder|book.epub> [--slug slug] [--title title] [--desc desc] [--genre key] [--force] [--dry-run]',
     '',
     '仅支持 Markdown 文件夹或 EPUB 文件。',
+    `--genre 为可选展示分类，取值：${genreKeys().join(' / ')}（注册表见 docs/.vitepress/genres-registry.mjs）`,
   ].join('\n')
+}
+
+/** --genre 校验：必须是注册表里的合法 key，写错时直接报错并列出可选值 */
+function validateGenre(genre) {
+  if (!genre) return
+  if (!GENRES.some(g => g.key === genre)) {
+    throw new Error(`未知的展示分类 --genre ${genre}。可选值：${genreKeys().join(' / ')}`)
+  }
 }
 
 function writeJson(file, value) {
@@ -139,6 +150,7 @@ function detectMarkdownFolder(inputPath, args) {
     title,
     desc: args.desc || '',
     slug: slugify(args.slug || title || basename(inputPath)),
+    genre: args.genre || '',
     chapterCount: chapters.length,
     warnings: [],
   }
@@ -506,6 +518,7 @@ function detectEpub(inputPath, args) {
     title,
     desc: args.desc || (opf.creator ? `作者：${opf.creator}` : ''),
     slug: slugify(args.slug || title),
+    genre: args.genre || '',
     chapterCount: (() => {
       // 与 importEpub 的规划逻辑保持一致：锚点文件按锚点数拆分；有目录标题的
       // 文件各成一章；目录标题之后的无标题文件并入上一章（续写分片）；首个
@@ -767,6 +780,8 @@ function updateBooks(info) {
     title: info.title,
     desc: info.desc,
     category: info.kind === 'epub' ? 'ebook' : 'booklet',
+    // 可选展示分类：未指定时不写 key，导航按 category 兜底
+    ...(info.genre ? { genre: info.genre } : {}),
   })
   writeJson(booksPath, next)
 }
@@ -827,6 +842,9 @@ function main() {
     return
   }
 
+  // dry-run 也校验：写错 genre 时快速失败，不等到真正写 books.json 才发现
+  validateGenre(args.genre)
+
   const inputPath = resolve(args.input)
   if (!existsSync(inputPath)) throw new Error(`输入路径不存在：${inputPath}`)
 
@@ -869,6 +887,8 @@ function main() {
 }
 
 export {
+  parseArgs,
+  validateGenre,
   lintFixBook,
   cleanTitle,
   decodeHtml,
