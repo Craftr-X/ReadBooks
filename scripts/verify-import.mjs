@@ -14,6 +14,7 @@ import { join, resolve, dirname, relative } from 'node:path';
 import { execSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { collectLeafItems } from './generate-sidebar.mjs';
+import { genreKeys } from '../docs/.vitepress/genres-registry.mjs';
 
 const ROOT = resolve(import.meta.dirname, '..');
 
@@ -197,6 +198,14 @@ function verify(slug, options = {}) {
       results.push(fail('books.json category valid', `Invalid category: ${bookEntry.category}`));
     } else {
       results.push(pass('books.json category valid'));
+    }
+    // 5c. Genre, if present, is a valid registry key
+    if (bookEntry.genre !== undefined) {
+      if (!genreKeys().includes(bookEntry.genre)) {
+        results.push(fail('books.json genre valid', `Invalid genre: ${bookEntry.genre} (valid: ${genreKeys().join(', ')})`));
+      } else {
+        results.push(pass('books.json genre valid'));
+      }
     }
   }
 

@@ -40,6 +40,7 @@ sidebar-generated.json
 
 - Markdown 文件夹默认写入 `category: "booklet"`，归入“技术小册”。
 - EPUB 文件默认写入 `category: "ebook"`，归入“电子书”。
+- 可选的 `genre` 展示分类（如 `--genre literature`）决定书籍在顶部导航与首页的细分分组（文学小说 / 历史人文 / AI 与智能体等），写错 key 会直接报错；不传则先落入兜底分组，之后可在 `books.json` 手动补。完整 key 列表见 `docs/.vitepress/genres-registry.mjs`。
 
 ## 常用参数
 
@@ -48,6 +49,7 @@ sidebar-generated.json
 | `--slug <slug>` | 指定书籍目录名，推荐必填，例如 `my-book`。 |
 | `--title <title>` | 指定书名。不传时，Markdown 会优先取第一篇的一级标题，EPUB 会优先取元数据标题。 |
 | `--desc <desc>` | 指定书籍简介，会写入 `books.json` 和书籍首页。 |
+| `--genre <key>` | 可选展示分类 key（如 `ai`、`literature`），决定导航与首页的细分分组，写入 `books.json`。 |
 | `--dry-run` | 只预览，不写入文件。 |
 | `--force` | 覆盖已有同名 `docs/books/<book-slug>/`。默认禁止覆盖。 |
 

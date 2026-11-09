@@ -11,12 +11,15 @@ import {
   normalizeHref,
   normalizeProseBlocks,
   numberedChapterLabel,
+  parseArgs,
   parseNavDocToc,
   parseNcxToc,
   parseOpf,
   safeFileName,
   titleFileSegment,
+  validateGenre,
 } from './import-book.mjs'
+import { genreKeys } from '../docs/.vitepress/genres-registry.mjs'
 
 test('parses EPUB3 nav toc titles by normalized href', () => {
   const toc = parseNavDocToc(`
@@ -189,6 +192,29 @@ test('titleFileSegment merges hyphens between Han characters', () => {
   assert.equal(titleFileSegment('说 明'), '说明')
   assert.equal(titleFileSegment('上篇 我的舅舅'), '上篇我的舅舅')
   assert.equal(titleFileSegment('Chapter 01'), 'Chapter-01')
+})
+
+test('parseArgs accepts --genre and keeps other flags intact', () => {
+  const args = parseArgs(['./book', '--genre', 'literature', '--slug', 'my-book', '--dry-run'])
+  assert.equal(args.genre, 'literature')
+  assert.equal(args.slug, 'my-book')
+  assert.equal(args.dryRun, true)
+})
+
+test('validateGenre accepts registry keys and rejects unknown ones', () => {
+  const keys = genreKeys()
+  assert.ok(keys.length > 0)
+  // 注册表里的任意 key 都应通过
+  for (const key of keys) assert.doesNotThrow(() => validateGenre(key))
+  // 缺省（undefined / 空串）不参与校验，直接放行
+  assert.doesNotThrow(() => validateGenre(undefined))
+  assert.doesNotThrow(() => validateGenre(''))
+  // 未知 key 报错并列出全部可选值
+  assert.throws(() => validateGenre('novel'), error => {
+    assert.match(error.message, /未知的展示分类 --genre novel/)
+    for (const key of keys) assert.ok(error.message.includes(key))
+    return true
+  })
 })
 
 test('skips title-only prelude before the first NCX anchor', () => {
