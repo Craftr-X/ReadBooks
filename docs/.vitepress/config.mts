@@ -141,6 +141,10 @@ export default defineConfig({
   outDir: '../dist',
   cleanUrls: true,
   ignoreDeadLinks: true,
+  // 默认 VitePress 会把全站 pageToHashMap + siteData（约 200KB）内联进每一个
+  // HTML；1300+ 页时等于把同一份数据复制上千遍，产物凭空多出 260MB+。
+  // 开启后改为单个可缓存的共享 metadata chunk，每页只留一行 script 引用。
+  metaChunk: true,
   vite: {
     build: {
       // Local search emits a large index chunk; regular page chunks should remain small.
