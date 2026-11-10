@@ -39,8 +39,9 @@ jobs:
         run: npm run build
         env:
           # VitePress 渲染 1000+ 页面 + 构建本地搜索索引很吃内存，CI runner
-          # 默认 Node 堆上限（~2GB）会 OOM。提高上限以匹配 runner 可用内存。
-          NODE_OPTIONS: --max-old-space-size=4096
+          # 默认 Node 堆上限（~2GB）会 OOM。提高上限以匹配 runner 可用内存
+          # （ubuntu-latest 16GB；2026-11 导入两本大书后 4GB 在渲染阶段不够用了）。
+          NODE_OPTIONS: --max-old-space-size=8192
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
