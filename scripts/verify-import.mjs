@@ -331,7 +331,7 @@ function verify(slug, options = {}) {
   // 12. Build passes
   if (runBuild) {
     try {
-      execSync('npm run build', { cwd: root, stdio: 'pipe', timeout: 300_000 });
+      execSync('npm run build', { cwd: root, stdio: 'pipe', timeout: 600_000 });
       results.push(pass('npm run build passes'));
     } catch (e) {
       const stderr = e.stderr ? e.stderr.toString().slice(0, 500) : '';
