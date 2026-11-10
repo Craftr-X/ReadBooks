@@ -50,14 +50,37 @@ jobs:
   deploy:
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: ${{ steps.deploy3.outputs.page_url || steps.deploy2.outputs.page_url || steps.deploy1.outputs.page_url }}
     needs: build
     runs-on: ubuntu-latest
+    # 3 次尝试 × 单次最长 10 分钟 + 退避，留足余量；异常挂起时也有兜底。
+    timeout-minutes: 45
     steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
+      # Pages 后端偶发卡在 syncing_files（见 actions/deploy-pages#406），单次部署会超时。
+      # 官方 Pages 限制明确「部署超过 10 分钟即超时」，属服务端硬限制，因此保持
+      # deploy-pages 默认的 600000ms，不要调大客户端 timeout（只会空等 20 分钟）。
+      # 改用最多 3 次串行重试承接短暂抖动；三次全失败时由最后一个 step 让 job 标红。
+      - name: Deploy to GitHub Pages (1/3)
+        id: deploy1
         uses: actions/deploy-pages@v4
-        with:
-          # Pages 后端发布延迟间歇性劣化（syncing_files 卡过默认 10 分钟超时，
-          # 见 actions/deploy-pages#406）。放宽到 30 分钟以容忍队列积压。
-          timeout: 1800000
+        continue-on-error: true
+
+      # 等后端清理上一次被取消的 deployment，同时避开瞬时抖动。
+      - name: Wait before retry (2/3)
+        if: steps.deploy1.outcome == 'failure'
+        run: sleep 20
+
+      - name: Deploy to GitHub Pages (2/3)
+        id: deploy2
+        if: steps.deploy1.outcome == 'failure'
+        uses: actions/deploy-pages@v4
+        continue-on-error: true
+
+      - name: Wait before retry (3/3)
+        if: steps.deploy1.outcome == 'failure' && steps.deploy2.outcome == 'failure'
+        run: sleep 20
+
+      - name: Deploy to GitHub Pages (3/3)
+        id: deploy3
+        if: steps.deploy1.outcome == 'failure' && steps.deploy2.outcome == 'failure'
+        uses: actions/deploy-pages@v4
