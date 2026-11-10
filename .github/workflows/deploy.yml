@@ -5,32 +5,27 @@ on:
     branches: [main]
   workflow_dispatch:
 
+# 推送 gh-pages 分支需要 contents: write。
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
 
+# 串行发布，避免两次构建互相覆盖 gh-pages 分支。
 concurrency:
   group: pages
   cancel-in-progress: false
 
 jobs:
-  build:
+  build-and-publish:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 24
           cache: npm
-
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
 
       - name: Install dependencies
         run: npm ci
@@ -43,45 +38,19 @@ jobs:
           # （ubuntu-latest 16GB；2026-11 导入两本大书后 4GB 在渲染阶段不够用了）。
           NODE_OPTIONS: --max-old-space-size=8192
 
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: dist
-
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deploy3.outputs.page_url || steps.deploy2.outputs.page_url || steps.deploy1.outputs.page_url }}
-    needs: build
-    runs-on: ubuntu-latest
-    # 3 次尝试 × 单次最长 10 分钟 + 退避，留足余量；异常挂起时也有兜底。
-    timeout-minutes: 45
-    steps:
-      # Pages 后端偶发卡在 syncing_files（见 actions/deploy-pages#406），单次部署会超时。
-      # 官方 Pages 限制明确「部署超过 10 分钟即超时」，属服务端硬限制，因此保持
-      # deploy-pages 默认的 600000ms，不要调大客户端 timeout（只会空等 20 分钟）。
-      # 改用最多 3 次串行重试承接短暂抖动；三次全失败时由最后一个 step 让 job 标红。
-      - name: Deploy to GitHub Pages (1/3)
-        id: deploy1
-        uses: actions/deploy-pages@v4
-        continue-on-error: true
-
-      # 等后端清理上一次被取消的 deployment，同时避开瞬时抖动。
-      - name: Wait before retry (2/3)
-        if: steps.deploy1.outcome == 'failure'
-        run: sleep 20
-
-      - name: Deploy to GitHub Pages (2/3)
-        id: deploy2
-        if: steps.deploy1.outcome == 'failure'
-        uses: actions/deploy-pages@v4
-        continue-on-error: true
-
-      - name: Wait before retry (3/3)
-        if: steps.deploy1.outcome == 'failure' && steps.deploy2.outcome == 'failure'
-        run: sleep 20
-
-      - name: Deploy to GitHub Pages (3/3)
-        id: deploy3
-        if: steps.deploy1.outcome == 'failure' && steps.deploy2.outcome == 'failure'
-        uses: actions/deploy-pages@v4
+      # 发布走「Deploy from a branch」管线（仓库 Pages 设置已切换到 gh-pages 分支）。
+      # 不再使用 actions/deploy-pages：其 syncing_files 阶段 2026-11-10 对本仓库连续
+      # 卡死 3 次（正常同步 21 秒 vs 卡死 30 分钟，见 actions/deploy-pages#406），
+      # 客户端重试只会反复轮询同一个卡死的后端部署，救不了。
+      # 分支管线由 Pages 后端异步处理分支推送，无 10 分钟客户端超时问题。
+      # .nojekyll 必须保留：dist 里有下划线开头目录，跳过 Jekyll 处理。
+      - name: Publish dist to gh-pages branch
+        run: |
+          cd dist
+          git init -q -b gh-pages
+          touch .nojekyll
+          git add -A
+          git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" commit -qm "deploy: ${GITHUB_SHA}"
+          git push -f "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" gh-pages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
