@@ -5,9 +5,10 @@ on:
     branches: [main]
   workflow_dispatch:
 
-# 推送 gh-pages 分支需要 contents: write。
+# 推送 gh-pages 分支需要 contents: write；查询/重触发 Pages 构建需要 pages: write。
 permissions:
   contents: write
+  pages: write
 
 # 串行发布，避免两次构建互相覆盖 gh-pages 分支。
 concurrency:
@@ -17,6 +18,9 @@ concurrency:
 jobs:
   build-and-publish:
     runs-on: ubuntu-latest
+    # Pages 后端同步有 ~10 分钟服务端硬超时，失败自动重试最多 4 轮
+    # （每轮最长等 ~11 分钟 + 重触发退避），加上构建 ~4 分钟，70 分钟兜底。
+    timeout-minutes: 70
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -42,9 +46,12 @@ jobs:
       # 不再使用 actions/deploy-pages：其 syncing_files 阶段 2026-11-10 对本仓库连续
       # 卡死 3 次（正常同步 21 秒 vs 卡死 30 分钟，见 actions/deploy-pages#406），
       # 客户端重试只会反复轮询同一个卡死的后端部署，救不了。
-      # 分支管线由 Pages 后端异步处理分支推送，无 10 分钟客户端超时问题。
+      # 注意：分支管线同样受 Pages 后端 ~10 分钟同步硬超时约束（2026-11-10 实测：
+      # 同一内容 58 秒成功一次、连续超时两次），后端间歇性挂起无法从客户端避免，
+      # 只能靠重试等后端恢复——由下一个 step 自动完成。
       # .nojekyll 必须保留：dist 里有下划线开头目录，跳过 Jekyll 处理。
       - name: Publish dist to gh-pages branch
+        id: publish
         run: |
           cd dist
           git init -q -b gh-pages
@@ -52,5 +59,46 @@ jobs:
           git add -A
           git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" commit -qm "deploy: ${GITHUB_SHA}"
           git push -f "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" gh-pages
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Pages 后端同步（syncing）对大站点（本站 ~317MB / 5100+ 文件）间歇性挂起，
+      # ~10 分钟服务端超时后 build 状态变 errored。挂起本身无法避免，但同一提交
+      # 重新触发构建通常很快成功（2026-11-10 实测同一内容 58 秒成功）。这里盯住
+      # 本次推送触发的构建，errored 时自动重触发，最多 4 轮，全失败才让 job 标红。
+      - name: Wait for Pages build (auto-retry)
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PAGES_SHA: ${{ steps.publish.outputs.sha }}
+        run: |
+          set -u
+          # 先等本次推送对应的构建登记上来（避免把上一条 build 记录当成结果）。
+          for i in $(seq 1 20); do
+            commit="$(gh api "repos/${GITHUB_REPOSITORY}/pages/builds/latest" --jq .commit 2>/dev/null || true)"
+            [ "$commit" = "$PAGES_SHA" ] && break
+            sleep 10
+          done
+          if [ "$commit" != "$PAGES_SHA" ]; then
+            echo "::error::推送 ${PAGES_SHA:0:7} 后 200 秒内未登记 Pages 构建，请检查 Settings → Pages 是否仍指向 gh-pages 分支。"
+            exit 1
+          fi
+          for attempt in 1 2 3 4; do
+            echo "::group::Pages 构建（第 ${attempt}/4 轮）"
+            for i in $(seq 1 45); do
+              status="$(gh api "repos/${GITHUB_REPOSITORY}/pages/builds/latest" --jq .status 2>/dev/null || echo unknown)"
+              case "$status" in
+                built)   echo "Pages 构建成功。"; echo "::endgroup::"; exit 0 ;;
+                errored) echo "Pages 构建失败（后端同步挂起/超时）。"; break ;;
+                *)       sleep 15 ;;
+              esac
+            done
+            echo "::endgroup::"
+            if [ "$attempt" -lt 4 ]; then
+              echo "等待 60 秒后重触发构建……"
+              sleep 60
+              gh api -X POST "repos/${GITHUB_REPOSITORY}/pages/builds" >/dev/null 2>&1 || true
+            fi
+          done
+          echo "::error::Pages 构建连续 4 轮失败（后端间歇性挂起，见 actions/deploy-pages#406）。请稍后 workflow_dispatch 重跑本工作流，或到 Settings → Pages 手动触发。"
+          exit 1
