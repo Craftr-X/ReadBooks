@@ -4,6 +4,7 @@ import { useData } from 'vitepress'
 import books from '../../../../books.json'
 import contentStats from '../../../../content-stats.json'
 import { groupBooks, type BookEntry } from '../../genres'
+import ContinueReading from './ContinueReading.vue'
 
 const { site } = useData()
 const base = computed(() => site.value.base)
@@ -44,6 +45,9 @@ const stats = computed(() => [
 
 <template>
   <div class="home-section">
+    <!-- 继续阅读：有阅读记录时显示，无记录整块隐藏 -->
+    <ContinueReading />
+
     <!-- 统计卡片 -->
     <div class="home-stats">
       <div v-for="item in stats" :key="item.label" class="stat-card">
