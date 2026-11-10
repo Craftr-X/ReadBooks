@@ -33,14 +33,12 @@ function generateContentStats(options = {}) {
   const books = readJson(join(root, 'books.json'), [])
   const docsBooksDir = join(root, 'docs', 'books')
   const statsPath = join(root, 'content-stats.json')
-  const previous = readJson(statsPath, {})
   const counts = {
     bookletCount: books.filter(book => (book.category || 'booklet') === 'booklet').length,
     ebookCount: books.filter(book => (book.category || 'booklet') === 'ebook').length,
     bookCount: books.length,
     chapterCount: books.reduce((sum, book) => sum + walkMarkdown(join(docsBooksDir, book.slug)).length, 0),
   }
-  const countsChanged = Object.entries(counts).some(([key, value]) => previous[key] !== value)
 
   // 按书计算阅读时长明细
   const booksDetail = {}
@@ -51,13 +49,13 @@ function generateContentStats(options = {}) {
     totalReadingMinutes += detail.readingMinutes
   }
 
+  // 输出必须是内容的纯函数：此 JSON 会被主题组件静态 import 进构建产物，
+  // 任何字节变化（如 generatedAt 时间戳）都会让全站 chunk 哈希改变，
+  // 导致 gh-pages 每次发布都是 100% 文件变更、无法增量同步。不要加时间戳。
   const stats = {
     ...counts,
     totalReadingMinutes,
     books: booksDetail,
-    generatedAt: countsChanged
-      ? options.generatedAt || new Date().toISOString()
-      : previous.generatedAt || options.generatedAt || new Date().toISOString(),
   }
 
   writeFileSync(statsPath, `${JSON.stringify(stats, null, 2)}\n`, 'utf8')
