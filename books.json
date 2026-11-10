@@ -257,5 +257,19 @@
     "desc": "黄仁宇经典史学著作，以万历朝为切面剖析明代政治制度与社会运行逻辑",
     "category": "ebook",
     "genre": "history"
+  },
+  {
+    "slug": "how-to-not-die-alone",
+    "title": "如何避免孤独终老",
+    "desc": "行为科学家洛根·尤里的寻爱指南：用科学方法避开择偶陷阱，找到并留住真爱",
+    "category": "ebook",
+    "genre": "cognition"
+  },
+  {
+    "slug": "attached",
+    "title": "关系的重建",
+    "desc": "成人依恋科学经典：读懂自己与伴侣的依恋风格，重建亲密关系",
+    "category": "ebook",
+    "genre": "cognition"
   }
 ]
