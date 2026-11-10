@@ -34,7 +34,7 @@ test('generateContentStats counts registered books and chapters', () => {
     writeFileSync(join(root, 'docs', 'books', 'beta', '01-c.md'), '# C\n')
     writeFileSync(join(root, 'docs', 'books', 'gamma', '01-d.md'), '# D\n')
 
-    const stats = generateContentStats({ root, generatedAt: '2026-06-13T00:00:00.000Z' })
+    const stats = generateContentStats({ root })
 
     assert.deepEqual(stats, {
       bookletCount: 2,
@@ -59,7 +59,6 @@ test('generateContentStats counts registered books and chapters', () => {
           chapters: { '01-d': 1 },
         },
       },
-      generatedAt: '2026-06-13T00:00:00.000Z',
     })
     assert.deepEqual(JSON.parse(readFileSync(join(root, 'content-stats.json'), 'utf8')), stats)
   } finally {
@@ -67,17 +66,21 @@ test('generateContentStats counts registered books and chapters', () => {
   }
 })
 
-test('generateContentStats preserves generatedAt when counts do not change', () => {
+test('generateContentStats 两次全新生成结果完全一致（gh-pages 增量发布的前提）', () => {
   const root = makeProject()
   try {
     writeJson(join(root, 'books.json'), [{ slug: 'alpha', title: 'Alpha', category: 'booklet' }])
     mkdirSync(join(root, 'docs', 'books', 'alpha'))
     writeFileSync(join(root, 'docs', 'books', 'alpha', '01-a.md'), '# A\n')
 
-    generateContentStats({ root, generatedAt: '2026-06-13T00:00:00.000Z' })
-    const stats = generateContentStats({ root, generatedAt: '2026-06-14T00:00:00.000Z' })
+    generateContentStats({ root })
+    const first = readFileSync(join(root, 'content-stats.json'), 'utf8')
+    // CI 每次都是冷启动（content-stats.json 被 gitignore，不存在），等价于删掉重生成
+    rmSync(join(root, 'content-stats.json'))
+    generateContentStats({ root })
+    const second = readFileSync(join(root, 'content-stats.json'), 'utf8')
 
-    assert.equal(stats.generatedAt, '2026-06-13T00:00:00.000Z')
+    assert.equal(first, second)
   } finally {
     rmSync(root, { recursive: true, force: true })
   }
