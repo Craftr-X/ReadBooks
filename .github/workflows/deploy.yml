@@ -57,3 +57,7 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+        with:
+          # Pages 后端发布延迟间歇性劣化（syncing_files 卡过默认 10 分钟超时，
+          # 见 actions/deploy-pages#406）。放宽到 30 分钟以容忍队列积压。
+          timeout: 1800000
