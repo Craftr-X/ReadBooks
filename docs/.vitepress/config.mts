@@ -3,6 +3,7 @@ import { existsSync, readFileSync } from 'fs'
 import { join } from 'path'
 import { generateSidebar } from '../../scripts/generate-sidebar.mjs'
 import { groupBooks, FALLBACK } from './genres'
+import { deterministicSearchIndex } from './deterministic-search-index.mjs'
 
 // 读取生成的侧边栏配置；若文件缺失（如 fresh clone 后未跑 prebuild），构建期兜底生成。
 const sidebarPath = join(__dirname, '../../sidebar-generated.json')
@@ -146,6 +147,10 @@ export default defineConfig({
   // 开启后改为单个可缓存的共享 metadata chunk，每页只留一行 script 引用。
   metaChunk: true,
   vite: {
+    // VitePress 并发构建本地搜索索引，MiniSearch 内部短 ID 的分配顺序会抖动，
+    // 导致索引 chunk 及其级联的 app/theme 文件名每次都变、全站 HTML 重写。
+    // 规范化序列化结果后，同一份源码的构建产物字节一致，增量发布才真正生效。
+    plugins: [deterministicSearchIndex()],
     build: {
       // Local search emits a large index chunk; regular page chunks should remain small.
       chunkSizeWarningLimit: 9000,

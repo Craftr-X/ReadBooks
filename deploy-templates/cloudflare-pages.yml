@@ -1,0 +1,50 @@
+# 模板：Actions 只构建，dist 直传 Cloudflare Pages
+# 用法见 docs-deploy-migration.md。放入 .github/workflows/ 前请：
+#   1. 把 readbooks 换成实际项目名（须先在控制台或 wrangler 创建 Direct Upload 项目）
+#   2. 配置 secrets：CLOUDFLARE_API_TOKEN、CLOUDFLARE_ACCOUNT_ID
+#   3. 按检查表确认 base 路径后再把 on.push 打开
+name: Deploy to Cloudflare Pages
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  deployments: write
+
+concurrency:
+  group: pages-deploy
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # lastUpdated 需要每个文件的真实 git 提交时间
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build with VitePress
+        run: npm run build
+        env:
+          NODE_OPTIONS: --max-old-space-size=8192
+
+      - name: Deploy dist
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy dist --project-name=readbooks --branch=main
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}

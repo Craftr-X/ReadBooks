@@ -15,7 +15,8 @@
     "lint": "markdownlint-cli2",
     "lint:fix": "markdownlint-cli2 --fix",
     "fix:missing-assets": "node scripts/normalize-missing-assets.mjs",
-    "test": "node --test scripts/*.test.mjs"
+    "test": "node --test scripts/*.test.mjs",
+    "verify:determinism": "node scripts/verify-build-determinism.mjs"
   },
   "devDependencies": {
     "markdownlint-cli2": "^0.17.0",

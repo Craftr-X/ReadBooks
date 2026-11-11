@@ -1,0 +1,48 @@
+# 模板：Actions 只构建，dist 直传腾讯云 EdgeOne Pages
+# 用法见 docs-deploy-migration.md。放入 .github/workflows/ 前请：
+#   1. 把 readbooks 换成实际项目名（不存在时 CLI 会自动创建）
+#   2. 配置 secret：EDGEONE_API_TOKEN
+#   3. 按检查表确认 base 路径、国内自定义域名备案后再把 on.push 打开
+# 官方 CI 文档：https://pages.edgeone.ai/zh/document/use-github-actions
+name: Deploy to EdgeOne Pages
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages-deploy
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build with VitePress
+        run: npm run build
+        env:
+          NODE_OPTIONS: --max-old-space-size=8192
+
+      # 纯静态站点直接上传 dist；若日后引入 Pages Functions，
+      # 需按官方文档把 functions 目录与 package.json 一并放进输出目录。
+      - name: Deploy dist
+        env:
+          EDGEONE_API_TOKEN: ${{ secrets.EDGEONE_API_TOKEN }}
+        run: npx edgeone pages deploy ./dist -n readbooks -t "$EDGEONE_API_TOKEN" -e production
