@@ -187,6 +187,8 @@ async function scanForBuild() {
 
 **首次上线实测（run `42975417700` / `c6be165`）**：修正判定链后 **conclusion=success，全程 3 分 24 秒**（对比上次 1h0m19s 被取消）。`本次变更 1502 个文件`（符合 P2 首次全量预期，不要误判为失败）；CI 构建指纹 `app.F_okMk0P.js`；`线上内容校验 第 1/3 轮 / 第 5 次探测` 即命中，线上首页实测已切到该指纹。日志同时暴露 `Pages builds API 读取失败：accepts 1 arg(s), received 2` —— 由此定位到 P0 误报的最终真因是 `--jq -r` 参数写错，已在 P0′ 补充提交中修正。
 
-**第二次部署（纯 workflow 改动）用于验证增量恢复**：不改任何书籍内容，预期 `Publish dist` 输出「内容无变化，跳过发布」、不触发 Pages 部署；若仍变更 1500+，说明 CI 环境仍有残余不确定性，需继续排查。
+**第二次部署实测（run `42976203212` / `be7f02d`，纯 workflow 改动）**：conclusion=success，3m31s，10 个步骤全部 success。**本次变更 1 个文件**（1502 → 1，恢复 99.9%）；CI 指纹仍是 `app.F_okMk0P.js`，与首次完全一致，证明 P2 的构建确定性在 CI 环境生效；线上校验第 1 轮第 1 次探测即命中；`--jq` 修正后日志不再出现 API 读取失败警告。
+
+**残留项（记录不修，观察 2~3 次再定）**：唯一变化的文件是 `books/build-agent-harness/10｜提示词组装…Skills.html`，diff 8 增 / 8 删，内容全是 **Shiki 对同一段 YAML frontmatter 代码块的语法高亮结果不同**（一次渲染成纯文本、一次带 key 高亮 span），是与 MiniSearch 无关的独立渲染竞态。影响 1/1502 文件、Pages 构建 47~53 秒，深挖收益远低于成本；且改动 Shiki 配置会再次全量重渲染全站代码块，风险更高。若后续扩散到更多页面或每次抖动导致额外部署，再单独立项。
 
 **P3 触发条件（取代原「再挂一次就迁」）**：仅当修正后的判定链下，线上指纹在 3 轮 ×12 分钟内仍不更新、且 Pages build 明确 `errored` 时，才认定为真实后端故障并启动迁移。此时优先按 `deploy-templates/` 走 Cloudflare（省事）或 EdgeOne（北京访问优先）。
