@@ -100,9 +100,11 @@ jobs:
 
       # 判定「发布是否真的生效」只认线上内容：CDN 首页是否引用本次 dist 的
       # app.*.js 指纹。2026-11-11 run 42964517356 实证：/pages/builds/latest
-      # 在 Actions 的 GITHUB_TOKEN 下读不到有效状态，4 轮全判 timeout、被 60 分钟
-      # 超时取消；但同期 4 次 Pages build 均 built（47~53 秒），远端 gh-pages 的
-      # index.html 与线上首页指纹完全一致，站点其实一直是健康的。
+      # 因 `gh api --jq -r .status` 参数写错（--jq 只接受 1 个字符串参数），
+      # 两个查询函数持续报 "accepts 1 arg(s), received 2"、被 2>/dev/null 静默
+      # 吞掉并回落成 unknown / 空串，4 轮全判 timeout、被 60 分钟超时取消；
+      # 但同期 4 次 Pages build 均 built（47~53 秒），远端 gh-pages 的 index.html
+      # 与线上首页指纹完全一致，站点其实一直是健康的。
       # 因此 Pages API 降级为辅助信号（errored 时快速重触发），主判定改为线上指纹：
       # 既避开 API 权限差异，也天然防住「Pages 报 built 但 CDN 没刷新」的假成功。
       # 每轮最长 12 分钟（覆盖 CDN max-age=600），最多 3 轮 + 线性退避。
@@ -126,7 +128,7 @@ jobs:
           echo "本次构建指纹：${expected}"
 
           # 不再静默吞掉 API 错误：一次性诊断输出，便于日后定位权限/端点问题。
-          if ! gh api "repos/${repo}/pages/builds/latest" --jq -r .status >/dev/null 2>/tmp/pages-api.err; then
+          if ! gh api "repos/${repo}/pages/builds/latest" --jq '.status' >/dev/null 2>/tmp/pages-api.err; then
             echo "::warning::Pages builds API 读取失败（不影响判定，以线上指纹为准）：$(head -c 200 /tmp/pages-api.err)"
           fi
 
@@ -135,7 +137,7 @@ jobs:
             printf '%s' "$body" | grep -Fq "$expected"
           }
           latest_status() {
-            gh api "repos/${repo}/pages/builds/latest" --jq -r .status 2>/dev/null || echo unknown
+            gh api "repos/${repo}/pages/builds/latest" --jq '.status' 2>/dev/null || echo unknown
           }
           rebuild_pages() {
             if ! gh api -X POST "repos/${repo}/pages/builds" >/dev/null 2>/tmp/pages-rebuild.err; then
