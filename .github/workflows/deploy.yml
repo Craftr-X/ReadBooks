@@ -27,7 +27,7 @@ concurrency:
 jobs:
   build-and-publish:
     runs-on: ubuntu-latest
-    # 构建 ~4 分钟 + 最多 4 轮 Pages 构建（每轮最长 ~10 分钟）+ 退避，60 分钟兜底。
+    # 构建 ~4 分钟 + 最多 3 轮线上校验（每轮最长 12 分钟）+ 退避，60 分钟兜底。
     timeout-minutes: 60
     steps:
       - name: Checkout
@@ -59,7 +59,9 @@ jobs:
       # 新增/变化的 blob 传给远端；内容无变化时跳过推送，不触发 Pages 部署。
       # 注意：Vite 入口 chunk（assets/app.*.js / chunks/theme.*.js）的哈希只要
       # 抖动，全站 1500+ HTML 都会跟着变，增量退化成全量并放大后端同步压力。
-      # 因此这里把「本次变更文件数」写进 summary，便于第一时间发现退化。
+      # 已由 docs/.vitepress/deterministic-search-index.mjs 在 transform 阶段
+      # 规范化 MiniSearch 索引修好；这里仍把「本次变更文件数」写进 summary，
+      # 作为增量是否退化的长期观测点（scripts/verify-build-determinism.mjs 可复核）。
       # --filter=blob:none --no-checkout 只拉提交和树对象，不下载旧文件内容；
       # read-tree 把旧树载入索引，git add -A 才能识别被删除的文件。
       # .nojekyll 必须保留：dist 里有下划线开头目录，跳过 Jekyll 处理。
@@ -96,102 +98,87 @@ jobs:
           echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
           echo "changed=true" >> "$GITHUB_OUTPUT"
 
-      # 后端 syncing_files 挂起是 GitHub 服务端间歇性故障
-      # （actions/deploy-pages#406；2026-11-10 20:42–21:26 同一 commit 连续 4 次
-      # errored，21:27 后恢复）。仓库侧无法根治，但可以把人工干预降为 0：
-      # 每轮失败后调用 Pages 重构建 API 重新触发同一份内容，带线性退避，
-      # 最多 4 轮。#56 已实证该手段有效，不要再以「重试浪费时间」为由移除。
-      - name: Wait for Pages build (auto retry)
+      # 判定「发布是否真的生效」只认线上内容：CDN 首页是否引用本次 dist 的
+      # app.*.js 指纹。2026-11-11 run 42964517356 实证：/pages/builds/latest
+      # 在 Actions 的 GITHUB_TOKEN 下读不到有效状态，4 轮全判 timeout、被 60 分钟
+      # 超时取消；但同期 4 次 Pages build 均 built（47~53 秒），远端 gh-pages 的
+      # index.html 与线上首页指纹完全一致，站点其实一直是健康的。
+      # 因此 Pages API 降级为辅助信号（errored 时快速重触发），主判定改为线上指纹：
+      # 既避开 API 权限差异，也天然防住「Pages 报 built 但 CDN 没刷新」的假成功。
+      # 每轮最长 12 分钟（覆盖 CDN max-age=600），最多 3 轮 + 线性退避。
+      - name: Verify live content (auto retry)
         id: pages
         if: steps.publish.outputs.changed == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
-          PAGES_SHA: ${{ steps.publish.outputs.sha }}
+          SITE_URL: https://craftr-x.github.io/ReadBooks/
         run: |
           set -u
           repo="${GITHUB_REPOSITORY}"
-          max_attempts=4
+          max_attempts=3
+          poll_interval=15
+          polls_per_attempt=48
+          expected="$(find dist/assets -maxdepth 1 -name 'app.*.js' -printf '%f\n' | head -1)"
+          if [ -z "$expected" ]; then
+            echo "::error::未找到入口 chunk，无法校验线上内容。"
+            exit 1
+          fi
+          echo "本次构建指纹：${expected}"
+
+          # 不再静默吞掉 API 错误：一次性诊断输出，便于日后定位权限/端点问题。
+          if ! gh api "repos/${repo}/pages/builds/latest" --jq -r .status >/dev/null 2>/tmp/pages-api.err; then
+            echo "::warning::Pages builds API 读取失败（不影响判定，以线上指纹为准）：$(head -c 200 /tmp/pages-api.err)"
+          fi
+
+          live_matches() {
+            body="$(curl -fsSL --max-time 20 "${SITE_URL}?build=${GITHUB_RUN_ID}-${attempt}-${i}" 2>/dev/null || true)"
+            printf '%s' "$body" | grep -Fq "$expected"
+          }
           latest_status() {
             gh api "repos/${repo}/pages/builds/latest" --jq -r .status 2>/dev/null || echo unknown
           }
-          latest_commit() {
-            gh api "repos/${repo}/pages/builds/latest" --jq -r .commit 2>/dev/null || echo ""
+          rebuild_pages() {
+            if ! gh api -X POST "repos/${repo}/pages/builds" >/dev/null 2>/tmp/pages-rebuild.err; then
+              echo "::warning::重构建 API 调用失败（检查 permissions.pages 是否为 write）：$(head -c 200 /tmp/pages-rebuild.err)"
+            fi
           }
+
           attempt=1
           while [ "$attempt" -le "$max_attempts" ]; do
-            echo "::group::Pages 构建 第 ${attempt}/${max_attempts} 轮"
-            # 先等本次推送对应的构建登记上来，避免误读上一条构建的结果。
-            registered=0
-            for i in $(seq 1 24); do
-              [ "$(latest_commit)" = "$PAGES_SHA" ] && { registered=1; break; }
-              sleep 10
-            done
-            if [ "$registered" != "1" ]; then
-              echo "::warning::240 秒内未登记与 ${PAGES_SHA:0:7} 对应的构建，继续按最新状态判断。"
-            fi
+            echo "::group::线上内容校验 第 ${attempt}/${max_attempts} 轮"
             outcome=timeout
-            for i in $(seq 1 40); do
-              status="$(latest_status)"
-              case "$status" in
-                built)
-                  echo "Pages 构建成功（第 ${attempt} 轮）。"
-                  outcome=built
-                  break
-                  ;;
-                errored)
-                  echo "Pages 构建失败（后端同步挂起/超时）。"
-                  outcome=errored
-                  break
-                  ;;
-                *) sleep 15 ;;
-              esac
+            for i in $(seq 1 "$polls_per_attempt"); do
+              if live_matches; then
+                echo "线上首页已引用本次构建指纹，发布完成（第 ${attempt} 轮 / 第 ${i} 次探测）。"
+                outcome=verified
+                break
+              fi
+              # errored 是后端 syncing_files 挂起的明确信号，立刻重触发，不必空等 12 分钟。
+              if [ "$(latest_status)" = "errored" ]; then
+                echo "Pages 构建失败（后端同步挂起/超时），提前进入下一轮。"
+                outcome=errored
+                break
+              fi
+              sleep "$poll_interval"
             done
             echo "::endgroup::"
-            if [ "$outcome" = "built" ]; then
+            if [ "$outcome" = "verified" ]; then
               echo "attempts=${attempt}" >> "$GITHUB_OUTPUT"
+              echo "verified=true" >> "$GITHUB_OUTPUT"
               exit 0
             fi
             if [ "$attempt" -lt "$max_attempts" ]; then
               delay=$((attempt * 30))
               echo "第 ${attempt} 轮结果=${outcome}，调用 Pages 重构建 API 后等待 ${delay} 秒再试。"
-              if ! gh api -X POST "repos/${repo}/pages/builds" >/dev/null; then
-                echo "::warning::重构建 API 调用失败（检查 permissions.pages 是否为 write）；下一轮仍会按最新状态轮询。"
-              fi
+              rebuild_pages
               sleep "$delay"
             fi
             attempt=$((attempt + 1))
           done
-          echo "::error::连续 ${max_attempts} 轮未完成 Pages 构建。gh-pages 分支内容已是最新，这是 GitHub Pages 服务端故障（syncing_files 挂起）；后端恢复后重跑 workflow_dispatch 并勾选 force 即可，无需重新构建站点。"
+          echo "attempts=${max_attempts}" >> "$GITHUB_OUTPUT"
+          echo "verified=false" >> "$GITHUB_OUTPUT"
+          echo "::error::连续 ${max_attempts} 轮线上首页仍未出现 ${expected}。gh-pages 分支内容已是最新，先手工核对站点；若确认是 Pages 后端故障，恢复后重跑 workflow_dispatch 并勾选 force，无需重新构建站点。"
           exit 1
-
-      # 防「假成功」：Pages 报 built 不代表 CDN 上已是本次构建。
-      # 用本次 dist 的入口 chunk 文件名做指纹，校验线上首页是否已引用它。
-      # 只告警不判失败：CDN 传播延迟是常态，不该把它变成新的红色构建。
-      - name: Verify live content
-        if: steps.publish.outputs.changed == 'true'
-        env:
-          SITE_URL: https://craftr-x.github.io/ReadBooks/
-        run: |
-          set -u
-          expected="$(find dist/assets -maxdepth 1 -name 'app.*.js' -printf '%f\n' | head -1)"
-          if [ -z "$expected" ]; then
-            echo "::warning::未找到入口 chunk，跳过线上校验。"
-            exit 0
-          fi
-          echo "本次构建指纹：${expected}"
-          ok=0
-          for i in $(seq 1 20); do
-            body="$(curl -fsSL --max-time 20 "${SITE_URL}?build=${GITHUB_RUN_ID}-${i}" 2>/dev/null || true)"
-            if printf '%s' "$body" | grep -Fq "$expected"; then
-              echo "线上首页已引用本次构建，发布完成。"
-              ok=1
-              break
-            fi
-            sleep 15
-          done
-          if [ "$ok" != "1" ]; then
-            echo "::warning::Pages 已报成功，但 5 分钟内线上首页仍未出现 ${expected}（CDN 缓存或后端同步延迟）。gh-pages 分支内容正确，稍后刷新即可；如持续异常可重跑 workflow_dispatch 并勾选 force。"
-          fi
 
       - name: Deployment summary
         if: always() && steps.publish.outputs.changed == 'true'
@@ -202,7 +189,8 @@ jobs:
             echo "| 项 | 值 |"
             echo "| --- | --- |"
             echo "| 变更文件数 | ${{ steps.publish.outputs.changed_count }} |"
-            echo "| Pages 构建轮次 | ${{ steps.pages.outputs.attempts || '未完成' }} |"
+            echo "| 线上内容校验 | ${{ steps.pages.outputs.verified == 'true' && '通过' || '未通过' }} |"
+            echo "| 校验轮次 | ${{ steps.pages.outputs.attempts || '未完成' }} |"
             echo "| gh-pages commit | \`${{ steps.publish.outputs.sha }}\` |"
             echo "| 站点 | https://craftr-x.github.io/ReadBooks/ |"
             echo ""

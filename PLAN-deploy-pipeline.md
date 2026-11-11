@@ -169,7 +169,7 @@ async function scanForBuild() {
 - 不改 `entryFileNames` / `chunkFileNames`。
 - 不动书籍内容、主题外观、`dist/` 生成物。
 - 不擅自创建外部托管账号、不切换线上域名。
-- P1/P2 的代码改动默认只做本地验证与本地提交，是否推送由用户确认（推送会触发一次真实部署）。
+- P1/P2 的代码改动默认只做本地验证与本地提交，是否推送由用户确认（推送会触发一次真实部署）；2026-11-11 用户已以「开干」授权本次推送。
 
 ---
 
@@ -177,11 +177,14 @@ async function scanForBuild() {
 
 | 档 | 结果 |
 | --- | --- |
-| P0 | `dd807d3` 已推，`origin/main` 同步。run `42964517356` 的 Checkout / Build / Publish 全部 success，但 Pages 后端持续挂起，4 轮自动重触发耗尽 `timeout-minutes: 60` 被取消（1h0m19s）。**是后端故障 + 重试预算不足，不是 workflow 失败**；gh-pages 分支内容已是最新，线上待后端恢复。这也直接印证了「必须减少同步量」。 |
+| P0 | `dd807d3` 已推，`origin/main` 同步。run `42964517356` 的 Checkout / Build / Publish 全部 success，但被 `timeout-minutes: 60` 取消（1h0m19s）。**当日复核后订正：不是后端挂起**——同期 4 次 Pages build 全部 `built`（47~53 秒），远端 gh-pages `3f2e51f6` 的 index.html 引用 `app.BBkJR8Uw.js`，与线上首页完全一致，`Last-Modified` 也对应最后一次 build，站点一直是健康的。真因是 workflow 依赖 `/pages/builds/latest` 判定，该端点在 Actions 的 `GITHUB_TOKEN` 下读不到有效状态，4 轮全判 `timeout` 误报失败。详见 P0′。 |
 | P1 | 校验脚本、单测、`--reuse` / `--strict` 落地。基线实测 649s / 503s 两次构建：1498 个 HTML 内容变化且**字节差全为 0**，新增/删除各 4 个带 hash 文件（app、theme、VPLocalSearchBox、索引 chunk）。 |
 | P2 | 三次实证迭代（renderChunk 定位失败 → renderChunk 时机被证伪 → transform + `averageFieldLength` 整数重算）。**`npm run verify:determinism -- --strict` 最终通过：两次完整构建 344s / 532s，新增 0 / 删除 0 / 内容变化 0，退出码 0。** |
-| P3 | 迁移方案文档 + 两个官方 CLI workflow 模板交付；未切换、未创建账号、未改线上域名。 |
+| P3 | 迁移方案文档 + 两个官方 CLI workflow 模板交付；未切换、未创建账号、未改线上域名。**决策：暂缓**——P0 复核证明后端未挂，「恢复后仍挂起就迁走」的前提不成立。 |
+| P0′ | 判定链修复（随 P2 同一次推送上线）：合并 `Wait for Pages build` 与 `Verify live content` 为 `Verify live content (auto retry)`，以「线上首页是否引用本次 dist 的 `app.*.js` 指纹」为唯一成功判定；Pages API 降为辅助信号（仅 `errored` 时快速重触发）；删除 240 秒 commit 注册等待，从 4 轮 ×14 分钟压缩为 3 轮 ×12 分钟；`gh api` 错误不再被静默吞掉。本地验收：结构断言 7 项、`bash -n` 0 失败、线上指纹正反用例通过。 |
 
 验证汇总：`npm test` 151 项全过、`npm run lint` 0 error（1505 个 md）、`check:deadlinks` 1497 个 md 零死链、真实 21M 字符索引的往返与搜索语义单测通过。
 
-**上线预期**：P2 改动本身会改变索引与入口 chunk 的内容哈希，因此修复上线后的**第一次部署仍会是全量**（1500+ 文件）；从第二次起，内容无变化的推送应直接跳过发布，只改一个 md 时变更数应回落到个位数。P0 触发的 run 被取消、未产出部署摘要，需在 Pages 后端恢复后重跑观察「变更文件数」。
+**上线预期**：P2 改动本身会改变索引与入口 chunk 的内容哈希，因此修复上线后的**第一次部署仍会是全量**（1500+ 文件），不要误判为失败；从第二次起，内容无变化的推送应直接跳过发布，只改一个 md 时变更数应回落到个位数。P0 触发的 run 因误报被取消、未产出部署摘要，本次推送是第一次在修正后的判定链下观察「变更文件数」与「线上内容校验」。
+
+**P3 触发条件（取代原「再挂一次就迁」）**：仅当修正后的判定链下，线上指纹在 3 轮 ×12 分钟内仍不更新、且 Pages build 明确 `errored` 时，才认定为真实后端故障并启动迁移。此时优先按 `deploy-templates/` 走 Cloudflare（省事）或 EdgeOne（北京访问优先）。
