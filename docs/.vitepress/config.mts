@@ -56,6 +56,9 @@ for (const group of ebookGroups) {
   })
 }
 
+// 统计页：目录式链接（docs/stats/index.md），与书籍 index 页的 /books/<slug>/ 同为 Pages 稳妥模式
+nav.push({ text: '统计', link: '/stats/' })
+
 // 打断 {{ / }}，避免 VitePress 把 Markdown 正文里的双花括号当作 Vue 模板插值渲染。
 // 历史上由 scripts/escape-vitepress-braces.mjs 在 prebuild 阶段就地改写源文件实现，
 // 现迁移为运行时 markdown-it 转换：build 不再修改源文件。

@@ -4,6 +4,8 @@ import { useData } from 'vitepress'
 import books from '../../../../books.json'
 import contentStats from '../../../../content-stats.json'
 import { groupBooks, type BookEntry } from '../../genres'
+// formatMinutes 与统计页共用同一实现，保证两页时长文案口径一致
+import { formatMinutes } from '../statsCore.mjs'
 import ContinueReading from './ContinueReading.vue'
 
 const { site } = useData()
@@ -23,16 +25,6 @@ const sideCount = (groups: { books: BookEntry[] }[]) =>
   groups.reduce((n, g) => n + g.books.length, 0)
 const booklets = computed(() => sideCount(bookletGroups.value))
 const ebooks = computed(() => sideCount(ebookGroups.value))
-
-const formatMinutes = (min: number): string => {
-  if (min < 60) return `${min} 分`
-  const hours = Math.floor(min / 60)
-  const rest = min % 60
-  // 不足半小时按半小时显示，超过半小时按整小时向上取整
-  if (rest === 0) return `${hours} 小时`
-  if (rest <= 30) return `${hours}½ 小时`
-  return `${hours + 1} 小时`
-}
 
 // 统计卡的前两项与下方分区用同一口径（按展示分组求和），避免同页数字打架
 const stats = computed(() => [
@@ -114,6 +106,11 @@ const stats = computed(() => [
         </div>
       </div>
     </section>
+
+    <!-- 统计页入口 -->
+    <p class="stats-link">
+      <a :href="`${base}stats/`">查看站点统计 →</a>
+    </p>
   </div>
 </template>
 
@@ -301,6 +298,23 @@ const stats = computed(() => [
   font-size: 18px;
   color: var(--vp-c-text-3);
   transition: all 0.2s;
+}
+
+/* ========== 统计页入口 ========== */
+.stats-link {
+  margin: 40px 0 0;
+  text-align: center;
+}
+
+.stats-link a {
+  font-size: 14px;
+  color: var(--vp-c-text-2);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.stats-link a:hover {
+  color: var(--vp-c-brand-1);
 }
 
 /* ========== 响应式 ========== */
