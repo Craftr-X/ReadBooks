@@ -4,6 +4,7 @@ import type { Theme } from 'vitepress'
 import './custom.css'
 import HomePage from './components/HomePage.vue'
 import BookComment from './components/BookComment.vue'
+import StatsPage from './components/StatsPage.vue'
 import ReadingProgressBar from './components/ReadingProgressBar.vue'
 import BookIndexProgress from './components/BookIndexProgress.vue'
 import ChapterReadingTime from './components/ChapterReadingTime.vue'
@@ -28,6 +29,7 @@ export default {
     // 注册全局组件
     app.component('HomePage', HomePage)
     app.component('BookComment', BookComment)
+    app.component('StatsPage', StatsPage)
     // ReadingProgressBar / BookIndexProgress 仅通过 Layout 插槽渲染，无需全局注册
     installImageFallback()
     installImageZoom(router)
