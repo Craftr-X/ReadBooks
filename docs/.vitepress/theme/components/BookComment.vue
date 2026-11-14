@@ -3,7 +3,7 @@ import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useData } from 'vitepress'
 import { useNormalizedPath } from '../routePath'
 
-const { frontmatter } = useData()
+const { frontmatter, site } = useData()
 const path = useNormalizedPath()
 const container = ref<HTMLElement | null>(null)
 const mounted = ref(false)
@@ -14,15 +14,22 @@ const shouldRender = computed(() => {
   return frontmatter.value.comments !== false && layout !== 'home' && layout !== 'page' && !isBookIndex.value
 })
 
-// ⚠️ Giscus pathname 映射注意事项：
-// data-mapping="pathname" 的匹配键来自 client.js 的
-//   location.pathname.substring(1).replace(/\.\w+$/, "")
-// 即「去掉开头 / 的完整 pathname（含 VitePress base 前缀）」。
-// 因此 base 路径一变（如仓库改名导致 base 从 /Craftx-books.github.io/ 改为 /ReadBooks/），
-// term 就和旧 discussion 标题对不上，评论区会整体变空（评论数据并未丢失）。
-// 改仓库名/域名后，需同步把旧 discussion 标题里的旧前缀改成新前缀。
-// 历史事件：仓库 Craftx-books.github.io → ReadBooks 改名后，曾靠迁移 discussion
-// 标题前缀（Craftx-books.github.io → ReadBooks）恢复评论关联。
+// giscus 匹配键（term）：「base 标签 + 解码后的逻辑路径」，与 discussion 标题一一对应。
+// 例：base='/ReadBooks/'，页面 /books/money-dog/26-童话与理财 → 'ReadBooks/books/money-dog/26-童话与理财'
+// 不用 data-mapping="pathname"：client.js 直接取 location.pathname（浏览器对中文
+// 返回百分号编码），会导致 discussion 标题全是 %E7%AF%87… 乱码。
+// ⚠️ term 是评论区的唯一关联键：改 base / 改章节文件名，都会让新 term 和旧
+// discussion 标题对不上，评论区变空（评论数据并未丢失）——需同步重命名对应
+// discussion 标题为新 term。
+// 历史事件：
+//   2026-08 仓库 Craftx-books.github.io → ReadBooks 改名，靠迁移 discussion 标题前缀恢复关联；
+//   2026-11 映射从「编码 pathname」切到「解码 term」，同步把 #15/#22/#58 标题改为中文解码形式。
+const giscusTerm = computed(() => {
+  const base = site.value.base || '/'
+  const baseLabel = base === '/' ? '' : base.replace(/^\//, '').replace(/\/$/, '')
+  const term = baseLabel + path.value
+  return term.startsWith('/') ? term.slice(1) : term
+})
 function mountGiscus() {
   if (container.value) {
     container.value.innerHTML = ''
@@ -37,7 +44,8 @@ function mountGiscus() {
   script.setAttribute('data-repo-id', 'R_kgDOSm7eVQ')
   script.setAttribute('data-category', 'Announcements')
   script.setAttribute('data-category-id', 'DIC_kwDOSm7eVc4C-wiu')
-  script.setAttribute('data-mapping', 'pathname')
+  script.setAttribute('data-mapping', 'specific')
+  script.setAttribute('data-term', giscusTerm.value)
   script.setAttribute('data-strict', '0')
   script.setAttribute('data-reactions-enabled', '1')
   script.setAttribute('data-emit-metadata', '0')
