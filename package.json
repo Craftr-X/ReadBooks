@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "vitepress dev docs",
     "import:book": "node scripts/import-book.mjs",
+    "remove:book": "node scripts/remove-book.mjs",
     "generate:sidebar": "node scripts/generate-sidebar.mjs",
     "generate:stats": "node scripts/generate-content-stats.mjs",
     "prebuild": "node scripts/generate-sidebar.mjs && node scripts/generate-content-stats.mjs",
