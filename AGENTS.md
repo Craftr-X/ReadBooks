@@ -92,6 +92,58 @@ The import is complete only when all are true:
 - `npm run build` passes.
 - Existing books and shared site behavior were not changed outside the documented scope.
 
+## Book Removal Spec
+
+Use this spec whenever removing a book from the site, for example on a user instruction like 删除<分类>标签下的<书名>. The goal is complete removal with zero residual references and no regression to other books or shared site behavior.
+
+**Input mapping**
+
+- Map the natural-language instruction to a slug with `npm run remove:book -- --find <书名关键词>` (matches title/desc/slug, case-insensitive). Never guess a slug.
+- Cross-check the user-named 分类 against the registry `genre` of the matched entry; if they do not match, confirm with the user before deleting.
+- Always start with `--dry-run` and show the preview (书名/slug/分类/章节数/外部引用) to the user for a real removal.
+
+**Scope and boundaries**
+
+- Keep the scope to one book slug per run. Only these may change: `docs/books/<slug>/`, `books.json`, `README.md`, and — only when the script blocks on hardcoded references — the few referencing files under `docs/` (currently at most `docs/index.md`).
+- The script automatically removes the README table row and the registry entry, deletes the content directory, and regenerates `sidebar-generated.json` / `content-stats.json`. Do not hand-edit those generated artifacts or the script's outputs afterwards.
+- Do not edit other books, site theme, VitePress config, deploy settings, comments, search, or `dist/`.
+- Branch: `docs/remove-<slug>`. Commit message: `docs: 移除《书名》（slug）`.
+
+**Safety rails (built into the script)**
+
+- Refuses unknown slugs; refuses when `books.json`, `README.md`, or `docs/books/<slug>/` have uncommitted changes (git history is the recovery path; `--force` overrides).
+- Blocks deletion while `docs/` still references the book (e.g. hardcoded homepage links). Fix those references first, or pass `--force` deliberately knowing the built-in self-check will then report the residue.
+- `--dry-run` performs the full validation and preview with zero writes.
+
+**Validation checklist**
+
+- The script's built-in self-check reports all six checks passed (registry / book-dir / sidebar / content-stats / readme / docs-references).
+- Residual scan; every hit must be intentional (e.g. history docs):
+
+  ```bash
+  rg -n "<slug>" docs README.md books.json
+  ```
+
+- `npm run check:deadlinks` reports no dead links across the site.
+- `npm test` passes (all suites, including `scripts/remove-book.test.mjs`).
+- `npm run build` passes.
+- Optional: `npm run preview` and visually check the homepage (cards, nav, 继续阅读卡) and one remaining book page.
+
+**Completion criteria**
+
+The removal is complete only when all are true:
+
+- The script's self-check passed and `books.json` / `README.md` no longer list the book; `docs/books/<slug>/` is gone.
+- Nav, homepage cards and genre groups no longer show the book; other books are untouched.
+- Residual scan hits are all intentional; deadlinks, tests and build are green.
+- The PR mentions the slug and lists the validation commands run.
+
+**Known tolerated behaviors (no action needed)**
+
+- The homepage 继续阅读 card filters out reading progress of removed books (`continueReadingCore.mjs`); stale localStorage entries are harmless.
+- The search index and `sitemap.xml` drop the book automatically on the next build.
+- Restoring a removed book from git may produce a one-time benign diff in `sidebar-generated.json` display texts (the text-preservation cache converges back to the `index.md` TOC block; verified idempotent).
+
 ## Branch & Workflow Guidelines
 
 This project follows a **branch-based workflow**. Never commit directly to `main`.
