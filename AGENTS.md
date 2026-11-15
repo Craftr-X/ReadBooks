@@ -44,6 +44,12 @@ Use this spec whenever importing a technical booklet, Markdown source, or EPUB e
 - Do not overwrite an existing `docs/books/<slug>/` unless the user explicitly requests replacement and `--force` is appropriate.
 - Use `npm run import:book -- <source> --slug <slug> --title "<title>" --desc "<desc>"` for Markdown folders and EPUB files. Use `--force` only for an intentional replacement.
 
+**Branching**
+
+- Branch: `docs/import-<slug>` created from `main`. Commit message: `docs: 导入《书名》（slug）`.
+- If the previous import PR is not merged yet, stack the new branch on it instead of `main`: every import edits the same tail of `books.json`, `README.md`, and the frozen snapshot guards in `scripts/stats-core.test.mjs`, so branching from `main` guarantees conflicts once both PRs are open.
+- After the upstream stacked PR is **squash-merged**, Git can no longer match the stacked branch's already-merged commits (squash creates new SHAs) and reports phantom conflicts in those same files. Fix by rebasing onto the squash commit and replaying only the new book's commit: `git rebase --onto origin/main <stacked-parent-commit> <branch>`, verify `books.json` / `README.md` / guard numbers after the rebase, then push with `--force-with-lease`.
+
 **Required output**
 
 - `docs/books/<slug>/` must contain an `index.md` and numbered chapter Markdown files. Chapter filenames should be readable and ordered, for example `01-开篇.md`.
