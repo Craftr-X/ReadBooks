@@ -72,6 +72,9 @@ function titleFileSegment(value) {
     .normalize('NFC')
     .replace(/[\\/:*?"<>|]/g, '-')
     .replace(/[\u0000-\u001f]/g, '')
+    // 裸 % 会生成 `40%的人群` 这类链接，VitePress 渲染时 decodeURI 把 %的
+    // 当成非法百分号转义直接抛 URIError，炸掉全站构建；转全角 ％ 保持语义且 URL 安全。
+    .replace(/%/g, '％')
     .replace(/\s+/g, '-')
     .replace(/-+/g, '-')
     .replace(/^-+|-+$/g, '')
