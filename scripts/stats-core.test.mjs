@@ -13,12 +13,12 @@ const realBooks = JSON.parse(readFileSync(join(here, '../books.json'), 'utf-8'))
 test('real books.json: total equals registry size and per-genre counts match', () => {
   const stats = categoryStats(realBooks)
   assert.equal(stats.total, realBooks.length)
-  assert.equal(stats.total, 41)
+  assert.equal(stats.total, 42)
 
   const groupCounts = Object.fromEntries(stats.group.map(r => [r.key, r.count]))
   assert.deepEqual(groupCounts, { ai: 4, frontend: 4, backend: 2, devops: 3, career: 4 })
   const topCounts = Object.fromEntries(stats.top.map(r => [r.key, r.count]))
-  assert.deepEqual(topCounts, { literature: 8, history: 6, cognition: 8, finance: 2 })
+  assert.deepEqual(topCounts, { literature: 8, history: 6, cognition: 9, finance: 2 })
 })
 
 test('rows follow registry order and carry registry label/icon', () => {
@@ -80,5 +80,5 @@ test('formatMinutes 与首页口径一致', () => {
   assert.equal(formatMinutes(60), '1 小时')
   assert.equal(formatMinutes(90), '1½ 小时')
   assert.equal(formatMinutes(91), '2 小时')
-  assert.equal(formatMinutes(15671), '261½ 小时') // 当前全站总阅读时长
+  assert.equal(formatMinutes(15850), '264½ 小时') // 当前全站总阅读时长
 })
