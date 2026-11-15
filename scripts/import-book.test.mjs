@@ -194,6 +194,13 @@ test('titleFileSegment merges hyphens between Han characters', () => {
   assert.equal(titleFileSegment('Chapter 01'), 'Chapter-01')
 })
 
+test('titleFileSegment converts bare percent sign to full-width to keep decodeURI safe', () => {
+  // 裸 % 生成 `40%的人群` 这类链接，VitePress 渲染 decodeURI 时抛 URIError
+  assert.equal(titleFileSegment('40%的人群将沦为下流阶层？'), '40％的人群将沦为下流阶层？')
+  assert.equal(titleFileSegment('团块次代男性中48%是“下流”！'), '团块次代男性中48％是“下流”！')
+  assert.ok(!/%/.test(titleFileSegment('100% 合格率 检测')))
+})
+
 test('parseArgs accepts --genre and keeps other flags intact', () => {
   const args = parseArgs(['./book', '--genre', 'literature', '--slug', 'my-book', '--dry-run'])
   assert.equal(args.genre, 'literature')
