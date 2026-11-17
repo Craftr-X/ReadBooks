@@ -24,6 +24,7 @@ export const GENRES = [
   { key: 'history', label: '历史人文', icon: '🏛️', nav: 'top' },
   { key: 'cognition', label: '认知成长', icon: '💡', nav: 'top' },
   { key: 'finance', label: '财富理财', icon: '💰', nav: 'top' },
+  { key: 'articles', label: '文章收藏', icon: '📝', nav: 'top' },
 ]
 
 /** 导航里的兜底组文案：下拉内部分组用「其他」，顶级兜底栏用「电子书」 */
