@@ -14,8 +14,8 @@ export interface GenreDef {
   key: string
   label: string
   icon: string
-  /** top：独立顶级导航栏；group：折叠进「技术小册」下拉内部分组 */
-  nav: 'top' | 'group'
+  /** top：电子书顶级下拉；group：折叠进「技术小册」；link：独立顶级直达栏 */
+  nav: 'top' | 'group' | 'link'
 }
 
 export interface BookEntry {
@@ -39,5 +39,7 @@ export const GENRES: GenreDef[] = _GENRES
 
 export const getGenre = (key?: string): GenreDef | undefined => _getGenre(key)
 
-export const groupBooks = (books: BookEntry[], nav: 'group' | 'top'): GenreGroup[] =>
-  _groupBooks(books, nav)
+export const groupBooks = (
+  books: BookEntry[],
+  nav: 'group' | 'top' | 'link',
+): GenreGroup[] => _groupBooks(books, nav)

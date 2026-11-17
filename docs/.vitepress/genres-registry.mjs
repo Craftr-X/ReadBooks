@@ -10,7 +10,7 @@
  * 展示分组由 books.json 中可选的 genre 字段驱动，缺省时按 category 兜底。
  */
 
-/** @typedef {{ key: string, label: string, icon: string, nav: 'top' | 'group' }} GenreDef */
+/** @typedef {{ key: string, label: string, icon: string, nav: 'top' | 'group' | 'link' }} GenreDef */
 /** @typedef {{ slug: string, title: string, desc?: string, category?: 'booklet' | 'ebook', genre?: string }} BookEntry */
 /** @typedef {{ genre: GenreDef | null, books: BookEntry[] }} GenreGroup */
 
@@ -24,7 +24,8 @@ export const GENRES = [
   { key: 'history', label: '历史人文', icon: '🏛️', nav: 'top' },
   { key: 'cognition', label: '认知成长', icon: '💡', nav: 'top' },
   { key: 'finance', label: '财富理财', icon: '💰', nav: 'top' },
-  { key: 'articles', label: '文章收藏', icon: '📝', nav: 'top' },
+  // link：独立顶级直达栏（合辑/栏目，不计入技术小册或电子书分区）
+  { key: 'articles', label: '文章收藏', icon: '📝', nav: 'link' },
 ]
 
 /** 导航里的兜底组文案：下拉内部分组用「其他」，顶级兜底栏用「电子书」 */
@@ -42,14 +43,16 @@ export const genreKeys = () => GENRES.map(g => g.key)
  * 按 nav 侧把书分组成有序列表（组内保持 books.json 原顺序）：
  * - group：技术小册下拉的内部分组（AI 与智能体 / 前端与调试 / …）
  * - top：电子书的顶级分栏（文学小说 / 历史人文 / …）
+ * - link：独立顶级直达栏（文章收藏等合辑，不混入前两者）
  *
  * 归类规则：显式写了合法 genre 的书跨 category 生效，且只归属该 genre
  * 注册的那一侧（读者只关心主题，不关心来源是 Markdown 还是 EPUB）；
  * 未写 genre 或 genre 无效时按 category 兜底——booklet 进 group 侧兜底组，
- * ebook 进 top 侧兜底组。任何一本书在两侧合计只出现一次。
- * 末尾可能追加一个 genre 为 null 的兜底组；空组会被过滤掉。
+ * ebook 进 top 侧兜底组。link 侧不做 category 兜底。
+ * 任何一本书在 group/top/link 合计只出现一次。
+ * 末尾可能追加一个 genre 为 null 的兜底组（仅 group/top）；空组会被过滤掉。
  * @param {BookEntry[]} books
- * @param {'group' | 'top'} nav
+ * @param {'group' | 'top' | 'link'} nav
  * @returns {GenreGroup[]}
  */
 export function groupBooks(books, nav) {
@@ -62,6 +65,8 @@ export function groupBooks(books, nav) {
       if (g.nav === nav) groups.find(x => x.genre === g).books.push(book)
       continue
     }
+    // link 侧无 category 兜底；未归类书只进 group/top
+    if (nav === 'link') continue
     const isBooklet = (book.category || 'booklet') === 'booklet'
     if (nav === 'group' ? isBooklet : !isBooklet) rest.push(book)
   }

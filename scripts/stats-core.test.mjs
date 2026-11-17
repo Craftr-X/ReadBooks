@@ -18,7 +18,9 @@ test('real books.json: total equals registry size and per-genre counts match', (
   const groupCounts = Object.fromEntries(stats.group.map(r => [r.key, r.count]))
   assert.deepEqual(groupCounts, { ai: 4, frontend: 4, backend: 2, devops: 3, career: 4 })
   const topCounts = Object.fromEntries(stats.top.map(r => [r.key, r.count]))
-  assert.deepEqual(topCounts, { literature: 8, history: 6, cognition: 9, finance: 2, articles: 1 })
+  assert.deepEqual(topCounts, { literature: 8, history: 6, cognition: 9, finance: 2 })
+  const linkCounts = Object.fromEntries(stats.link.map(r => [r.key, r.count]))
+  assert.deepEqual(linkCounts, { articles: 1 })
 })
 
 test('rows follow registry order and carry registry label/icon', () => {
@@ -26,8 +28,10 @@ test('rows follow registry order and carry registry label/icon', () => {
   assert.deepEqual(stats.group.map(r => r.key), ['ai', 'frontend', 'backend', 'devops', 'career'])
   assert.equal(stats.group[0].label, 'AI 与智能体')
   assert.equal(stats.group[0].icon, '🤖')
-  assert.deepEqual(stats.top.map(r => r.key), ['literature', 'history', 'cognition', 'finance', 'articles'])
+  assert.deepEqual(stats.top.map(r => r.key), ['literature', 'history', 'cognition', 'finance'])
   assert.equal(stats.top[0].label, '文学小说')
+  assert.deepEqual(stats.link.map(r => r.key), ['articles'])
+  assert.equal(stats.link[0].label, '文章收藏')
 })
 
 test('显式 genre 跨 category：置身钉内(ebook) 计入 career 组', () => {
@@ -36,9 +40,9 @@ test('显式 genre 跨 category：置身钉内(ebook) 计入 career 组', () => 
   assert.equal(career.count, 4) // 3 本 booklet + 1 本 ebook
 })
 
-test('两侧计数之和等于 total（一本书不多算不少算）', () => {
+test('三侧计数之和等于 total（一本书不多算不少算）', () => {
   const stats = categoryStats(realBooks)
-  const sum = [...stats.group, ...stats.top].reduce((n, r) => n + r.count, 0)
+  const sum = [...stats.group, ...stats.top, ...stats.link].reduce((n, r) => n + r.count, 0)
   assert.equal(sum, stats.total)
 })
 
@@ -63,8 +67,9 @@ test('missing / unknown genre falls back to 未分类 by category side', () => {
   assert.equal(stats.top[0].label, '未分类')
   assert.equal(stats.top[0].count, 1)
 
-  const sum = [...stats.group, ...stats.top].reduce((n, r) => n + r.count, 0)
+  const sum = [...stats.group, ...stats.top, ...stats.link].reduce((n, r) => n + r.count, 0)
   assert.equal(sum, 4)
+  assert.deepEqual(stats.link, [])
 })
 
 test('empty input yields zeroed stats', () => {
@@ -72,6 +77,7 @@ test('empty input yields zeroed stats', () => {
   assert.equal(stats.total, 0)
   assert.deepEqual(stats.group, [])
   assert.deepEqual(stats.top, [])
+  assert.deepEqual(stats.link, [])
 })
 
 test('formatMinutes 与首页口径一致', () => {

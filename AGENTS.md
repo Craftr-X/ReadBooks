@@ -12,6 +12,7 @@ This repository is a VitePress books site. Main site content lives in `docs/`, w
 - `npm run preview`: preview the built site locally.
 - `npm run generate:sidebar`: regenerate `sidebar-generated.json` after content structure changes. This file is gitignored (a build-time artifact); `config.mts` regenerates it on demand if missing, and `prebuild` refreshes it before every build.
 - `npm run import:book -- ./path/to/book --slug my-book`: import a Markdown folder or EPUB into `docs/books/`.
+- `npm run import:article -- --url <url>`：收录单篇文章到「文章收藏」；知乎等防抓站用 `--markdown`（见 `.codex/skills/article-link-import/SKILL.md`）。
 - `npm run check:deadlinks`: scan all internal markdown links and image references under `docs/` for broken targets (external http(s) links are not checked).
 - `npm run lint`: check all Markdown formatting via markdownlint-cli2 (configured in `.markdownlint-cli2.yaml`; runs in CI). Structural rules for the EPUB/juejin book sources are intentionally disabled.
 - `npm run lint:fix`: auto-fix Markdown formatting issues (trailing spaces, blank lines, newlines). Run independently of `prebuild`; do not wire it into the build flow.

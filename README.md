@@ -82,7 +82,17 @@ CraftX Books 是一个基于 VitePress 构建的在线阅读站点，发布到 G
 | --- | --- | --- |
 | 文章收藏 | 知乎等平台看到的好文章，随手收录 | [开始阅读](./docs/books/articles/) |
 
-**收录流程**：提供文章原文 → 排版为 Markdown 存入 `docs/books/articles/`（文件名 `NN-短标题.md` 编号递增，文首引用块注明来源与收录日期）→ `## 目录` 区块由 `generate:sidebar` 自动维护 → 走分支 + PR 发布。
+**收录流程**：
+
+- **推荐（发链接即可）**：把原文 URL 发给 Agent；Agent 按 `.codex/skills/article-link-import/SKILL.md` 抽取正文（开放站自动抓；知乎/公众号走浏览器 DOM，不依赖页面「复制」；长图则转写），再执行：
+
+  ```bash
+  npm run import:article -- --markdown ./draft.md --url "<原文url>" --title "<标题>" --author "<作者>"
+  ```
+
+  开放站点也可直接：`npm run import:article -- --url "<url>"`。
+- 文件名 `NN-短标题.md` 编号递增；文首引用块含来源链接 / 作者 / 收录日期；`## 目录` 由脚本追加（`generate:sidebar` 幂等对齐）。
+- 栏目 genre 为 `nav: link`（独立顶级直达，不计入技术小册/电子书分区）。
 
 ## 🚀 快速开始
 

@@ -29,7 +29,8 @@ try {
 
 // 顶部导航由 genre 展示分类驱动（注册表见 ./genres.ts）：
 // - 「技术小册」合并为一个顶级项，下拉内按 genre 分组
-// - top 侧 genre（文学小说 / 历史人文 / …）各自独立成顶级栏
+// - top 侧 genre（文学小说 / 历史人文 / …）各自独立成顶级下拉
+// - link 侧 genre（文章收藏等）为独立顶级直达栏；单本合辑不套一层同名下拉
 // 显式 genre 跨 category 生效；未归类的书按 category 兜底，保证新导入的书不丢入口。
 const bookLink = (book: { title: string; slug: string }) => ({
   text: book.title,
@@ -38,6 +39,7 @@ const bookLink = (book: { title: string; slug: string }) => ({
 
 const techGroups = groupBooks(books, 'group')
 const ebookGroups = groupBooks(books, 'top')
+const linkGroups = groupBooks(books, 'link')
 
 const nav: Array<any> = [{ text: '首页', link: '/' }]
 if (techGroups.length > 0) {
@@ -54,6 +56,14 @@ for (const group of ebookGroups) {
     text: group.genre ? group.genre.label : FALLBACK.top,
     items: group.books.map(bookLink),
   })
+}
+for (const group of linkGroups) {
+  const label = group.genre ? group.genre.label : '专栏'
+  if (group.books.length === 1) {
+    nav.push({ text: label, link: `/books/${group.books[0].slug}/` })
+  } else {
+    nav.push({ text: label, items: group.books.map(bookLink) })
+  }
 }
 
 // 统计页：目录式链接（docs/stats/index.md），与书籍 index 页的 /books/<slug>/ 同为 Pages 稳妥模式
