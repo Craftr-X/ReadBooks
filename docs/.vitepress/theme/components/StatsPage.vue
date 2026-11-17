@@ -12,15 +12,16 @@ const stats = categoryStats(books)
 
 const summary = [
   { label: '总书籍', value: stats.total, icon: '📚' },
-  { label: '展示分类', value: stats.group.length + stats.top.length, icon: '🏷️' },
-  { label: '文章总数', value: contentStats.chapterCount, icon: '📄' },
+  { label: '展示分类', value: stats.group.length + stats.top.length + stats.link.length, icon: '🏷️' },
+  { label: '章节总数', value: contentStats.chapterCount, icon: '📄' },
   { label: '总阅读时长', value: formatMinutes(contentStats.totalReadingMinutes), icon: '⏱' },
 ]
 
 // 每分区一条数据源：count 供分区标题、max 供比例条按分区内最大值归一化
 const sections = [
-  { icon: '📚', title: '技术小册分类', rows: stats.group },
-  { icon: '📖', title: '电子书分类', rows: stats.top },
+  { icon: '📚', title: '技术小册分类', rows: stats.group, unit: '本' },
+  { icon: '📖', title: '电子书分类', rows: stats.top, unit: '本' },
+  { icon: '📝', title: '独立栏目', rows: stats.link, unit: '辑' },
 ].map(s => ({
   ...s,
   count: s.rows.reduce((n, r) => n + r.count, 0),
@@ -44,7 +45,7 @@ const sections = [
       <h2 class="section-title">
         <span class="section-icon">{{ s.icon }}</span>
         {{ s.title }}
-        <span class="section-count">{{ s.count }} 本</span>
+        <span class="section-count">{{ s.count }} {{ s.unit }}</span>
       </h2>
       <div v-if="s.rows.length" class="genre-stats">
         <div v-for="row in s.rows" :key="row.key || 'uncategorized'" class="genre-row">
@@ -52,7 +53,7 @@ const sections = [
           <span class="genre-bar-track">
             <span class="genre-bar" :style="{ width: (row.count / s.max) * 100 + '%' }"></span>
           </span>
-          <span class="genre-count">{{ row.count }} 本</span>
+          <span class="genre-count">{{ row.count }} {{ s.unit }}</span>
         </div>
       </div>
       <p v-else class="genre-empty">该分区暂无书籍</p>

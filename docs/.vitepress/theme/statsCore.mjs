@@ -18,7 +18,7 @@ const UNCATEGORIZED = '未分类'
 /**
  * 把 groupBooks 的分组结果压成统计行；key 为 null 表示未分类兜底组。
  * @param {{ slug: string, title: string, category?: string, genre?: string }[]} books
- * @returns {{ total: number, group: StatsRow[], top: StatsRow[] }}
+ * @returns {{ total: number, group: StatsRow[], top: StatsRow[], link: StatsRow[] }}
  */
 export function categoryStats(books) {
   const toRows = groups =>
@@ -31,6 +31,7 @@ export function categoryStats(books) {
     total: books.length,
     group: toRows(groupBooks(books, 'group')),
     top: toRows(groupBooks(books, 'top')),
+    link: toRows(groupBooks(books, 'link')),
   }
 }
 

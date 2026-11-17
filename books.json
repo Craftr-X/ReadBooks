@@ -292,5 +292,12 @@
     "desc": "马歇尔·卢森堡经典之作：观察、感受、需要、请求四要素，让爱与理解融入生活",
     "category": "ebook",
     "genre": "cognition"
+  },
+  {
+    "slug": "articles",
+    "title": "文章收藏",
+    "desc": "知乎等平台看到的好文章，随手收录",
+    "category": "booklet",
+    "genre": "articles"
   }
 ]

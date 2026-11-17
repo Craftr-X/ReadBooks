@@ -15,9 +15,11 @@ const base = computed(() => site.value.base)
 const bookHref = (slug: string) => `${base.value}books/${slug}/`
 
 // 大区与顶部导航共用 genre 注册表：显式 genre 跨 category 生效，
-// 未归类的书按 category 兜底（booklet → 技术小册区，ebook → 电子书区）。
+// 未归类的书按 category 兜底（booklet → 技术小册区，ebook → 电子书区）；
+// link 侧（文章收藏等）独立成栏，不计入前两者。
 const bookletGroups = computed(() => groupBooks(books as BookEntry[], 'group'))
 const ebookGroups = computed(() => groupBooks(books as BookEntry[], 'top'))
+const linkGroups = computed(() => groupBooks(books as BookEntry[], 'link'))
 const groupLabel = (genre: { icon: string; label: string } | null) =>
   genre ? `${genre.icon} ${genre.label}` : '其他'
 
@@ -25,12 +27,13 @@ const sideCount = (groups: { books: BookEntry[] }[]) =>
   groups.reduce((n, g) => n + g.books.length, 0)
 const booklets = computed(() => sideCount(bookletGroups.value))
 const ebooks = computed(() => sideCount(ebookGroups.value))
+const linkCollections = computed(() => sideCount(linkGroups.value))
 
-// 统计卡的前两项与下方分区用同一口径（按展示分组求和），避免同页数字打架
+// 统计卡与下方分区用同一口径（按展示分组求和），避免同页数字打架
 const stats = computed(() => [
   { label: '技术小册', value: booklets.value, icon: '📚' },
   { label: '电子书', value: ebooks.value, icon: '📖' },
-  { label: '文章总数', value: contentStats.chapterCount, icon: '📄' },
+  { label: '文章收藏', value: linkCollections.value, icon: '📝' },
   { label: '总阅读时长', value: formatMinutes(contentStats.totalReadingMinutes), icon: '⏱' },
 ])
 </script>
@@ -90,6 +93,31 @@ const stats = computed(() => [
           {{ groupLabel(group.genre) }}
           <span class="genre-count">{{ group.books.length }} 本</span>
         </h3>
+        <div class="book-grid">
+          <a
+            v-for="book in group.books"
+            :key="book.slug"
+            :href="bookHref(book.slug)"
+            class="book-card"
+          >
+            <div class="book-card-body">
+              <h3 class="book-title">{{ book.title }}</h3>
+              <p class="book-desc">{{ book.desc }}</p>
+            </div>
+            <span class="book-arrow" aria-hidden="true">→</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- 独立栏目（文章收藏等 link 侧合辑） -->
+    <section v-if="linkGroups.length" class="book-section">
+      <h2 class="section-title">
+        <span class="section-icon">📝</span>
+        文章收藏
+        <span class="section-count">{{ linkCollections }} 辑</span>
+      </h2>
+      <div v-for="group in linkGroups" :key="group.genre?.key || 'other'" class="genre-group">
         <div class="book-grid">
           <a
             v-for="book in group.books"
