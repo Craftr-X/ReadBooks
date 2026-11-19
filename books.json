@@ -299,5 +299,12 @@
     "desc": "知乎等平台看到的好文章，随手收录",
     "category": "booklet",
     "genre": "articles"
+  },
+  {
+    "slug": "jingying-weilai",
+    "title": "经营未来",
+    "desc": "韩国前总统李明博自传：从贫困少年到现代集团CEO、首尔市长、总统的成长与经营人生",
+    "category": "ebook",
+    "genre": "history"
   }
 ]
