@@ -6,7 +6,7 @@
 
 Dockerfile 是 Docker 中用于定义镜像自动化构建流程的配置文件，在 Dockerfile 中，包含了构建镜像过程中需要执行的命令和其他操作。通过 Dockerfile 我们可以更加清晰、明确的给定 Docker 镜像的制作过程，而由于其仅是简单、小体积的文件，在网络等其他介质中传递的速度极快，能够更快的帮助我们实现容器迁移和集群部署。
 
-![](https://user-gold-cdn.xitu.io/2018/10/1/1662ee4fdf802776?w=1047&h=332&f=png&s=55112)
+![Dockerfile 定义镜像构建流程示意](https://user-gold-cdn.xitu.io/2018/10/1/1662ee4fdf802776?w=1047&h=332&f=png&s=55112)
 
 通常来说，我们对 Dockerfile 的定义就是针对一个名为 Dockerfile 的文件，其虽然没有扩展名，但本质就是一个文本文件，所以我们可以通过常见的文本编辑器或者 IDE 创建和编辑它。
 

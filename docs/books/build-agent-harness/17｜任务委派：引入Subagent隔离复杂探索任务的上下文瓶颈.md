@@ -30,7 +30,7 @@
 
 我们下面用一张示意图，对比单体 Agent 与 Subagent 架构在上下文管理上的巨大差异：
 
-![](images/979413/7b1c50865c26f3d1bcf5a579516393e1.png)
+![单体 Agent 与 Subagent 隔离上下文对比图](images/979413/7b1c50865c26f3d1bcf5a579516393e1.png)
 
 ## 极简驾驭：Subagent 就是一个底层的“普通工具”
 

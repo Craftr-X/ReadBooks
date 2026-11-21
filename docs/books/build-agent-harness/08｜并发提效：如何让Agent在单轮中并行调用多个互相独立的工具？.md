@@ -58,7 +58,7 @@ for _, toolCall := range actionResp.ToolCalls {
 
 我们可以用一张示意图来对比改造前后的性能差异。
 
-![](images/973865/61e773160859a58af9ac831e53e84e30.jpeg)
+![单轮串行与并行调用工具的性能对比示意](images/973865/61e773160859a58af9ac831e53e84e30.jpeg)
 
 通过引入 Goroutine 和 `sync.WaitGroup`，我们将原本 O(N) 的耗时，硬生生降到了 O(Max(N))。这在面对 I/O 密集型操作时，甚至是数量级的性能提升。
 

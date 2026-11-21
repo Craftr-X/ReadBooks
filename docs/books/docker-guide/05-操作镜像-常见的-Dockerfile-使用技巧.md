@@ -98,7 +98,7 @@ RUN rm -rf /var/lib/apt/lists/*
 
 看似连续的镜像构建过程，其实是由多个小段组成。每当一条能够形成对文件系统改动的指令在被执行前，Docker 先会基于上条命令的结果启动一个容器，在容器中运行这条指令的内容，之后将结果打包成一个镜像层，如此反复，最终形成镜像。
 
-![](https://user-gold-cdn.xitu.io/2018/10/3/166377aa670bb4a4?w=1516&h=482&f=png&s=49015)
+![Dockerfile 指令逐层构建镜像过程示意](https://user-gold-cdn.xitu.io/2018/10/3/166377aa670bb4a4?w=1516&h=482&f=png&s=49015)
 
 所以说，我们之前谈到镜像是由多个镜像层叠加而得，而这些镜像层其实就是在我们 Dockerfile 中每条指令所生成的。
 
@@ -238,11 +238,11 @@ exec "$@"
 
 要得到镜像的 Dockerfile 文件，我们可以进入到镜像的详情页面，在介绍中，镜像作者们通常会直接把 Dockerfile 的连接放在那里。
 
-![](https://user-gold-cdn.xitu.io/2018/10/3/16637944f4705632?w=709&h=583&f=png&s=41150)
+![镜像详情页中 Dockerfile 链接位置截图](https://user-gold-cdn.xitu.io/2018/10/3/16637944f4705632?w=709&h=583&f=png&s=41150)
 
 除此之外，进入到 Dockerfile 这个栏目下，我们也能够直接看到镜像 Dockerfile 的内容。在页面的右侧，还有进入 Dockerfile 源文件的连接，如果在 Dockerfile 中有引入其他的文件，我们可以通过这个连接访问到。
 
-![](https://user-gold-cdn.xitu.io/2018/10/3/166379581300d9e0?w=1264&h=675&f=png&s=62662)
+![Docker Hub Dockerfile 栏目与源文件入口](https://user-gold-cdn.xitu.io/2018/10/3/166379581300d9e0?w=1264&h=675&f=png&s=62662)
 
 另外，我自己也制作了一些软件的镜像，大家可以访问 GitHub 上的项目地址，查阅其中的 Dockerfile 内容：[https://github.com/cogset](https://github.com/cogset) 。
 

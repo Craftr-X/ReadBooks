@@ -8,7 +8,7 @@
 1. 将制品上传到服务器。
 1. 在服务器将编译后的文件，手动可用的容器服务内（例如 `Nginx，Tomcat，Apache` 等服务）
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/43e0a040cebb4bc8a611ffb46002db18~tplv-k3u1fbpfcp-zoom-1.image)
+![传统手动打包上传部署流程示意](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/43e0a040cebb4bc8a611ffb46002db18~tplv-k3u1fbpfcp-zoom-1.image)
 
 显而易见，这种流程不仅繁琐，且容易出错，是非常影响开发效率的。开发人员要花一些时间浪费在这上面。那么有没有高效率，简单便捷一些的方式呢？
 

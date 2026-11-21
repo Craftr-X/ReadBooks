@@ -24,7 +24,7 @@
 
 如果说 Dockerfile 是将容器内运行环境的搭建固化下来，那么 Docker Compose 我们就可以理解为将多个容器运行的方式和配置固化下来。
 
-![](https://user-gold-cdn.xitu.io/2018/10/4/1663e6a38cd88368?w=1600&h=704&f=png&s=781358)
+![Dockerfile 与 Compose 固化环境对比示意](https://user-gold-cdn.xitu.io/2018/10/4/1663e6a38cd88368?w=1600&h=704&f=png&s=781358)
 
 在 Docker Compose 里，我们通过一个配置文件，将所有与应用系统相关的软件及它们对应的容器进行配置，之后使用 Docker Compose 提供的命令进行启动，就能让 Docker Compose 将刚才我们所提到的那些复杂问题解决掉。
 
