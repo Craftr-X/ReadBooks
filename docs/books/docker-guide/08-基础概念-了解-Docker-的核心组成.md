@@ -14,7 +14,7 @@
 
 当然，Docker 的镜像与虚拟机中的镜像还是有一定区别的。首先，之前我们谈到了 Docker 中的一个创新是利用了 AUFS 作为底层文件系统实现，通过这种方式，Docker 实现了一种增量式的镜像结构。
 
-![](https://user-gold-cdn.xitu.io/2018/9/7/165b29cad1a3dfae?w=1645&h=740&f=png&s=92371)
+![AUFS 增量式镜像层结构示意](https://user-gold-cdn.xitu.io/2018/9/7/165b29cad1a3dfae?w=1645&h=740&f=png&s=92371)
 
 每次对镜像内容的修改，Docker 都会将这些修改铸造成一个镜像层，而一个镜像其实就是由其下层所有的镜像层所组成的。当然，每一个镜像层单独拿出来，与它之下的镜像层都可以组成一个镜像。
 
@@ -42,7 +42,7 @@
 
 在 Docker 中，实现了强大的网络功能，我们不但能够十分轻松的对每个容器的网络进行配置，还能在容器间建立虚拟网络，将数个容器包裹其中，同时与其他网络环境隔离。
 
-![](https://user-gold-cdn.xitu.io/2018/9/5/165a810ad2c81714?w=1570&h=486&f=png&s=50933)
+![Docker 容器虚拟网络与隔离示意](https://user-gold-cdn.xitu.io/2018/9/5/165a810ad2c81714?w=1570&h=486&f=png&s=50933)
 
 另外，利用一些技术，Docker 能够在容器中营造独立的域名解析环境，这使得我们可以在不修改代码和配置的前提下直接迁移容器，Docker 会为我们完成新环境的网络适配。对于这个功能，我们甚至能够在不同的物理服务器间实现，让处在两台物理机上的两个 Docker 所提供的容器，加入到同一个虚拟网络中，形成完全屏蔽硬件的效果。
 
@@ -70,7 +70,7 @@
 
 所有我们通常认为的 Docker 所能提供的容器管理、应用编排、镜像分发等功能，都集中在了 docker daemon 中，而我们之前所提到的镜像模块、容器模块、数据卷模块和网络模块也都实现在其中。在操作系统里，docker daemon 通常以服务的形式运行以便静默的提供这些功能，所以我们也通常称之为 Docker 服务。
 
-![](https://user-gold-cdn.xitu.io/2018/9/5/165a8349ffdb33e0?w=1385&h=530&f=png&s=60142)
+![docker daemon 承载核心功能模块示意](https://user-gold-cdn.xitu.io/2018/9/5/165a8349ffdb33e0?w=1385&h=530&f=png&s=60142)
 
 在 docker daemon 管理容器等相关资源的同时，它也向外暴露了一套 RESTful API，我们能够通过这套接口对 docker daemon 进行操作。或者更确切的说，是通过这套 RESTful API 对 docker daemon 中运行的容器和其他资源进行管理。
 
@@ -78,7 +78,7 @@
 
 那么问题来了，如果我们在控制台中编写一个 HTTP 请求以借助 docker daemon 提供的 RESTful API 来操控它，那显然是个费脑、费手又费时间的活儿。所以在 Docker Engine 里还直接附带了 docker CLI 这个控制台程序。
 
-![](https://user-gold-cdn.xitu.io/2018/9/5/165a834db42056c4?w=1502&h=503&f=png&s=37784)
+![docker CLI 通过 API 与 daemon 通信示意](https://user-gold-cdn.xitu.io/2018/9/5/165a834db42056c4?w=1502&h=503&f=png&s=37784)
 
 熟悉程序结构的朋友们比较容易看出来，docker daemon 和 docker CLI 所组成的，正是一个标准 C/S ( Client-Server ) 结构的应用程序。衔接这两者的，正是 docker daemon 所提供的这套 RESTful API。
 
