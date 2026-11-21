@@ -399,6 +399,6 @@ mysql> SELECT * FROM mysql.innodb_index_stats WHERE table_name = 'single_table';
 
 - `innodb_stats_method`决定着在统计某个索引列不重复值的数量时如何对待`NULL`值。
 
-  [1]: https://user-gold-cdn.xitu.io/2018/12/26/167e94d5b165a91f?w=598&h=325&f=png&s=109882
-  [2]: https://user-gold-cdn.xitu.io/2018/12/26/167e94d5b1e44524?w=863&h=535&f=png&s=178111
-  [3]: https://user-gold-cdn.xitu.io/2018/12/26/167e94d5b17c24e3?w=777&h=451&f=png&s=133034
+  [1]: ./_assets/recovered-167e94d5b165a91f.png
+  [2]: ./_assets/recovered-167e94d5b1e44524.png
+  [3]: ./_assets/recovered-167e94d5b17c24e3.png

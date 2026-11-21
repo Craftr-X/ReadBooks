@@ -596,4 +596,4 @@ mysql>
 
 可以看到该表的存储引擎已经改为`InnoDB`了。
 
-  [1]: https://user-gold-cdn.xitu.io/2018/12/28/167f4c7b99f87e1c?w=842&h=559&f=png&s=100231
+  [1]: ./_assets/recovered-167f4c7b99f87e1c.png

@@ -1259,6 +1259,6 @@ SELECT * FROM  (
 
 所以`MySQL`在执行带有派生表的时候，优先尝试把派生表和外层查询合并掉，如果不行的话，再把派生表物化掉执行查询。
 
-  [1]: https://user-gold-cdn.xitu.io/2018/12/26/167e9e704abd19e4?w=741&h=566&f=png&s=86914
-  [2]: https://user-gold-cdn.xitu.io/2018/12/26/167e9e704f8befd2?w=730&h=509&f=png&s=68994
-  [3]: https://user-gold-cdn.xitu.io/2018/12/26/167e9e704e05a551?w=959&h=440&f=png&s=112907
+  [1]: ./_assets/recovered-167e9e704abd19e4.png
+  [2]: ./_assets/recovered-167e9e704f8befd2.png
+  [3]: ./_assets/recovered-167e9e704e05a551.png

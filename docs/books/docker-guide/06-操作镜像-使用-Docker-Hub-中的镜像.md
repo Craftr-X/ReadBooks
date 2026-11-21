@@ -10,7 +10,7 @@
 
 这里我们来看个例子，下面是由 Docker 官方提供的 OpenJDK 镜像的说明页面。
 
-![Docker Hub 上 OpenJDK 官方镜像说明页](https://user-gold-cdn.xitu.io/2018/10/3/166387eaadcb9fe1?w=816&h=762&f=png&s=65318)
+![Docker Hub 上 OpenJDK 官方镜像说明页](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/10/3/166387eaadcb9fe1~tplv-t2oaga2asx-image.image)
 
 通常来说，镜像的维护者会在镜像介绍中展示出镜像所有的 Tag，如果没有，我们也能够从页面上的 Tags 导航里进入到镜像标签列表页面。
 
@@ -80,7 +80,7 @@ python:3.6-jessie
 
 在 MySQL 镜像的详情里，描述了我们要如何传入这些参数来启动 MySQL 容器。
 
-![MySQL 镜像文档中启动参数说明截图](https://user-gold-cdn.xitu.io/2018/10/3/16639074fdc48422?w=816&h=762&f=png&s=97212)
+![MySQL 镜像文档中启动参数说明截图](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/10/3/16639074fdc48422~tplv-t2oaga2asx-image.image)
 
 对于 MySQL 镜像来说，进行软件配置的方法是通过环境变量的方式来实现的 ( 在其他的镜像里，还有通过启动命令、挂载等方式来实现的 )。我们只需要通过这些给出的环境变量，就可以初始化 MySQL 的配置了。
 
@@ -103,25 +103,25 @@ sudo docker run --name mysql -e MYSQL_DATABASE=webapp -e MYSQL_USER=www -e MYSQL
 
 要在 Docker Hub 上共享镜像，我们必须有一个 Docker Hub 的账号，这自不必说了。在登录到我们账号的控制面板后，我们能够找到创建的按钮，在这里选择 `Create Automated Build` ( 创建自动构建 )。
 
-![Docker Hub 创建自动构建入口截图](https://user-gold-cdn.xitu.io/2018/10/3/16638f7a60c3c8a9?w=916&h=558&f=png&s=69134)
+![Docker Hub 创建自动构建入口截图](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/10/3/16638f7a60c3c8a9~tplv-t2oaga2asx-image.image)
 
 自动构建镜像是 Docker Hub 为我们提供的一套镜像构建服务，我们只需要提供 Dockerfile 和相关的基本文件，Docker Hub 就能够在云端自动将它们构建成镜像，之后便可以让其他开发者通过 `docker pull` 命令拉取到这一镜像。
 
 自动构建让不需要我们再用本机进行镜像的构建，既能节约时间，又能享受高速的云端机器构建。
 
-![Docker Hub 自动构建配置界面截图](https://user-gold-cdn.xitu.io/2018/10/3/16638fbdcfee0b77?w=2558&h=918&f=png&s=89388)
+![Docker Hub 自动构建配置界面截图](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/10/3/16638fbdcfee0b77~tplv-t2oaga2asx-image.image)
 
 在 Docker Hub 中并不直接存放我们用于构建的 Dockerfile 和相关文件，我们必须将 Docker Hub 账号授权到 GitHub 或是 Bitbucket 来从这些代码库中获取 Dockerfile 和相关文件。
 
-![授权 GitHub 或 Bitbucket 以获取构建文件](https://user-gold-cdn.xitu.io/2018/10/3/16638fbc9c1ac1c2?w=2558&h=708&f=png&s=79510)
+![授权 GitHub 或 Bitbucket 以获取构建文件](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/10/3/16638fbc9c1ac1c2~tplv-t2oaga2asx-image.image)
 
 在连接到 GitHub 或 Bitbucket 后，我们就可以选择我们存放 Dockerfile 和相关文件的代码仓库用来创建自动构建了。
 
-![选择代码仓库创建自动构建截图](https://user-gold-cdn.xitu.io/2018/10/3/16638fbbd4f6d20a?w=1934&h=1034&f=png&s=96802)
+![选择代码仓库创建自动构建截图](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/10/3/16638fbbd4f6d20a~tplv-t2oaga2asx-image.image)
 
 在基本信息填写完成，点击创建按钮后，Docker Hub 就会开始根据我们 Dockerfile 的内容构建镜像了。而此时，我们也能够访问我们镜像专有的详情页面了。
 
-![自动构建开始后的镜像详情页截图](https://user-gold-cdn.xitu.io/2018/10/3/16638fb9fa6cd7f7?w=2554&h=952&f=png&s=137319)
+![自动构建开始后的镜像详情页截图](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/10/3/16638fb9fa6cd7f7~tplv-t2oaga2asx-image.image)
 
 在 Build Details 页面里，我们可以看到镜像构建的进度和详细的构建情况。
 

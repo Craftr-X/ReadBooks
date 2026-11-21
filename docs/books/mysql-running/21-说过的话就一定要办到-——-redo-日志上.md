@@ -316,22 +316,22 @@ Redundant是一种比较原始的行格式，它就是非紧凑的。而Compact�
 对照着上图，自己分析一下每个block的LOG_BLOCK_HDR_DATA_LEN、LOG_BLOCK_FIRST_REC_GROUP属性值都是什么哈～
 ```
 
-  [1]: https://user-gold-cdn.xitu.io/2019/3/4/1694892fdec61898?w=982&h=253&f=png&s=32063
-  [2]: https://user-gold-cdn.xitu.io/2019/3/4/1694892fdf053082?w=839&h=291&f=png&s=43606
-  [3]: https://user-gold-cdn.xitu.io/2019/3/4/1694892fdf3da823?w=878&h=299&f=png&s=48358
-  [4]: https://user-gold-cdn.xitu.io/2019/3/4/1694892fdfa7d8ce?w=1127&h=524&f=png&s=68863
-  [5]: https://user-gold-cdn.xitu.io/2019/3/4/1694892fe02553d0?w=565&h=625&f=png&s=87737
-  [6]: https://user-gold-cdn.xitu.io/2019/3/4/1694892fe05a2603?w=722&h=458&f=png&s=31490
-  [7]: https://user-gold-cdn.xitu.io/2019/3/4/16948930120794a0?w=711&h=559&f=png&s=44305
-  [8]: https://user-gold-cdn.xitu.io/2019/3/4/1694893011fc216e?w=731&h=551&f=png&s=45566
-  [9]: https://user-gold-cdn.xitu.io/2019/3/4/16948930147d598e?w=951&h=570&f=png&s=99256
-  [10]: https://user-gold-cdn.xitu.io/2019/3/4/16948930162d677f?w=539&h=199&f=png&s=15317
-  [11]: https://user-gold-cdn.xitu.io/2019/3/4/16948930164d64a0?w=961&h=300&f=png&s=42384
-  [12]: https://user-gold-cdn.xitu.io/2019/3/4/169489301685dcb4?w=869&h=282&f=png&s=28021
-  [13]: https://user-gold-cdn.xitu.io/2019/3/4/169489303b9e5c9f?w=619&h=559&f=png&s=28248
-  [14]: https://user-gold-cdn.xitu.io/2019/3/4/169489303bff8e20?w=785&h=416&f=png&s=58592
-  [15]: https://user-gold-cdn.xitu.io/2019/3/4/169489303c1fb389?w=998&h=521&f=png&s=116667
-  [16]: https://user-gold-cdn.xitu.io/2019/3/4/169489303ceeb982?w=995&h=459&f=png&s=78303
-  [17]: https://user-gold-cdn.xitu.io/2019/3/4/1694893043dc7344?w=842&h=542&f=png&s=100778
-  [18]: https://user-gold-cdn.xitu.io/2019/2/25/1692548dcc3fe243?w=956&h=507&f=png&s=97414
-  [19]: https://user-gold-cdn.xitu.io/2019/3/4/169489304969c9d7?w=823&h=419&f=png&s=105070
+  [1]: ./_assets/recovered-1694892fdec61898.png
+  [2]: ./_assets/recovered-1694892fdf053082.png
+  [3]: ./_assets/recovered-1694892fdf3da823.png
+  [4]: ./_assets/recovered-1694892fdfa7d8ce.png
+  [5]: ./_assets/recovered-1694892fe02553d0.png
+  [6]: ./_assets/recovered-1694892fe05a2603.png
+  [7]: ./_assets/recovered-16948930120794a0.png
+  [8]: ./_assets/recovered-1694893011fc216e.png
+  [9]: ./_assets/recovered-16948930147d598e.png
+  [10]: ./_assets/recovered-16948930162d677f.png
+  [11]: ./_assets/recovered-16948930164d64a0.png
+  [12]: ./_assets/recovered-169489301685dcb4.png
+  [13]: ./_assets/recovered-169489303b9e5c9f.png
+  [14]: ./_assets/recovered-169489303bff8e20.png
+  [15]: ./_assets/recovered-169489303c1fb389.png
+  [16]: ./_assets/recovered-169489303ceeb982.png
+  [17]: ./_assets/recovered-1694893043dc7344.png
+  [18]: ./_assets/recovered-1692548dcc3fe243.png
+  [19]: ./_assets/recovered-169489304969c9d7.png

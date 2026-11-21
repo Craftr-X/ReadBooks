@@ -872,5 +872,5 @@ mysql> SELECT * FROM mysql.engine_cost;
     FLUSH OPTIMIZER_COSTS;
     ```
 
-  [1]: https://user-gold-cdn.xitu.io/2018/12/13/167a79434866cf8f?w=810&h=639&f=png&s=120298
-  [3]: https://user-gold-cdn.xitu.io/2018/12/13/167a79434b362e5e?w=818&h=637&f=png&s=127109
+  [1]: ./_assets/recovered-167a79434866cf8f.png
+  [3]: ./_assets/recovered-167a79434b362e5e.png
