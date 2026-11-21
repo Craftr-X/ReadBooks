@@ -50,7 +50,7 @@ generate(instruction);  // 规范没带进来
 
 所以单次指令的清晰度只能解决单次输出的质量。要保证整个项目几十次、几百次AI输出的一致性，你需要的不是一条好指令，是一套规范体系。写下来，每次自动加载，让Claude Code不管在哪个模块、哪个阶段，都在同一套规矩下工作。
 
-![](https://static001.geekbang.org/resource/image/3c/03/3c39f8e95c8bc02aedb985aa99da3903.jpg?wh=1440x890)
+![](./_assets/remote-a63fcce6de27.webp)
 
 这就是SDD和“写好 Prompt”的本质区别。**写好 Prompt 是一次性的技巧，SDD 是贯穿整个项目生命周期的方法论**。
 

@@ -14,41 +14,41 @@ GUI 工具中，最好用的应该就是`SourceTree`了，大家可以去[官网
 
 我们安装完启动，就会看到如下画面：
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/da12714d6f5e4fc2abc3db2a38bf351d~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-457a1e6d322d.png)
 
 我们直接点击“新建” -> “添加已经存在的本地仓库”，然后选择我们上一章的`helloworld`项目目录即可，然后就会发现我们的项目已经列出来了。
 
-![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/90f27bec1c9242ff905bc2b3717f7155~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-6e7c9d44a0e1.png)
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3a9044cd19294a4f81c3558ed6bb07d8~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-8fccc1eb7adb.png)
 
 然后我们打开我们的项目，随便修改一个文件，比如，修改我们的`.gitignore`文件，添加一行`/nm`，然后就会发现`sourcetree`中项目的目录右边有个 1，如下所示：
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/58d151a7977a4083a64b27ba5c7618a4~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-c27b6fd8b95a.png)
 
 这就表示我们的项目有一个改动等待提交。
 
 我们双击打开，如下：
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d99ff3668ac34916a64d8bc71a3d5438~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-319936b9fa1c.png)
 
 其中最左边列出了我们项目的分支，上面是本地分支，可以看到当前只有一个`master`分支，并且有个小圆圈，这表示当前所在的分支就是`master`，下面有“远端”，表示远程的分支。中间列出了`.gitignore`文件，并且被打勾，表示已经暂存，右边列出了文件的改动，`-`表示删除了一行，`+`表示添加了一行。
 
 现在，我们选中`.gitignore`文件，点击右键，选择“重置”，如下：
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c7d1e80c928a47c08af185ebcde860e7~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-f5dcfe7f561c.png)
 
 就会发现文件不提示了，其实，重置的意思就等于放弃修改，也就是把文件还原到上次提交后的状态。
 
 这不是我们想要的，我们希望修改保留，但是不放在暂存区，怎么做呢？我们只需要取消文件前的打勾即可，如下：
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8f42798e1b4d49688ba967faa8f9fd66~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-66dc3a33578a.png)
 
 这就是取消暂存，等价于执行了`git rm --cached`命令，如果我们想要提交呢？
 
 我们先勾选文件，让它变为暂存文件，然后在下方输入框中输入提交信息，点击右下方的“提交”即可提交，等价于执行了`git commit`；如果你同时勾选了下面的“**立即推送变更到 origin/master**”，则文件在提交的同时也会推送，等价于同时执行了`git push`。
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/739953c1df384f45a943b37ba0bf9b61~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-dd17e90a9d49.png)
 
 如下图：
 
@@ -58,11 +58,11 @@ GUI 工具中，最好用的应该就是`SourceTree`了，大家可以去[官网
 
 好，我们执行完提交之后，再来看看历史记录，我们点击左侧的“历史”，就能在右边看到历史的提交记录，如下图：
 
-![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e673430b87ce4ce9bd48b843dfadf08b~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-ebf918f4bc43.png)
 
 我们选择任意的一个提交，下方就会列出提交的具体内容，如下：
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/581dfedf1c2f4c8a954262c7a90d98af~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-42296af2d4eb.png)
 
 这样很方便以后的查找，当然，有些想偷偷摸摸干坏事的人，这里就要小心了，你的每一行代码都会记录在案，作为呈堂供词，千万别再胡写八写了。
 
@@ -138,11 +138,11 @@ GUI 工具中，最好用的应该就是`SourceTree`了，大家可以去[官网
 
 首先打开我们上一章的`helloworld`项目，我们默认就是在`master`分支，现在，让我们从`master`分支创建一个新分支`test_branch1`出来，我们直接执行`git checkout -b test_branch1`即可，根据前面的命令，我们知道这是创建一个新分支并切换到这个分支。如果你想用`sourcetree`，你就直接点击顶部的“**分支**”。
 
-![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/24649643c0f54d74a64bd94ef6610537~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-e892f2f6a0a2.png)
 
 然后就回弹出如下一个创建新分支的提示框，直接输入`test_branch1`然后点击“**创建分支**”即可。
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1c8f4bd4fa9049a59e3531c0fdd778d2~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-541f005add8a.png)
 
 这样，我们就创建出了一个新分支，我们直接执行`git status`，发现打印如下:
 
@@ -161,11 +161,11 @@ GUI 工具中，最好用的应该就是`SourceTree`了，大家可以去[官网
 
 先选择顶部的“**合并**”：
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/77b5c97851b34809998b25e8c88d4f90~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-b9e0f28183ac.png)
 
 然后在弹出框中选择“**合并已抓取**”，并选择`origin/test_branch1`分支（如果没有这个分支，就是没有 push，push 下就可以了）：
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d54a892e2bd44d4194f33f36064a6f40~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-027e755b524f.png)
 
 此时，我们就会发现合并冲突，因为我们两个分支都修改了同一个文件，如下：
 
@@ -177,15 +177,15 @@ Automatic merge failed; fix conflicts and then commit the result.
 
 此时，我们打开`sourcetree`，选择文件状态，就会看到文件被标记为感叹号，并且右边列出了冲突的内容：
 
-![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b0adbba916cb42b3bdc4b7af9b5736ca~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-d1c1f7b0c027.png)
 
 其中，感叹号表示冲突，右边的`<<<HEAD`和`=====`之间的内容表示**当前分支的改动**，而`=====`和`>>>>>`之间的内容表示**合并的分支的改动**，这里我们要手动处理下，我们把两行都保留即可，然后把`====`和`>>>`以及`<<<<`删除即可，如下：
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/eb352e19c7b9443c818469de8c63e613~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-2a8164640aa1.png)
 
 可以看到，它告诉我们本次修改添加了一行`hello git`，我们注意到`hello.java`还是带有感叹号，这就需要我们手动把文件标记为**已解决**了，我们选中文件，右键点击，然后选择**解决冲突** -> **标记为已解决**。
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e167d05f37a04adda5a362b01c6a0b28~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-764ce7aef536.png)
 
 这样，我们的一次合并就完成了。
 

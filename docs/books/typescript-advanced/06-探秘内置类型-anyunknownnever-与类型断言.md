@@ -363,11 +363,11 @@ const obj = <IStruct>{
 
 类型提示仍然存在：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/aa8331c0f2e7484784c442dc822a2c98~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.awebp)
+![img](./_assets/remote-f2f7d284b6d2.webp)
 
 在你错误地实现结构时仍然可以给到你报错信息：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/533a1b0315934f0fb4e6a831970b71c0~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.awebp)
+![img](./_assets/remote-2669baa460c0.webp)
 
 ## 总结与预告
 

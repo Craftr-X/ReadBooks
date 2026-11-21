@@ -10,7 +10,7 @@ listpack 之所以会出现，是因为用户上报的一个 Redis 崩溃问题�
 
 下面这张图是 listpack 结构，它和 ziplist 的结构很类似，也是分为头、中、尾三部分。先来看头、尾两部分：头部里面的 tot-bytes 占了 4 个字节，存了 listpack 占用的总字节数，num-elements 占用 2 个字节，存了这个 listpack 里面的元素个数；尾部是一个字节的 end-byte，它的值始终是 255。
 
-![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/73b4a04f02764c54bacb57fff7ff12c2~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-e3222c2bbf4a.png)
 
 > ziplist 内心 OS：这不是一样的吗？这样也能赚到钱！报警吧！
 
@@ -66,11 +66,11 @@ listpack 之所以会出现，是因为用户上报的一个 Redis 崩溃问题�
 
 ## listpack 核心方法
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1ea734dd8ddd4f75b0b1836d80e5ad16~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-fde78950db1b.png)
 
 要使用 listpack，先需要**用 lpNew() 函数初始化一个 listpack 实例**，返回的 char 指针，指向的是 listpack 的首地址。 lpNew() 函数可以接收一个参数来指定初始化的内存空间大小，比如说，我明确知道我的 listpack 会占用 1024 个字节，就可以直接传个 1024 的参数，就可以申请出 1024 字节大小的内存了。要是传 0 的话，就是创建一个空的 listpack 实例，里面只有头尾两部分，其中的 element 部分都没有，就是下图的状态：
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/062f24e2abbd4442940dd5b6dcbe3186~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-94859f427ab9.png)
 
 至于 lpFree() 函数的话，就是释放 listpack 实例占的空间，这里不再多说了。
 
@@ -78,13 +78,13 @@ listpack 之所以会出现，是因为用户上报的一个 Redis 崩溃问题�
 
 创建完 listpack 实例之后呢，我们就可以开始看 listpack 的增删改查了。
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/506e4632117841899a85b1ba6826b3a5~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-58cea47979e5.png)
 
 lpAppend 是往 listpack 的尾部插入字符串，lpPrepend 是往 listpack 的头部插入字符串，lpInsertString() 是往指定的位置插入字符串，它们**底层都依赖 lpInsert () 函数**。
 
 我们可以用 Cloin 的调用链视图看一下，无论是插入字符串元素，还是插入整数元素，都是走的 lpInsert() 函数：
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8c2d089fe1414d2a8ea7849cce365035~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-ac78ae1eb194.png)
 
 **lpInsert() 函数除了有`插入`数据的功能，还能够实现`删除`和`替换`的功能**，从这个调用链里面，我们也能看到 lpDelete()、lpReplace() 这些删除、替换操作也调用了 lpInsert()。
 
@@ -194,7 +194,7 @@ unsigned char *lpInsert(...){
 
 6. 算好 listpack 的新长度之后，也就知道了这个 listpack 是需要扩容还是要缩容了。如果是缩容的话，比如说删除操作，我们应该先前移数据，然后再 realloc 缩小内存空间，要不这样的话，listpack 结尾地方的数据就可能丢失。如果是需要扩容的话，比如插入操作，需要先走 realloc 扩容，然后后移已有的数据，再插入新 element。下图展示了插入和删除场景的逻辑，更新元素的话，也是类似的。
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/66ecd9b16dd145a7bf348c2ee99a5f11~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-1f1341630296.png)
 
 7. 最后，就是把新 element 写到指定的位置，更新一下 listpack 头部的 tot-bytes 和 num-elements 值。
 
@@ -241,7 +241,7 @@ lpInsert(..., newp);
 
 下面这张图就说明了 *newp 这个指针的指向：如果此次是插入操作，会把它指向新 element；如果是更新操作，它会指向这个更新的 element；如果是删除操作，它会指向下一个 element。
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/55ff15d792f1411286c853338b474bf9~tplv-k3u1fbpfcp-watermark.image?)  
+![image.png](./_assets/remote-1f73b954770f.png)  
 
 之所以要这么修改 *newp 指针，主要是`为了方便实现迭代器的删除操作`。在后面介绍 quicklist 迭代器的时候会看到，它就是使用 lpInsert() 方法删除元素的，它需要感知到删除之后下一个 element 的位置，这样才能继续往下迭代。
 
@@ -253,7 +253,7 @@ lpInsert(..., newp);
 
 与 listpack 读取或者迭代相关的函数，就是下面这些，从函数名上基本就可以猜出具体实现。
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/01ffc1165aac4d12af6fb334a5ec8685~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-c63e61b390fe.png)
 
 我这里简单整理一下这些函数的功能：
 
@@ -270,7 +270,7 @@ lpInsert(..., newp);
 
 但是，lpGet() 函数，就需要专门解析 data 部分。看下面这个调用关系链，我们发现解析 data 值的函数，底层走的是 **lpGetWithSize() 函数**。至于 lpGetWithSize() 函数的具体实现，就是根据 encoding-type 编码格式解析 data，该函数的实现就留给你自己分析吧，相信你在读完本讲内容之后，可以轻松读懂该函数，当然也欢迎你在评论区分享看源码时遇到的问题哦。
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/55ba92afb7b544c9a0b8c96f8b2186f5~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-433032bc3ac9.png)
 
 ## 总结
 

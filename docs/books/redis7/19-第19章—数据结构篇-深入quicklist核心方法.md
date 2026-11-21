@@ -4,7 +4,7 @@
 
 首先来看创建 quicklist 实例的 `quicklistNew() 函数`，可以用 CLoin 调用链的视图看一下它都调了哪些函数。
 
-![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/13f74fdfca8441f1be8cc5756b55e10c~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-35a18fb0defc.png)
 
 可以看到，quicklistNew() 函数先会调用 quicklistCreate() 创建一个空 quicklist 实例，里面就是走 malloc 分配内存，然后通过 quicklistSetCompressDeth() 和 quicklistSetFill() 函数来初始化 compress 和 fill 两个字段。
 
@@ -28,7 +28,7 @@ void quicklistPush(quicklist *quicklist, void *value, const size_t sz,
 
 从下面的调用关系链截图，也能看到，quicklistPush 调用了 quicklistPushHead 和 quicklistPushTail 两个分支。
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/088a90192d59431882df4b7bc4af3330~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-bf903e5f7887.png)
 
 下面我们就拿 quicklistPushHead 这个分支为例进行分析（quicklistPushTail 这个分支，在代码实现上和 quicklistPushHead 的差异不大，这里就不再赘述），相关实现代码如下：
 
@@ -79,11 +79,11 @@ int quicklistPushHead(quicklist *quicklist, void *value, size_t sz) {
 
 CPU 执行命令之前需要读指令、解析指令，然后才能真正执行指令，其中读指令的时间比较久，串行的话，CPU 就要等待执行从各级缓存或内存加载到寄存器里面，比如说下面这张图，白色块占的时间，都是 CPU 空闲等待的时间。
 
-![19 CPU流水线1.jpg](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7ad45fb6f34349769cd94015027ff28f~tplv-k3u1fbpfcp-watermark.image?)
+![19 CPU流水线1.jpg](./_assets/remote-20a0ae32a0bc.jpg)
 
 为了打满 CPU 呢，就可以用`预取指令`的方式，提前给 CPU 准备好下一条指令。如下图所示，CPU 就一直在执行指令了。
 
-![19 CPU 流水线2.jpg](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3bb10831f7ae4001be8d93e77d46ebd5~tplv-k3u1fbpfcp-watermark.image?)
+![19 CPU 流水线2.jpg](./_assets/remote-c2bc96f75603.jpg)
 
 需要注意一个问题，**预取指令的数量是有限的**。比如说，CPU 只能预取后面 10 条、20 条指令，不可能把整个程序的指令都预取进来，CPU 高速缓存之类的地方是存不下的。
 
@@ -168,11 +168,11 @@ quicklistPushHead() 里面最后一个分支，用于处理节点分裂的情况
 
 先举个例子，假设我们的 compress-depth 配置成了 1，那就是下图的状态，只有首尾的两个节点的 listpack 没有被压缩。
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2bff29f0efa0412b99292a7232ffb50d~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-7564b4c1b0f5.png)
 
 现在在头部插入一个新 quicklistNode 节点，此时我们就需要把原来的头部节点进行压缩，就是这个图里面标红的 quicklistNode 节点。
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/30eee0fac19b41c8bf5dc077ef1cef8a~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-23aee6cb9701.png)
 
 触发压缩的例子说明了之后，我们再来看 quicklistCompress 这个宏，它分了两个分支。
 
@@ -231,7 +231,7 @@ REDIS_STATIC void __quicklistCompress(const quicklist *quicklist,
 
 __quicklistCompress() 函数中最核心的就是上述代码片段中的 while 循环，它会同时从 quicklist 的两端开始往中间节点检查。比如说，现在 compress-depth 是 3，那首尾三个节点都要是不压缩的状态，这个 while 循环就会循环 3 次，forward、reverse 两个指针的移动方向，就是下面这张图，循环到的这 6 个节点都会被解压，解压的逻辑是 Decompress 这个宏里面。
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c8172933488a495f90de91d67ed7a15a~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-2ca26de97187.png)
 
 处理完 quicklist 两端的压缩的事情之后呢，我们来关注 __quicklistCompress() 函数的最后一个 node 参数，这个参数传入的是此次要压缩的目标节点。如果这个节点在上述非压缩范围内，就无需压缩了；如果在压缩范围内，则需要执行 quicklistCompressNode() 函数进行压缩处理。
 
@@ -239,7 +239,7 @@ __quicklistCompress() 函数中最核心的就是上述代码片段中的 while 
 
 举个例子，来看下面这张图，compress-depth 还是 3，节点从 6 个增长到 7 个节点的时候，forward、reverse 指针在 while 循环结束的时候，都会指向中间这个节点，已经离开了非压缩区域，需要把它压缩掉；然后继续往 quicklist 头部插入节点，节点增长到 8 个的时候，forward、reverse 指向中间两个节点，reverse 已经压缩过了，forward 需要压缩；节点继续增长到 9 个的时候，forward 需要压缩，最中间的节点、还有 reverse 节点在节点是 8 的时候，已经压缩过了，就不用管了。
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/13ec7fbba8084a70896db1a87456e639~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-11bbcfbecbfb.png)
 
 到此为止，从 quicklist 头部插入新元素的事情，已经说完了。从尾部插入的逻辑就不再重复了，相信小伙伴们看这部分的代码应该会非常轻松。
 
@@ -247,11 +247,11 @@ __quicklistCompress() 函数中最核心的就是上述代码片段中的 while 
 
 除了从头尾插入数据之外，quicklist 还可以**在指定的位置插入数据**，具体就是 `InsertAfter()` 和 `InsertBefore()` 这两个函数。
 
-![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1a1cdbc45e2147609eb739f67a95fd08~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-ac40e4294f55.png)
 
 从名字上就能看出来，After 是在指定位置之后插入数据，Before 是在前面插入。这两个函数，底层都依赖了`_quicklistInsert()`，来看一眼调用关系：
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8b1726f45fc84eafa97aac84ca86122c~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-e4d797b3b300.png)
 
 这里我们就拿 InsertAfter() 的场景为例来讲解 __quicklistInsert() 函数的实现。
 
@@ -305,11 +305,11 @@ REDIS_STATIC void _quicklistInsert(quicklistIter *iter, quicklistEntry *entry,
 
 下面进入一个非常长的 if else 代码块，我们还是紧抓 after 插入场景进行分析，我这里标了 1 到 4，四个分支，这四个是和 after 插入场景相关的分支。
 
-![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/fa5b16c3470d4b83b3dd89bb809786a7~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-bd6811b00f84.png)
 
 我们一个个场景来说，来看这张图：
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a03d97c1f1cd4bccacaf93050e15d506~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-ebd62a7b9f83.png)
 
 - 第一个场景，是锚节点没满，直接走 listpack 的定点插入逻辑就行。
 
@@ -327,13 +327,13 @@ REDIS_STATIC void _quicklistInsert(quicklistIter *iter, quicklistEntry *entry,
 
 - 最后是场景 4 里面，锚节点分裂的位置，是新元素插入的位置。节点分裂的时候，可能会出现一种合并的情况。举个例子，就像下面这张图，锚节点分裂成两个节点之后，分裂出来的前面这个节点，可能会和前一个节点合并，当然，前提是这两个节点的数据合并之后，依旧没有达到分裂的阈值。具体的合并实现，在 _quicklistMergeNodes() 这个函数里面，里面会涉及到节点解压、listpack 合并这些事情，就留给小伙伴们自己分析了。
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/cc8ddf9a3b4c4c79ba110db6ef0c3eed~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-a20c0aab3b4e.png)
 
 ## 弹出数据
 
 从 quicklist 里面读取数据的时候，我们一般是从 quicklist 两端弹出数据，也就是 LPOP、RPOP 这种命令。这些 POP 命令底层依赖是 `PopCustom 这个函数`，我们用调用链视图看一眼，不仅是 LPOP、RPOP 命令，像阻塞版本里的 POP、LMOVE 这些命令也都是通过 quicklistPopCustom() 弹出元素的。
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d11b4a150b204cd29fd36215f52d234c~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-02b1e6f60dea.png)
 
 **quicklistPopCustom() 函数基本就是前面说的 quicklistPushTail()、quicklistPushHead() 函数的反逻辑**，先来看它的函数签名：
 
@@ -456,7 +456,7 @@ while (quicklistNext(iter, &entry)) {
 
 **这两个函数主要是初始化了 quicklist 迭代器的 current 和 offset 字段**。以 quicklistGetIteratorAtIdx() 函数为例，如下图，我们需要从第 9 个元素开始正向迭代的话，就需要把迭代器的 current 指针移动到第 3 个节点，offset 移动到 current 节点里面的第二个元素。
 
-![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/af1b94eeea104f998ee5750d56bf92de~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-bfcf16f10afc.png)
 
 具体的实现就不展开分析了，小伙伴们可以自行思考一下。
 

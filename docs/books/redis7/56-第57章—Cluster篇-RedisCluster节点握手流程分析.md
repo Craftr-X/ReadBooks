@@ -19,7 +19,7 @@
 
 下面我们来看 A、B 两个 Redis Cluster 节点握手的示例，下图展示了节点 A 处理完 CLUSTER MEET 命令之后的状态：
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5b7ee272f6d2433a9e0900fbe97cdf63~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-666dce744c64.png)
 
 ## 建立连接
 
@@ -57,7 +57,7 @@ int serverCron(struct aeEventLoop *eventLoop, long long id, void *clientData) {
 
 下图展示了节点 A 向节点 B 发起建连成功之后的状态：
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b66dab0b24e74d9bb36fbeeb764cdd75~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-903d1d7b2e85.png)
 
 ## 发送 MEET 消息
 
@@ -96,7 +96,7 @@ Cluster Message 之所以要携带 PFAIL 状态的节点信息，是为了将疑
 
 填充好一个完整的 Cluster Message 消息之后，clusterSendPing() 会根据其实际长度，修正消息基本信息中的消息总长度、节点个数以及扩展内容的条数等信息。Cluster Message 消息的具体格式我们在下一小节展开分析，现在只需要了解 Cluster Message 中有下图展示的五个逻辑部分即可：
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6ae5ed857132447a926c6680300c0b0a~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-98548c8e2e77.png)
 
 完成 clusterMsg 实例的创建和填充之后，当前节点会调用 clusterSendMessage() 函数将 clusterMsg 添加到发送缓冲区中，也就是对应 clusterLink 连接的 sndbuf 缓冲区中，同时还会开始监听该连接上的可写事件，可写事件的回调为 clusterWriteHandler() 函数。
 
@@ -104,7 +104,7 @@ clusterWriteHandler() 函数的实现比较简单，其中就是调用 clusterLi
 
 下图展示了节点 A 向节点 B 发送完 MEET 消息之后的状态：
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e1cb9a6b16e6441ea523f427e771bf93~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-03f9a625b8c3.png)
 
 ## Cluster Message 消息
 
@@ -285,7 +285,7 @@ int clusterProcessPacket(clusterLink *link) {
 
 下图展示了 B 节点处理完 MEET 消息之后两个节点的状态：
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1e736b8317324faba1875d5b1ac37ba7~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-2c64584c3b76.png)
 
 ## 处理 PONG 消息
 
@@ -293,7 +293,7 @@ int clusterProcessPacket(clusterLink *link) {
 
 下面来看 clusterProcessPacket() 函数处理 PONG 消息的核心逻辑。根据 PONG 消息中携带的节点名称从 clusterState->nodes 集合中查找节点，依旧是查找不到，如上图所示，PONG 消息携带的是 Name B，而 A 节点记录的是 Random Name B。下图代码所示，接下来会进入 PONG 消息的处理分支。
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/61e1a513b9d84827b4fbddbfa888f24b~tplv-k3u1fbpfcp-zoom-1.image)
+![](./_assets/remote-d71180af9bc2.png)
 
 在 PONG 处理分支中，会使用 PONG 携带的节点名称替换随机生成的对端节点名称，同时还会修改对端节点的 flags：一个是删除 HANDSHAKE 标志位，表示握手结束；一个是设置 MASTER 和 SLAVE 标志位，后续流程会判断对端节点是 Master 还是 Slave。相关代码片段如下：
 
@@ -343,7 +343,7 @@ if (type == CLUSTERMSG_TYPE_PING || type == CLUSTERMSG_TYPE_PONG ||
 
 下图展示了节点 A 处理完节点 B 返回的 PONG 消息之后的状态：
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/362a31b6e5664ecda2ef0085ac716223~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-e724886d2ced.png)
 
 ## 发送 PING 消息
 
@@ -362,7 +362,7 @@ if (type == CLUSTERMSG_TYPE_PING || type == CLUSTERMSG_TYPE_PONG ||
 
 下图展示了节点 B 主动与节点 A 建连的全流程：
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c7a957fde6994a2ca55d38e1b89f7770~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-447a143f6037.png)
 
 到此为止，A、B 两个 Redis Cluster 节点之间的握手流程才算完整结束了。
 

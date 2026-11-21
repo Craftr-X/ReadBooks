@@ -31,7 +31,7 @@
 
 Claude Code解释得很清楚：MCP Server就是一个独立的Spring Boot应用，和Hify完全分开部署，只通过HTTP通信。
 
-![](https://static001.geekbang.org/resource/image/1c/93/1c3575781927c65cb861e10515c47e93.png?wh=1440x745)
+![](./_assets/remote-15ad4a845e53.webp)
 
 然后解释一般MCP Server目录结构如下：
 
@@ -55,7 +55,7 @@ hify-mcp-refund/                  ← 独立 Maven 项目
 
 然后Claude Code又解释说MCP Server对Hify是黑盒。Hify只存了一个endpoint地址，发标准协议请求，不关心里面是Java还是Python，不关心查的是MySQL还是Oracle。这就是标准化协议的价值。
 
-![](https://static001.geekbang.org/resource/image/e5/19/e5617ba2cfedde9159447323986yyb19.png?wh=1440x762)
+![](./_assets/remote-dd97c0bfe220.webp)
 
 其实到这里，我们就可以理清楚MCP Server是什么，和Hify的关系是什么。这里其实就有一个问题，我怎么知道我的业务要做哪些MCP Server呢？
 
@@ -88,7 +88,7 @@ Claude Code提了一个容易漏掉的细节：`get_refund_status` 的statusLa
 
 Claude Code还帮我们拆解一次完整退款对话会用哪些工具（真的贴心，这就是真正的生产力提升啊）：
 
-![](https://static001.geekbang.org/resource/image/0e/36/0ea79b379a172cf3f9a6a949bbb4bc36.png?wh=1440x1016)
+![](./_assets/remote-74f8eb40b76c.webp)
 
 ## 让Claude Code拆解实现步骤
 
@@ -100,7 +100,7 @@ Claude Code还帮我们拆解一次完整退款对话会用哪些工具（真�
 
 Claude Code给的拆解，这里就不细讲了，跟之前的流程差不多：
 
-![](https://static001.geekbang.org/resource/image/ec/78/ecb9a6427717d260a925a38f18fc2b78.png?wh=1547x630)
+![](./_assets/remote-c94739d2e1fd.webp)
 
 每步都能独立验证，出了问题知道在哪层找。
 
@@ -246,7 +246,7 @@ POST /api/v1/mcp-servers/{id}/debug
 
 Claude Code会根据这个提示词给我们做成页面。当然细节需要我们不断跟它对话。这个过程交给你了，直接给效果图。
 
-![](https://static001.geekbang.org/resource/image/37/yy/376d96b2314582e3dd970ca191d5a5yy.png?wh=3816x804)![](https://static001.geekbang.org/resource/image/df/f2/df04c70de7ab6311d541eyy978199ef2.png?wh=3830x1502)
+![](./_assets/remote-8b11e1af0881.webp)![](./_assets/remote-641506997d20.webp)
 
 ## 和Hify串起来
 
@@ -269,7 +269,7 @@ curl -X PUT http://localhost:8080/api/v1/agents/1/tools \
 
 Server从模拟换成真实的，Hify的MCP Client一行代码没有改。这就是标准化协议的价值，工具提供方换了，调用方不用动。
 
-![](https://static001.geekbang.org/resource/image/70/ca/7043643995302d794bcbyy58af2b1aca.png?wh=1440x706)
+![](./_assets/remote-40a7373d3c95.webp)
 
 ## 验收
 
@@ -312,7 +312,7 @@ curl -N -X POST http://localhost:8080/api/v1/chat/sessions/2/messages \
 
 下面这张图是我们在前端讲MCP Server集成到对话的效果：
 
-![](https://static001.geekbang.org/resource/image/2c/c2/2c26ecdec914719191e9842e5f6877c2.png?wh=3814x1918)
+![](./_assets/remote-ecbe47463b90.webp)
 
 ## 总结
 

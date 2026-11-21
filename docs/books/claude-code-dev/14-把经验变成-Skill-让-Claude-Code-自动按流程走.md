@@ -24,7 +24,7 @@
 
 我在动手做Hify之前，用Claude Code跑了一轮系统性的领域梳理。不是漫无目的地问“Dify是什么”，而是按一个固定结构问。
 
-![](https://static001.geekbang.org/resource/image/ff/c3/ff86ac79907704b0cbdc7a6c12d9fcc3.png?wh=1440x866)
+![](./_assets/remote-66b16d254389.webp)
 
 第一问：**它是什么，解决什么问题**？建立认知框架。Dify是AI应用开发平台，让不会写代码的人也能搭建AI应用。这决定了产品定位，它是平台型产品，不是开发者工具。
 
@@ -56,7 +56,7 @@ Skill是 `.claude/skills/` 目录下的Markdown文件，定义特定任务的�
 
 和CLAUDE.md的区别：
 
-![](https://static001.geekbang.org/resource/image/c3/d9/c3aa65419200d64db34398c793b1b9d9.png?wh=1440x804)
+![](./_assets/remote-1347589b31a5.webp)
 
 CLAUDE.md是**全局规范，即“什么规矩要遵守”，每次对话自动加载**。Skill是**具体任务的操作手册，即“这类任务怎么做”，在你引用时才生效**。CLAUDE.md定义了“Controller只做参数校验”这种通用规矩，Skill定义了“做一个新模块应该先梳理需求再拆解再执行”这种具体流程。
 
@@ -70,7 +70,7 @@ CLAUDE.md是**全局规范，即“什么规矩要遵守”，每次对话自动
 
 Claude Code给的回答会打开你的视野，原来Skill不只能写开发流程。
 
-![](https://static001.geekbang.org/resource/image/86/3d/8636f8c3009d3973fc4e7cfcd83eb43d.png?wh=1440x862)
+![](./_assets/remote-8a6585ca7dc4.webp)
 
 - 开发流程类：新模块交付流程、API接口开发流程、数据库变更流程。就是我们13讲干的事。
 - 质量保障类：代码审查checklist、单元测试编写规范、安全检查清单。比如每次写Service方法都要检查：入参校验了吗？异常处理了吗？缓存失效了吗？日志打了吗？
@@ -605,7 +605,7 @@ Skill和CLAUDE.md一样是活文档。02讲说的SDD闭环——定规范→AI�
 
 这个“加新供应商”的流程也可以沉淀成Skill：
 
-![](https://static001.geekbang.org/resource/image/b7/1a/b7c493dabf7ffa8816a6b1500001391a.png?wh=2604x730)
+![](./_assets/remote-98533c19d1e4.webp)
 
 如上图所示，我们不用去写一行代码，这个Skill也沉淀下来了。所以你看，Skill不只是大流程，小流程也可以沉淀。大的“模块交付Skill”覆盖通用的模块开发流程，小的“供应商适配Skill”覆盖特定场景的操作步骤。积累下来，你的 `.claude/skills/` 目录就是一个越来越丰富的经验库。
 

@@ -12,7 +12,7 @@
 
 这里我已经建立好了一个目录结构，虽然我们在实践的过程中不一定要按照这样的结构，但我相信这个结构一定对你有所启发。
 
-![Docker Compose 项目推荐目录结构](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/10/22/1669c139cbb5b1d8~tplv-t2oaga2asx-image.image)
+![Docker Compose 项目推荐目录结构](./_assets/remote-3ddb250a515b.png)
 
 简单说明一下这个结构中主要目录和文件的功能和作用。在这个结构里，我们可以将根目录下的几个目录分为四类：
 
@@ -106,7 +106,7 @@ services:
 
 了解如何安装扩展，这就要考验我们之前在 Docker Hub 镜像使用一节中学到的知识了。我们通过阅读 PHP 镜像的介绍页面，可以找到 PHP 镜像中已经为我们准备好了扩展的安装和启用命令，这让我们可以很轻松地在镜像中加入扩展。
 
-![PHP 镜像文档中扩展安装命令说明](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/10/23/166a08aa844baae9~tplv-t2oaga2asx-image.image)
+![PHP 镜像文档中扩展安装命令说明](./_assets/remote-2050d4f83893.png)
 
 在准备好这些使用方法之后，我们就可以开始编写构建 PHP 镜像的 Dockerfile 文件了。这里我已经编写好了一份，供大家参考。
 

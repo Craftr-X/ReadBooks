@@ -17,7 +17,7 @@ console.assert(assertion, msg [, subst1, ..., substN]); // c-like message format
 
 这个方法适用于什么情况呢？举个栗子：
 
-![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/12/7/167893640b5cdd71~tplv-t2oaga2asx-image.image)
+![](./_assets/remote-a807c2b446a1.gif)
 
 通过它，你可以摆脱令人讨厌的 `if` 表达式，还可以获得堆栈信息。
 
@@ -28,13 +28,13 @@ console.assert(assertion, msg [, subst1, ..., substN]); // c-like message format
 有时即使你 `console.log` 一个简单的变量，你可能会忘记（或混淆）哪一个是那个。那当你有不同的变量需要打印的时候，阅读起来会更费劲。
 
 假如有这么一堆你想要输出但看起来并不易读的数据
-![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2019/1/22/16874442f819a4bf~tplv-t2oaga2asx-image.image)
+![](./_assets/remote-88956dc156e3.png)
 
 > **“哪一个值对应哪一个变量来着？”**
 
 为了让它变得更加易读，你可以打印一个对象 - 只需将所有 `console.log` 的参数包装在大括号中。感谢 `ECMAScript 2015` 中引入了 `enhanced object literal(增强对象文字面量)` ，所以加上 `{}` 已经是你需要做的全部事情了：
 
-![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2019/1/22/1687447f46cb18a2~tplv-t2oaga2asx-image.image)
+![](./_assets/remote-d70b1cf5a8ce.png)
 
 ## 3.`console.table`
 
@@ -42,7 +42,7 @@ console.assert(assertion, msg [, subst1, ..., substN]); // c-like message format
 
 如果你觉得展示的列太多了，使用第二个参数，传入你想要展示的列的名字:
 
-![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/12/7/167893640e9ba1d3~tplv-t2oaga2asx-image.image)
+![](./_assets/remote-e320336b5880.gif)
 
 > 对于后台而言，只有 `node` 版本大于 `10` 以上， `console.table` 才能起作用
 
@@ -50,7 +50,7 @@ console.assert(assertion, msg [, subst1, ..., substN]); // c-like message format
 
 我们刚刚看到了 `console.table` 这个技巧，也了解了在他上面的 `{}` ，那么我们为什么不将他们结合起来打造一个终极 `log` 呢？
 
-![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2019/1/22/1687448b6fdfc5bc~tplv-t2oaga2asx-image.image)
+![](./_assets/remote-76221898e142.png)
 
 ## 5. `console.dir`
 
@@ -58,7 +58,7 @@ console.assert(assertion, msg [, subst1, ..., substN]); // c-like message format
 
 在那样的情况下，就可以使用`console.dir`:
 
-![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/12/7/1678936410bb79fa~tplv-t2oaga2asx-image.image)
+![](./_assets/remote-29a8e7b063e9.gif)
 
 ## 6. 给 `logs` 加上时间戳
 
@@ -66,7 +66,7 @@ console.assert(assertion, msg [, subst1, ..., substN]); // c-like message format
 
 如果你想要给你的应用中发生的事件加上一个确切的时间记录，开启 *timestamps* 。你可以在设置(在调试工具中的 `⋮` 下拉中找到它，或者按下 `F1` )中来开启或者使用 [Commands Menu](https://medium.com/@tomsu/devtools-tips-day-6-thecommand-menu-449eb3966d9#7404)：
 
-![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/12/13/167a467d9f9ff467~tplv-t2oaga2asx-image.image)
+![](./_assets/remote-19aedabfed40.gif)
 
 ## 7.监测执行时间
 
@@ -77,13 +77,13 @@ console.assert(assertion, msg [, subst1, ..., substN]); // c-like message format
 
 如果你想一次记录多件事，可以往这些函数中传入不同的标签值。(例如: `console.time('loading')` ， `console.timeEnd('loading')` )
 
-![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/12/13/167a484d3824545d~tplv-t2oaga2asx-image.image)
+![](./_assets/remote-fc2a021521ae.gif)
 
 ## 8. 给你的 `console.log` 加上 `CSS` 样式
 
 如果你给打印文本加上 `%c` 那么 `console.log` 的第二个参数就变成了`CSS` 规则！这个特性可以让你的日志脱颖而出(例如 [Facebook](https://www.facebook.com/) 在你打开 `console` 的时候所做的一样)
 
-![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2019/1/21/1686f25a9c7ad9d8~tplv-t2oaga2asx-image.image)
+![](./_assets/remote-9cc368506b5c.jpg)
 
 ## 9. 让 `console.log` 基于调用堆栈自动缩进
 
@@ -117,7 +117,7 @@ function log(message) {
 
 运行结果如下：
 
-![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2019/1/14/1684b5b03d4ebb82~tplv-t2oaga2asx-image.image)
+![](./_assets/remote-3cf4e95e5694.jpg)
 
 ## 10. 直接在回调中使用 `console.log`
 
@@ -130,7 +130,7 @@ function log(message) {
 
 我推荐使用第二种，因为这不仅减少了输入，还可能在回调中接收多个参数。(这在第一个解决方案中是没有的)
 
-![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2019/1/22/168744938b968240~tplv-t2oaga2asx-image.image)
+![](./_assets/remote-0f6c672f4873.png)
 
 ## 11. 使用实时表达式
 
@@ -140,4 +140,4 @@ function log(message) {
 
 同时支持定义好几个：
 
-![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/12/29/167f82b33009449f~tplv-t2oaga2asx-image.image)
+![](./_assets/remote-0ea07ec263eb.gif)

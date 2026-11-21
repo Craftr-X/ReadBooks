@@ -14,7 +14,7 @@
 
 通常来说，如果你面试比较多，面试在“并行”发生，示意图如下：
 
-![并行面试](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/94a4d91ab9a84affbc50bd5d51a068b0~tplv-k3u1fbpfcp-watermark.image?)
+![并行面试](./_assets/remote-b4b6b142c30b.png)
 
 有足够的面试数量支持，手里就容易同时拿到多个`Offer`，这样的情况对自己最有利，因为此时是你挑企业，而并不是企业挑你，从被动方变成了主动方。
 
@@ -199,7 +199,7 @@ OK，上述五点是在选`Offer`时，从公司层面上来看，需要酌情�
 
 公司信息大家可以借助[企查查](https://www.qcc.com/)、[天眼查](https://www.tianyancha.com/)、[爱企查](https://aiqicha.baidu.com/)等平台来查询，这里主要看注册日期、实缴资本、参保人数。
 
-![工商信息](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bdd958ab775c44f79d9f1f7947f347c8~tplv-k3u1fbpfcp-watermark.image?)
+![工商信息](./_assets/remote-5576917f441e.png)
 
 如果成立日期比较早，但企业规模并不大，说明这家公司业务并不是很好。比如那些经营十年、但人数还未破百的企业，进去之后成长性也不会高，毕竟都十年了，还是小公司的话，说明实力、业务、营销等方面都不强，后续涨薪的空间也不大（可能有少数个例除外）。
 
@@ -209,7 +209,7 @@ OK，上述五点是在选`Offer`时，从公司层面上来看，需要酌情�
 
 看了公司的基本信息后，接着可以去看看公司的经营风险，这里大家可以借助[国家企业信用信息公示系统](https://www.gsxt.gov.cn/index.html)、[看准网](https://www.kanzhun.com)、支付宝-芝麻企业信用等平台，或者在前面提到的几个平台，开个会员也可以，如下：  
 
-![公司风险](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/26145226dc354b019e9d797ec7a6f505~tplv-k3u1fbpfcp-watermark.image?)
+![公司风险](./_assets/remote-e9a9a8dae208.png)
 
 大家可以快速浏览一下对应公司的风险，重点关注“严重违法”类型，这说明公司存在大风险，入职后搞不好就给一锅端了，或者突然暴雷就倒闭了。
 
@@ -221,7 +221,7 @@ OK，上述五点是在选`Offer`时，从公司层面上来看，需要酌情�
 
 除开可以通过前面提到的平台分析公司外，咱们也可以通过招聘平台来分析公司，因为招聘平台会强制要求公司填写认证信息，所以大家可以从给出的认证信息上进行分析，先来张图：  
 
-![认证信息](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3c1b6aedd78b4d95bc743f87c1654fbc~tplv-k3u1fbpfcp-watermark.image?)
+![认证信息](./_assets/remote-72cfbcf5333f.png)
 
 主要就是看工作时间这一栏，如果上面写着“弹性工作”的，十有八九就是需要加班，包括写着“免费班车”的，几乎也是需要加班，但后者相对人性化，起码有加班费。
 
@@ -229,7 +229,7 @@ OK，上述五点是在选`Offer`时，从公司层面上来看，需要酌情�
 
 最后，与其自个儿去调查分析，也不如直接问“入职过的前辈”来得实在，大家可以通过各个网络渠道，如知乎、脉脉、小红书这类分享平台，又或者职友集、看准网之类的收集平台，还有各类社交群、交流社区等，从而得知“公司前辈”的评价。
 
-![公司点评](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7b23d3b23fc3461182f6b84da549a23d~tplv-k3u1fbpfcp-watermark.image?)
+![公司点评](./_assets/remote-872ad20efefb.png)
 
 通过这类社交渠道，大家可以得知很多信息，如加班强度、涨薪幅度、涨薪频率、晋升频率、工作氛围、领导作风、内部潜规则……但网络上千人千面，大家也不要听风就是雨，除非一家公司搜到的都是负面评价时，此时就可以提前避坑。
 

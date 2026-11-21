@@ -4,13 +4,13 @@
 
 所以本次 **CLI** 的设计会更加较为通用，不再与单纯的业务开发耦合过多。
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/07032c54156346feb621fcb99f024685~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-866c510b9f3a.png)
 
 ## 初始化工程/管理
 
 由于物料会根据业务的不同存在不同的配置属性，每一次开发物料都需要拉取对应的业务模板，所以我们会面对种类非常以及多个版本的情况，以下是拉取模板的流程图：
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c3e2594940d64c45ba3691b4f0b0796c~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-6887e16a2fa6.png)
 
 **nodegit**、**download-git-repo** 和 **git-clone** 都是用于在 **Node.js** 环境中从远程 **Git** 仓库中下载代码的库，它们之间的主要区别如下：
 
@@ -38,7 +38,7 @@
 
 ## 构建
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6a50290c0ccf4a3db64d203fe9f0d7b8~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-7ea0514a725a.png)
 
 由于新的 **CLI** 设计将不再与脚手架耦合，所以构建的具体配置将内置在脚手架中，例如：**Rollup**、**Webpack**、**Vite** 等。
 
@@ -75,7 +75,7 @@
 
 > 无论是哪种模式都需要针对不同的平台进行适配，比如不同服务商的 **OSS** 工具以及不同 **k8s** 平台等，虽然一般的小团队不会有很多的选择性，直接内置在 CLI 中也问题不大，但作为通用性的工具，我们在开发过程这一会设计成拓展插件，减少用户的接入成本。
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/db48e97c306e41339bc354d038fd4ab9~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-0e97c738301f.png)
 
 ## 自定义插件
 
@@ -83,7 +83,7 @@
 
 **CLI** 需要先对命令进行分析判断是基础命令还是拓展服务，所以需要一个类似 **Router** 的主入口，包含内置与第三方插件的命令，在用户输入命令之后，调用不同的插件，流程图如下所示：
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8e1825cde3304fec932d13e9a2d6aea9~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-1a0bd80b4ee6.png)
 
 对于主 **CLI** 来说，很难接受规范不一致的三方插件注册，这样会影响 **CLI** 的结构，所以我们需要对 **CLI** 插件的模板做一个约束，除了输出的格式与上述内置插件格式保持一致之外，我们还需要对插件名称、依赖等等做一个约束，并且提供各种 **Hook** 方便插件开发，可以参考 **Webpack** 的 **tapable** 实现。
 
@@ -91,7 +91,7 @@
 
 所以在添加插件的时候需要做两次校验，第一层校验是通过校验名字，第二层是安装依赖，如果依赖安装失败也不会添加成功。
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0eb21442acac4aacb846660ada9a29ef~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-bd00685ccb28.png)
 
 > 在之前工程化里面有对自定义插件有一些实战的介绍，有想先试试的同学可以先参考[前端工程化实战 - 自定义 CLI 插件开发](https://juejin.cn/post/7004967490790883365)玩起来，后期出实战篇的时候，会比之前的更加详细。
 
@@ -101,7 +101,7 @@
 
 为了避免构建代码遗失以及环境不一致的问题，我们需要根据下述流程来约束：
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/14ca7531de1048c5b5a1319dda0414ad~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-788f3ebe2b7f.png)
 
 > 当然 **CLI** 可以不做本地构建，而是触发远程构建命令直接走云上构建，将结果实时反馈到本地，虽然会更加可靠，但是开发工作量也就相对增加了，如果有能力我建议选择云上构建。
 

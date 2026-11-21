@@ -9,7 +9,7 @@
 
 在上一讲编译好的 Redis 的 src 目录下面，就可以看到 `redis-cli` 这个命令行客户端，如下图所示：
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0d6dee2d699848ae9d807a3ff06147d8~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-63299b5ecd15.png)
 
 直接执行这个 `redis-cli` 命令，它就会**默认连到前面启动的 Redis 服务上**。要是连其他远程的 Redis 服务，我们可以用 `-h` 指定 Redis 服务的 IP 地址，然后 `-p` 指定 Redis 的端口就行了。
 
@@ -21,17 +21,17 @@
 
 连接上 Redis 之后，我们再来看 Redis 里面关于字符串的命令。我们后续的介绍会尽可能覆盖官网的[文档](https://redis.io/commands/?group=string)给的这些命令，如下图所示：
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/023f08b552694d0cb3cbf10d1ecafd01~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-1954351c2575.png)
 
 这里对字符串命令做一个简单的分类，主要分成**五大类**，如下图，有：`基础读写命令`、`批量操作`、`递增操作`、`部分字符串操作`以及`复合操作`的命令。这一节主要就是按照这个分类方式来介绍。
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b4238053105541d99c1d784333427c88~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-2bbb1cd7e880.png)
 
 ### 1. 读写命令
 
 字符串儿最简单的命令就是 **`SET`** 和 **`GET`** 命令。SET 命令的话，就是**设置一个键值对**。如下截图，执行一下这个 SET 命令，这个 name 就是 Key，kouzhao 就是 Value 值。然后，GET 命令的话，就可以通过刚才设置的这个 Key 值，获取对应的 Value 值。
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ebd5fef0d28e48a38e22d871fda02b30~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-2bc4b9c903a5.png)
 
 这个 SET 命令除了设置 Value 值之外，SET 还可以带其他参数。比如说：
 
@@ -40,7 +40,7 @@
 
 来试一下下面这几条命令。下面把 name 设置成 kouzhaoxuejie，把它的过期时间设置成 20 秒，然后我们就可以通过 GET 命令拿到这个 name 的值，还可以通过 TTL 这个命令来看一下这个 name 的过期时间，可以看到这里，它还有几秒钟就过期了。在这几秒钟之内都可以用 GET 命令来拿到这个 name 的值。等一会儿，等这个值过期了，这个时候就会发现啊，TTL 命令返回了 -2 ，这就说明这个 Key 已经过期了；然后再用 GET 命令去拿的时候，就发现拿不到这个 name 的值，因为它已经过期，Redis 就会把它清理掉。
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6f9657dc97074d34a3fc91c0b2f2d0b1~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-afdda7b8d2ee.png)
 
 除了 EX 和 PX 两个之外，SET 命令还可以有下面几个参数。
 
@@ -52,11 +52,11 @@
 
 先来看一下 NX 这个参数。先添加一个 name，Value 值设置成 kouzhao。然后，执行一下 `SET name kouzhaoxuejie NX`命令，这个命令的意思就是，如果 name 这个 Key 不存在的话，我们就把它的值写成 kouzhaoxuejie。前面已经设置了 name 这个 Key，所以现在是写不进去的，再执行 GET 命令，看到 name 还是 kouzhao。
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/75378b76a8404a9aac74549c3a77df8a~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-da8798ef3ff0.png)
 
 再来试一下 XX 参数。先查一下 age 这个 Key，发现没有 age 这个 Key。然后我们执行 `SET age 25 XX` 这条命令，意思就是`如果 age 这个 Key 存在的话，才能把它改成 25`，那么这个时候也是写不进去了，因为之前没有设置过 age 这个 Key。看到这个返回是 nil，也就是说那个命令没有执行成功，然后执行 GET age 也返回 nil。接下来我们把 age 的值设置为 0， 然后再执行这条 SET age 25 XX 命令，就能看到修改成功了。
 
-![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b180a98203c148abae42ec4278529cfe~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-b8411a225c1f.png)
 
 至于 SETNX 命令，如果你感兴趣的话可以自己动手操作一下，这里就不再赘述了。
 
@@ -66,21 +66,21 @@
 
 来看一个具体的例子。现在有很多个人的名字要存，name1、name2、name3，里边存的值分别是张三、李四、王五，我们`用 MSET 一条命令全部存进去`。然后用 GET 拿，如下图所示，都成功获取到了，这就说明 MSET 命令写三个 Key 都成功了。
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/740765bbd2094285ba62eea0129ffa20~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-675851453e34.png)
 
 但一次次 GET 是不是很麻烦呢？这里可以`用 MGET 命令一次把三个 name 全部拿出来`，看这个输出，输出的就是存进去的张三、李四、王五。
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/30c0157f41b941ed9b522eb241441f38~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-39206b58bd6c.png)
 
 最后一个要说的字符串批量命令是 **`MSETNX`**，它是 **SETNX 的批量版本**，就是**多个 Key 都不存在的时候，可以一把写入多个 Key**。
 
 来看例子，name1 现在是存在的，然后执行 `MSETNX name1 zhaoliu name4 sunqi`，name1 和 name4 这两个 Key 是更新不了的。从下图中可以看出，name1 还是张三，name4 还是不存在。
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/969b481c6001469896bf3f6181d54419~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-e7485d410a91.png)
 
 再来尝试一下 `MSETNX name4 zhaoliu name5 sunqi`这条命令，name4 和 name5 这两个 Key 是不存在的，所以能正常写进去。执行一下 MGET 命令，查询一下 name4和 name5 两个 Key，如下图所示，拿到 zhaoliu、sunqi，证明这两个 Key 写入成功了。
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f4bd748e47064f508f66ec7b1d5cecfb~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-b272306a6532.png)
 
 ### 3. 递增操作
 
@@ -104,13 +104,13 @@ String age = "25";
 
 如下图，执行 INCR age 命令后，用 GET 命令再次查询 age 的时候它的值会加了 1；然后，DECR age 命令执行之后，age 值是会减了 1。
 
-![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b9b5e0b8fd1943bf962b1d7e656c920f~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-8c818b9022c2.png)
 
 除了加 1 和减 1 外，Redis 还提供了 **`INCRBY`** 和 **`DECRBY`** 两个命令，这两条命令后面可以指定加多少、减多少。
 
 举个例子，今天有 1000 个粉丝，然后又有 100 个小伙伴来关注了我，对应的命令就是 `INCRBY fans 100`；然后，有 2 个小伙伴取关了，对应的命令就是 `DECRBY fans 2`，最后还剩 1098。相应的命令如下图所示：
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b747a933438647db86320fdfc242f338~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-778dfb04f284.png)
 
 ### 4. 操作部分字符串
 
@@ -118,15 +118,15 @@ Redis 还提供了一些操作部分字符串的命令，`但在实际场景中�
 
 首先是 **`APPEND 命令`**，它是**往一个 Key 里面追加一个字符串**，和 Java 字符串的 append() 方法一个意思。在下图中，name 这个 Key 是 kouzhao，然后我们用 APPEND 命令把 xuejie 追加到 name 里面，name 就变成了 kouzhaoxuejie 了。
 
-![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/47aa22f7c2474456a25f64e123f3f734~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-3ad9ef2716e8.png)
 
 **`GETRANGE 命令`是取字符串的一部分值返回**，和 Java 里面 substring() 方法的功能一样。我们来看下图这个例子，需求是要获取 kouzhaoxuejie 中 xuejie 这部分的字符串，也就是需要获取 name 字符串里面下标在 7 到 12 的部分。
 
-![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/155da43c1ec24acda49fccb8ecd817e1~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-fd9640418af1.png)
 
 **`SETRANGE 命令`**，功能是**指定一个下标，然后用传进去的字符串，替换这个下标后的内容**。下图就是我们用 kz 来替换 kouzhaoxuejie 中的前两个字符，这个 SETRANGE 命令是从 name 里面的 0 这个位置开始替换，可以看到开头的 ko 两个字符被替换成了 kz，剩下的字符完全没有变。
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/71e8075501744614b8654551fc69e1d1~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-227334eb76dd.png)
 
 ### 5. 复合操作
 
@@ -134,15 +134,15 @@ Redis 还提供了一些操作部分字符串的命令，`但在实际场景中�
 
 **`GETSET` 是 GET 和 SET 两个命令的组合**。下图是一个使用 GETSET 命令的示例，GETSET 命令的意思是，返回当前这个 name 的值，也就是返回 kouzhaoxuejie，然后同时用 zhangsan 来覆盖 name 的值，这个时候再查 name 这个 Key，拿到的就是 zhangsan 了。
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d3bd25bd7b0c478ab0ff983595474d3e~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-242f2895b27b.png)
 
 **`GETEX 命令`的意思是，获取 Key 的值，同时给 Key 设置一个过期时间**。来看下图的例子，我们这里获取 name 的同时，把 name 这个 Key 的过期时间设置成 10 秒。我们用 TTL 命令可以看到 name 剩余的过期时间不断在减少，最后返回一个 -2，就表示 name 过期了。
 
-![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4b8e8338a48148159ef8b1d327c614b4~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-84949a4a4239.png)
 
 **`DEL 命令`是删除一个 Key，`GETDEL 命令` 就是先获取一个 Key 的值，同时删除这个 Key 的值**。如下图所示，这里我们用 GETDEL 命令读取 name 值的时候，就把它一并删除了，再用 GET 命令查，就查询不到了。
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6ad4bd7a57fa4844848991dd9bc46c60~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-e9e94690e25f.png)
 
 ## 使用场景
 
@@ -150,7 +150,7 @@ Redis 还提供了一些操作部分字符串的命令，`但在实际场景中�
 
 我们会通过三个示例来介绍一下 Redis String 命令在实际场景中的应用，下图列举了这三个示例，分别是：用 Redis 的 String 结构缓存一个 Java 对象、实现分布式的效果以及实现限流的效果。
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/48d3e1b81b894756aede315279ce9bae~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-70a51e57597f.png)
 
 我们这里先创建一个 Maven 项目 lettuce-demo，然后 pom 文件里面加上 lettuce 的依赖，现在最新的版本已经到 6.1.8 了。后面还要用 JSON 序列化，还有 Junit 写单测，这里也加一下这两个依赖。
 

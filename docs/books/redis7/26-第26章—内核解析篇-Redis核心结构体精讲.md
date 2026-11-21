@@ -10,7 +10,7 @@
 
 我们回到 robj 继续介绍，Redis 中 Key 只能是字符串类型，Value 可以是 sds、list、set、zset 以及 dict 等数据结构，这些 Value 值并不会直接存储在 redisDb 里面，而是**包装成 robj 对象再进行存储**。下图大概展示了这种结构：
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4a963ea06464476080b372b53a29f14b~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-1cdf9ee1224f.png)
 
 下面来看 robj 的核心字段及其含义，弄清了它们的含义，也就了解了`为何要使用 robj 对 value 值进行一层额外的包装`。
 
@@ -27,15 +27,15 @@
 
 - **OBJ_ENCODING_INT**：表示存的这个字符串值能够转换成整数。OBJ_ENCODING_INT 编码方式是直接将字符串转换成整数值，并存储到 ptr 字段中（void* 指针占 8 字节，整数最长也是 8 字节），从而少创建一个 sdshdr 字符串实例，降低内存开销，在读取数据的时候，也少了一跳指针解析。比如存 1000 这个字符串，结构就如下图所示：
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/cbfe43496a194bf79eb61ab2c869abe1~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-d27aabeca042.png)
 
 - **OBJ_ENCODING_EMBSTR**：在 CPU 从内存读取数据到高速缓存的时候，即使我们的目标值只有一个字节，也会一次更新整个 Cache Line（64 个字节），这也就是我们常说的“局部性原理”。通过前面对 robj 的介绍我们知道，robj 的 5 个字段占了 16 个字节，还剩 48 字节可用。48 长度的字符串需要 sdshdr8 进行存储，sdshdr8 需要额外的 4 字节空间存储其字段（len、alloc、flags、以及字符串的 '\0' 结尾） ，所以当存储的字符串长度小于等于 44 个字节的时候，会使用 OBJ_ENCODING_EMBSTR 编码方式，与 robj 实例一起占满一个 Cache Line（也就是 64 个字节）。如下图所示：
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5e1acbb797ff4679926337abc1e6f56f~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-1aad4ca98192.png)
 
 - **OBJ_ENCODING_RAW**：字符串无法转换成整数类型且长度超过 44 字节的时候，Redis 会使用 OBJ_ENCODING_RAW 编码方式进行存储，这种存储方式就是老老实实创建 sdshdr 存储字符串数据，并使用 ptr 指针存储 sdshdr 的地址，没有任何优化。如下图所示：
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/73ff6f9feb1549d6a7c0232d1d2497c6~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-e4b22bc22de8.png)
 
 **当一个 robj 里面的存储数据为列表（即 type 为 `OBJ_LIST`）时**，底层存储数据结构是 quicklist，对应的编码方式也只有 OBJ_ENCODING_QUICKLIST 一种。quicklist 这个数据结构自身是基于 listpack 实现的，quicklist 自身涉及到压缩、优化等方面的内容在前面已经详细分析过了。你可能还会看到有的资料说：列表会使用 OBJ_ENCODING_LINKEDLIST 编码方式，这是 Redis 老版本的编码方式了，quicklist 底层使用 ziplist 实现，这是 Redis 7 之前的实现方式，从 Redis 7.0 开始，quicklist 底层已经用 listpack 替换了 ziplist，我们在前面的章节中也反复提到这件事情了。
 
@@ -43,7 +43,7 @@
 
 - **OBJ_ENCODING_LISTPACK**：当哈希表中的总键值对数量小于 hash-max-listpack-entries 配置值（默认 512），且每个键值对中的 Key 和 Value 长度都小于 hash-max-listpack-value 配置值（默认 64），Redis 使用 listpack 来存储哈希表的结构。具体结构如下图所示，Redis 将一个键值对拆分成两个 listpack 元素进行存储：
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7e3bae2e427f442186d133e83cf27da5~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-cec487d0455c.png)
 
 - **OBJ_ENCODING_HT**：当哈希表不满足上面两个条件中的任意一个时，就会使用 dict 作为底层的存储结构，此时对应的编码方式就是 OBJ_ENCODING_HT。
 
@@ -56,7 +56,7 @@
 
 - **OBJ_ENCODING_LISTPACK**：当有序集合中存储的元素个数小于 zset-max-listpack-entries 配置值（默认为 128），且每个键值对中的 Key 和 Value 长度都小于 zset-max-listpack-value 配置值（默认 64）时，Redis 使用 listpack 存储有序列表。如下图所示，其中元素值及其对应的 score 值都会作为 listpack 的一个元素进行存储。
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/550693bb08ff4d23a1f1ed01f35f1fb4~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-d675444e5bf8.png)
 
 - **OBJ_ENCODING_SKIPLIST**：当有序集合不符合上述两个条件中的任意一个时，Redis 使用 dict + skiplist 的结构存储有序集合。在后面我们会详细展开介绍 Redis 是如何使用 dict 和 skiplist 存储有序集合的原理。
 
@@ -64,7 +64,7 @@
 
 用下图简单总结一下，robj 中不同 type 取值与 encoding 编码方式之间的映射关系：
 
-![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ff75cb43513144f597e2fa32acfe455e~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-270499da519e.png)
 
 ## redisServer
 
@@ -561,7 +561,7 @@ ZUNION numkeys key [key ...] [WEIGHTS weight [weight ...]] [AGGREGATE SUM|MI
 
 - 再来看 id 字段，该字段是在 Redis 实例启动的时候动态分配的，Redis 会将命令名称插入到一个 Rax 树中，每插入一个命令对应的 id 递增 1，命令对应 raxNode 节点中存储的 value 值就是其 id 值。这部分逻辑位于 ACLGetCommandID() 函数中，调用栈如下图所示：
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6968f81692f8411e991fedcf079338fe~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-cbd9947e08d6.png)
 
 额外说一下，`为啥有了 name 这个唯一标识之后，还需要将其转换成 id 呢？`id 字段主要是为了 ACL 使用的，Redis 为每个用户创建了一个 bitmap，其中每一位都标识这个用户是否有权限访问对应的命令，这里将命令转换成 id 这个整数，就是为了构建 bitmap。
 
@@ -569,7 +569,7 @@ ZUNION numkeys key [key ...] [WEIGHTS weight [weight ...]] [AGGREGATE SUM|MI
 
     在 Redis 7 中，引入了 **Key Spec** 的规则，用来描述命令行的规则，我们可以用 `COMMAND INFO` 命令来看一下 Key Spec 对 SET 命令的描述，如下图所示，Redis 7 比 Redis 6 多返回的这一部分就是 Key Spec 对 SET 命令的描述：
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f46a270afb954ab0810db9b4667169a7~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-f649a04dcc3b.png)
 
 > Key Spec 的具体规则，小伙伴们可以参考[这篇文档](https://redis.io/docs/reference/key-specs/)，为了防止本篇文章变得冗长，不再逐一展开介绍 Key Spec 规则的内容。要是对 Key Spec 出现的原因感兴趣，可以参考下面这两个 PR 的讨论：
 >
@@ -580,13 +580,13 @@ ZUNION numkeys key [key ...] [WEIGHTS weight [weight ...]] [AGGREGATE SUM|MI
 
 - 最后要看的 tips 这个字段，其中记录了一些给客户端（或者 Proxy，尤其是 Cluster Client）的提示信息，客户端会根据这个提示信息，决定如何执行这条命令。举个例子，假设我们有一个 Redis Proxy，底层是维护了三个 Redis 实例，如下图所示：
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/dd655c92300f41deb5d6cf2d1fb60339~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-1715b6385b8d.png)
 
 这个时候，Proxy 收到业务层发来的一条 DBSIZE 命令，正常情况下，是要统计整个 Redis 集群，也就是底层的三个 Redis Shard 总大小，所以 Proxy 需要把 DBSIZE 命令发到三个 Redis Shard，然后将三个 Redis Shard 的返回值汇总累加，最后返回给客户端。
 
 在 DBSIZE 命令中的 tips 字段，就是告诉 Proxy 如何处理 DBSIZE 命令，我们可以用 COMMAND INFO 看一下 DBSIZE 命令的 tips 值，如下图所示，这里的 “request_policy:all_shards” 就是告诉 Proxy 把 DBSIZE 命令发到所有 Redis Shard， “response_policy:agg_sum” 则是告诉 Proxy 要累加各个 Redis Shard 的返回值。
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/08bd2e5f82d74e4d92959bf9543d3264~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-b861f223ac72.png)
 
 > 你如果对 tips 完整的规范感兴趣，可以参考 https://redis.io/docs/reference/command-tips/#response_policy 文档，以及 https://github.com/redis/redis/issues/9876 这个 Issue。
 

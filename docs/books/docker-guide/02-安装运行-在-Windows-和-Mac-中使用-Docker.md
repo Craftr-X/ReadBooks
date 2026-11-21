@@ -43,7 +43,7 @@ Docker Desktop 产品线包含两个软件，也就是针对 Windows 系统的 D
 
 打开软件之后，我们会在 Windows 的任务栏或者 macOS 的状态栏中看到 Docker 的大鲸鱼图标。
 
-![系统托盘中的 Docker Desktop 鲸鱼图标](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/9/10/165c1d1fb7030b63~tplv-t2oaga2asx-image.image)
+![系统托盘中的 Docker Desktop 鲸鱼图标](./_assets/remote-07b33eb4e521.png)
 
 Docker for Windows 或 Docker for Mac 在启动时，这只大鲸鱼上的集装箱会一直闪动，这说明 Docker 程序正在部署 docker daemon 所需要的一些环境并执行 docker daemon 的启动。当集装箱不再闪动，就说明 Docker 服务已经准备就绪，我们就可以在 Windows 和 macOS 中使用 Docker 了。
 
@@ -70,7 +70,7 @@ Client:
 
 Docker for Windows 和 Docker for Mac 这里利用了这两个操作系统提供的功能来搭建一个虚拟 Linux 系统，并在其之上安装和运行 docker daemon。
 
-![Docker Desktop 在虚拟 Linux 上运行 daemon 示意](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/9/12/165cb3b94b24b951~tplv-t2oaga2asx-image.image)
+![Docker Desktop 在虚拟 Linux 上运行 daemon 示意](./_assets/remote-0330dbb9cb43.png)
 
 除了搭建 Linux 系统并运行 docker daemon 之外，Docker Desktop 系列最突出的一项功能就是我们能够直接通过 PowerShell、Terminal 这类的控制台软件在 Windows 和 macOS 中直接操作虚拟 Linux 系统中运行的 docker daemon。
 
@@ -88,7 +88,7 @@ Docker for Windows 和 Docker for Mac 这里利用了这两个操作系统提供
 
 要实现我们所期望的效果，也就是 Docker 容器直接挂载主机系统的目录，我们可以先将目录挂载到虚拟 Linux 系统上，再利用 Docker 挂载到容器之中。这个过程被集成在了 Docker Desktop 系列软件中，我们不需要人工进行任何操作，整个过程已经实现了自动化。
 
-![主机目录经虚拟机挂载到容器的路径示意](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/9/11/165c8400bf8f809e~tplv-t2oaga2asx-image.image)
+![主机目录经虚拟机挂载到容器的路径示意](./_assets/remote-6fa6d68d90fc.png)
 
 Docker Desktop 对 Windows 和 macOS 到虚拟 Linux 系统，再到 Docker 容器中的挂载进行了实现，我们只需要直接选择能够被挂载的主机目录 ( 这个过程更多也是为了安全所考虑 )，剩下的过程全部由 Docker Desktop 代替我们完成。这相比于普通虚拟机软件进行挂载的过程来说，完全不能用百倍效率来比较了。
 
@@ -100,7 +100,7 @@ Docker Desktop 对 Windows 和 macOS 到虚拟 Linux 系统，再到 Docker 容�
 
 打开 Docker for Windows 和 Docker for Mac 的配置页面后，我们可以发现几个配置页面。这里我不逐一把每个页面进行截图了，大家可以自己动手查看页面每个页面的内容。
 
-![Docker Desktop 偏好设置配置页面截图](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/9/11/165c62cd575bb4e8~tplv-t2oaga2asx-image.image)
+![Docker Desktop 偏好设置配置页面截图](./_assets/remote-1352cdf44efc.png)
 
 Docker for Windows 和 Docker for Mac 的配置项目较 Docker Engine 来说要多上许多，这主要是因为 Docker Desktop 是 Docker Engine 的超集，所以其不仅包含了 Docker Engine 的配置内容，还要包含诸如虚拟机实现等其他配置。
 

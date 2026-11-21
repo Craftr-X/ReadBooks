@@ -14,7 +14,7 @@
 
 **第一个原因是“安全的二进制存储”，在有的场景里面，我们在字符串里可能需要存 `\0` 这种特殊字符**。比如说，`Hello \0 World! \0`这种数据，如下：
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3914e7877b5f4ec485db7684451b05ae~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-c99a2e5511a4.png)
 
 如果直接用 C 语言字符串的话，`\0` 表示字符串结尾，那我就会认为是到 Hello 字符串就完了，对不对？为了要存 `\0` 这种特殊字符，sds 就不再把 `\0` 当作字符串的结尾，而是明确地记录字符串的长度，比如说存个 length 字段，我就知道到第一个`\0` 的时候，字符串还没结束。这样的话，我们就可以在字符串里面存储`\0` 这种特殊字符了，我们也把这种能存储特殊字符的方式叫作 “安全的二进制存储”。
 
@@ -42,7 +42,7 @@ struct sds {
 
 在 Redis 源码的 sds.h 这个文件里面，我们可以看到 5 个 sdshdr 结构体，从 sdshdr5 一直到 sdshdr64，这 5 个结构体就是 Redis 字符串的`真身`。
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8aae0258f5f04622849a8624be24acfd~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-fcf91f2cb820.png)
 
 那为什么会有 5 个 sds 结构体呢？我们通过对比下面的 sdshdr8 和 sdshdr16 ，就可以得到答案：**5 个 sds 分别用来存储不同长度的字符串**。
 
@@ -89,7 +89,7 @@ typedef struct {
 
 按照我们正常的想法，c1、s、c2 还有 i 这些字段都是紧凑地排列在内存里面的，就跟下面这张图一样：
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/416301eaf41d4465a3f397fc3ae0d105~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-3b65caee4c44.png)
 
 下面我们就写一个示例，输出一下 sdemo 里面各个字段的地址。前面在[《先导基础篇：10 分钟 C 语言入门》那一讲](https://juejin.cn/book/7144917657089736743/section/7147527076092837888)中提到，这个 `&` 符就是取地址的意思，我们这里先定义一个 sdemo 的实例，然后取一下这个 sdemo 实例本身的地址，接着再取一下这个实例中各个字段的地址，输出一下。
 
@@ -116,13 +116,13 @@ void main() {
 
 我们会发现，sdemo 里面各个字节的排布是下图这样的：
 
-![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/36eab9af7ad647838ca6282db9ab7c50~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-f989bb4cf17b.png)
 
 编译器会在 c1 之后填充一个字符，在 c2 后面填充三个字符，这样的话，就四字节对齐了。
 
 `那为什么要进行内存对齐呢？`嗯，这主要跟具体的平台有关系，比如说我的机器每次读内存的时候，都是从四字节的位置开始读，每次读取四个字节，这样的话，我读取一个 int 的时候，就希望它的起始位置在四字节倍数的位置，这样**读取一次就可以完成一个 int 的读取**。那如果我的 int 首地址放到了一个奇数的地址上，就像这样：
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4324167483d4493c87ea10c590e09d71~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-a7953edacf67.png)
 
 这种情况就会导致我读两次内存后，才能读出来一个完整的 int 值。
 
@@ -151,7 +151,7 @@ typedef struct __attribute__ ((__packed__)) {
 
 那在内存里面的结构就是这样的，**内存是非常紧凑的，没有任何填充**：
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/13e91be1a6d543319cae75be91dab4ba~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-18683cbaf4a1.png)
 
 所以说，`__attribute__ ((__packed__))`的主要目的就是不进行内存填充，这样，sds 就可以安全地用指针前后移动的方式，获取到指定字段值，而不用担心指针前后移动的过程中，碰到填充的空白字节。在介绍 flags 字段的时候，我们就会看到 sds 是如何通过指针移动来确定自身类型的，你也可以在阅读下面这部分内容时，仔细体会一下 `__attribute__ ((__packed__))`的作用。
 
@@ -171,7 +171,7 @@ typedef char* sds;
 
 好家伙，大名鼎鼎的 sds 居然只是一个 char 指针，那这个 char 指针指向哪里呢？其实指向的就是我们前面介绍的 5 种 sdshdr 中的一种 。比如我用 sdshdr8 来存储一个字符串，那 sds 指向的就是 sdshdr8 实例里面，**buf 数组的起始位置**，就是这种结构：
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/da232c4e4e7a437aa0c930939425dda4~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-76e05c0c2379.png)
 
 Redis 使用字符串的时候，都是使用的 sds 这个指针。Redis 只需要从 sds 指针往前找一个字节，就可以拿到这个 flags 值，通过读这个 flags 的低三位值，Redis 就可以知道当前的这个 sds 实例，是 5 种类型的哪一种。比如，图里面的 flags 低三位是 1，那就是 sdshdr8，这样也就确定了 len 和 alloc 的具体长度都是 8 位。接下来 Redis 就可以继续往前读数据，拿到 len 和 alloc 值。根据这两个值，我们就可以从 sds 指针往后的位置，读写 buf 数组了。
 

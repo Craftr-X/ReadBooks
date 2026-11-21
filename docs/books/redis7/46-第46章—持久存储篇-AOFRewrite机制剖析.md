@@ -2,13 +2,13 @@
 
 下图举了个例子，Redis 依次收到了 `SET Key1 Value1` 、`SET Key1 Value2` 、`SET Key1 Value3` 、`SET Key1 Value4` 这四条命令，相应地，在 AOF 文件中就会记录这 4 条命令，如下图最左边这一栏所示。在这 4 条命令的执行过程中，Redis 中 Key1 对应的 Value 值也在不断发生变化，如果下图红色那一栏所示。如果我们在 `SET Key1 Value4` 这条命令执行完之后，使用这个 AOF 文件进行数据恢复，这里的前三条 SET 命令其实都是无效的，因为执行或不执行这些语句，都不会影响最终的恢复结果。
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ec08f8670550429b827954cb55b236ea~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-65f87de23856.png)
 
 为了解决这一问题，Redis 会定期对 AOF 进行压缩，这一操作被称为 **`AOF Rewrite`，其核心原理是将 AOF 文件中无效的命令删除，只保留有效的命令**。如上图右侧两栏所示，在 AOF Rewrite 之后，AOF 日志中只保留 `SET Key1 Value4` 这一条命令，对应地就是当前 Redis 中 Key1 的最新值。
 
 AOF Rewrite 的核心实现原理就是扫描 Redis 中的全部键值对，将写入这个键值对的操作用一条命令表示出来，然后将这个条命令保存到 AOF 文件中就可以。**Redis 实现 AOF Rewrite 机制通过子进程的方式实现的**，如下图所示，fork() 出来的子进程拥有此时 Redis 的内存快照，然后子进程就可以开始扫描 Redis 中的全部键值对，然后生成 Rewrite 的临时文件。与此同时，主进程开始将 AOF 日志同时写入到 AOF 缓冲区和 Rewrite 缓冲区两个缓冲区中，其中 AOF 缓冲区会正常刷盘，这样即使出现宕机，AOF 日志也不会丢失。在子进程完成 Rewrite 操作之后，主进程会将 Rewrite 缓冲区的数据，写入到临时文件，然后将临时文件进行重命名，替换原来的 AOF 文件，后续新的 AOF 日志就会写入到这个 Rewrite 之后的 AOF 文件中。
 
-![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/972f66969b404947b28bba18660bbce1~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-950064233810.png)
 
 上述 AOF Rewrite 操作是 Redis 7.0 之前的逻辑，我们会发现在这个版本的 AOF Rewrite 会带来一些性能问题，如下。
 
@@ -29,7 +29,7 @@ AOF Rewrite 的核心实现原理就是扫描 Redis 中的全部键值对，将�
 
 接下来，我们结合下面这张图，简单介绍一下 Multi-Part AOF 机制的原理。
 
-![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/370211869e374212b67d8cb61d8e5a58~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-a8abb2c07dee.png)
 
 在触发 AOF Rewrite 的时候，Redis 首先会创建一个新的 Incr AOF 文件，在整个 Rewrite 期间，主进程会将所有的 AOF 日志写入到这个新建的 Incr AOF 文件中，老的 Incr AOF 文件不再写入。新建好 Incr AOF 文件之后，主进程会 fork 出一个子进程，由这个子主进程执行 Rewrite 操作。
 
@@ -47,7 +47,7 @@ Multi-Part AOF 功能涉及到 https://github.com/redis/redis/pull/9539 和 http
 
 首先，来看`触发 AOF Rewrite 的三个时机`，如下图所示：
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9a5d7f1b6c664198b0c059c61b0f6cef~tplv-k3u1fbpfcp-zoom-1.image)
+![](./_assets/remote-e5951b1dbc08.png)
 
 1. 手动调用 BGREWRITEAOF 命令，对应上图中 bgrewriteaofCommand() 函数处的调用。
 1. 触发了 Redis 配置指定的定时 Rewrite 条件，对应上图中 serverCron() 函数处的调用。
@@ -55,7 +55,7 @@ Multi-Part AOF 功能涉及到 https://github.com/redis/redis/pull/9539 和 http
 
 下面我们一个个展开看一下这些 AOF Rewrite 调用点的具体逻辑，首先是 bgrewriteaofCommand() 函数，它会检查当前是否有子进程在运行，以及这个子进程的类型是什么，也就是检查 redisServer.child_type 字段的值，具体的核心流程如下图所示：
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/85c6ebeb644f4fe698b814002fe3f2d3~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-404753fade1a.png)
 
 在 serverCron() 这个周期执行的函数中，有两个条件会触发 AOF Rewrite：一个是它会检查 redisServer. aof_rewrite_scheduled 是否被标记为 1，如果是的话，证明有 AOF Rewrite 的任务在等待执行，当前要是没有子进程在执行，那就可以执行 rewriteAppendOnlyFileBackground() 函数，开始 AOF Rewrite 的操作；另一个触发条件是检查 AOF 文件的大小以及增长率是否超出了限制，如果超出了限制，才会触发 AOF Rewrite 操作。相关代码片段如下所示：
 
@@ -97,7 +97,7 @@ int serverCron(struct aeEventLoop *eventLoop, long long id, void *clientData){
 
 最后一个触发 Rewrite 操作的地方，是我们通过 `CONFIG SET appendonly yes` 命令手动将 AOF 功能开启的时候，会触发一次 AOF Rewrite 操作。在 startAppendOnly() 函数中会将 redisServer.aof_state 这个状态字段设置为 AOF_WAIT_REWRITE，之后会和 bgrewriteaofCommand() 函数类似，检查子进程的运行状态和类型，如下图所示：
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7dd41d8d93a84758a84ec1baa979dac4~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-cfb2a5e5f436.png)
 
 ## Rewrite 核心实现
 
@@ -128,7 +128,7 @@ typedef struct {
 
 下面我们正式开始分析 AOF Rewrite 的实现，下图展示了 rewriteAppendOnlyFileBackground() 这个入口函数的核心逻辑：
 
-![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f4f0db2705274f72895491d30702681a~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-c91cd90a2380.png)
 
 rewriteAppendOnlyFileBackground() 函数首先会检查一下启动 AOF Rewrite 的条件，比如，AOF 目录是不是正常、是不是已经子进程在跑了。检查通过之后，就可以对当前使用的 Incr AOF 文件进行刷盘了，之后就不会再向这个 Incr AOF 文件中写入数据了。接下来，Redis 会执行 openNewIncrAofForAppend() 函数创建新的 Incr AOF 文件，在这个函数里面还会更新 manifest 文件，它的具体逻辑我们后面单独说。
 
@@ -136,7 +136,7 @@ rewriteAppendOnlyFileBackground() 函数首先会检查一下启动 AOF Rewrite 
 
 这里我们展开说一下 openNewIncrAofForAppend() 函数创建新 Incr AOF 文件的过程，这个函数主要处理两个场景，一个是我们在启动的时候，就已经开启了 AOF 功能，这个场景下，在 Redis 启动的时候，就已经通过 aofOpenIfNeededOnServerStart() 创建了 Base AOF、Incr AOF 以及 manifest 三个文件，它的调用栈如下图所示：
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3350ca9d58cb452e83d6724f58087eec~tplv-k3u1fbpfcp-zoom-1.image)
+![](./_assets/remote-9c38e560f112.png)
 
 openNewIncrAofForAppend() 在这种场景下需要做的就是下图展示的 `AOF_ON 分支`，它会新建一个 Incr AOF 文件出来，然后把后续的 AOF 日志写入切换到这个新 Inrc AOF 文件中。另外，它还会把这个新 Incr AOF 文件的名称、编号等信息，更新到内存中的 redisServer.aof_manifest 中，然后写入到磁盘中对应的 manifest 文件中。这里同时会更新 redisServer 结构体中的多个字段，例如，aof_fd 字段指向了当前最新 Incr AOF 的文件描述符；aof_last_incr_size 字段记录的是当前最新 Incr AOF 文件的大小。
 
@@ -144,13 +144,13 @@ openNewIncrAofForAppend() 在这种场景下需要做的就是下图展示的 `A
 
 openNewIncrAofForAppend() 函数处理的第二个场景是在 Redis Server 启动的时候，没有开启 AOF 功能，之后通过 CONFIG SET appendonly yes 命令开启 AOF 日志的场景，对应的就是 aof_state 为 `AOF_WAIT_REWRITE 的分支`。在这个分支中，Redis 只是生成一个临时 Incr AOF 文件，它命名规则比较固定，分成了 temp 前缀、appendfilename 配置项指定的文件命令以及 .incr 后缀。在 Rewrite 期间的 AOF 日志都会写入到这个临时 AOF 文件中，这里不会将临时 Incr AOF 文件的信息添加到 manifest 文件中，而是等到 Rewrite 结束之后，将临时文件转换成正式的 Incr AOF 文件，才会加到 manifest 文件中。
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/95eec061f4764485bd007fb6e63a0731~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-fef793f05845.png)
 
 ### 写入数据
 
 准备好 Incr AOF 文件之后，Redis 就可以**正式调用 rewriteAppendOnlyFile() 函数开始写 Base 文件**，下面是 rewriteAppendOnlyFile() 函数的核心流程：
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0eb00dfffed94cf9883ee57421e32e33~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-13e1c6e66676.png)
 
 首先，rewriteAppendOnlyFile() 函数会创建一个临时文件，它是 Base 文件的前身，此次 Rewrite 的结果就会写入到这个文件中。为了写入数据，这里会同时创建一个 rio 实例来负责向这个文件写入数据，注意这里也有一个增量刷盘配置，对应 redis.conf 配置文件中的 aof-rewrite-incremental-fsync 配置项，它和前面介绍 RDB 持久化的时候，说的 rdb-save-incremental-fsync 配置项原理是一样的，这里就不再重复了。
 
@@ -182,13 +182,13 @@ openNewIncrAofForAppend() 函数处理的第二个场景是在 Redis Server 启�
 
 前面说过，在子进程结束的时候，主进程会通过 checkChildrenDone() 函数感知到子进程结束，如果结束的是 AOF Rewrite 子进程，那么主进程会通过 backgroundRewriteDoneHandler() 函数完成 Rewrite 的收尾工作。
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/93518c032b1942689342c1d6f9ab4578~tplv-k3u1fbpfcp-zoom-1.image)
+![](./_assets/remote-98e2f12ae1f8.png)
 
 在子进程完成 Rewrite 操作的时候，还并未真正生成一个有效的 Base 文件，主要有两点体现：一是文件名称不对，子进程生成的是一个名为 temp-rewriteaof-bg-{子进程 ID}.aof 的临时文件，不符合 Base 文件的命名规则；二是这个临时文件并没有加入到 manifest 文件中，Redis 恢复数据是根据 manifest 文件查找 Base 文件的，如果此时 Redis 宕机重启的时候，是完全感知不到这个文件的存在。所以，在 backgroundRewriteDoneHandler() 函数中，需要将 Rewrite 出来的临时 AOF 文件 rename 成 Base 文件，然后记录到 manifest 文件中。
 
 下面我们来看 **backgroundRewriteDoneHandler() 函数**中的核心流程，如图所示：
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a02253afe0c54e3cbae751a88ca1d7b5~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-5b8962c508e0.png)
 
 首先，backgroundRewriteDoneHandler() 在修改 redisServer.aof_manifest 字段之前，先深拷贝一份临时的 aofManifest 实例出来，接下来的修改都是针对这个临时的 aofManifest 实例进行的，修改完成之后，直接替换到 aof_manifest 字段上。这样做的好处就是方便回滚，我们只要不更新 redisServer.aof_manifest 字段，在临时 aofManifest 实例上的修改，对 Redis 来说，都是不可见的。
 

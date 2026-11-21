@@ -107,7 +107,7 @@ int io_threads_op;
 
 介绍完基础的数据结构之后，我们再来看 IO 多线程相关的初始化逻辑。在 Redis Server 启动的最后，会**调用 `initThreadedIO() 函数`创建 IO 线程**，调用关系链如下图所示：
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8dfaaa9100cf4e888538a9f6923c6ff5~tplv-k3u1fbpfcp-zoom-1.image)
+![](./_assets/remote-e8af9798215c.png)
 
 initThreadedIO() 函数的逻辑也不是很复杂，它的核心逻辑是根据 redis.config 文件中 io-threads 配置的 IO 线程数，初始化对应数量的 IO 线程数。注意`两个特殊值`，一个是 io-threads 配置成 1 的时候，表示不开启 IO 多线程，退化成了 Redis 6 之前的状态，也就是只通过主线程读取和解析请求；另一个是 io-threads 配置项上限值是 128，一旦超过 128，会直接报错。
 
@@ -145,7 +145,7 @@ void initThreadedIO(void) {
 
 我们在[第 28 讲《内核解析篇：Redis 事件驱动核心框架解析》](https://juejin.cn/book/7144917657089736743/section/7147529834703847465)中介绍 aeEventLoop 结构体的时候提到，每次处理网络事件之前，都会调用 aeEventLoop->beforesleep 指向的函数，也就是 beforeSleep() 函数。如下图调用链所示，**beforeSleep() 底层调用的 startThreadedIO() 函数就是释放 IO 线程锁，让 IO 线程跑起来的地方**，同时，它里面还会将 io_threads_active 字段设置成 1，表示当前 I/O 线程已经可用。
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/099e74aeca464a06b18f9da12b168c53~tplv-k3u1fbpfcp-zoom-1.image)
+![](./_assets/remote-78ce701a2e9d.png)
 
 下面是 startThreadIO() 函数以及调用的关键代码片段：
 
@@ -217,7 +217,7 @@ void *IOThreadMain(void *myid) {
 
 这个过程是在 handleClientsWithPendingReadsUsingThreads() 函数中完成的，而这个函数是在 aeEventLoop->beforeSleep 函数中被调用的，如下图所示：
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/cdcee809576d4f689dfbe3279e03ee5a~tplv-k3u1fbpfcp-zoom-1.image)
+![](./_assets/remote-b80c3f0ed78c.png)
 
 这里又要涉及到[第 28 讲《内核解析篇：Redis 事件驱动核心框架解析》](https://juejin.cn/book/7144917657089736743/section/7147529834703847465)中提到的 aeEventLoop->beforeSleep 字段了，它指向的是 beforeSleep() 函数。在主线程每次进入 aeApiPoll() 函数阻塞等待可读可写事件之前，都会调用这个 beforeSleep() 函数。
 
@@ -266,7 +266,7 @@ listEmpty(io_threads_list[0]);
 
 下面这张图很好地总结了 `handleClientsWithPendingReadsUsingThreads() 函数`协调主线程和 IO 线程处理可读事件的过程：
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9b5c8ec9aa4049209dbd29edb27a7190~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-2abfdb66fb86.png)
 
 ## 再探 readQueryFromClient
 

@@ -3,7 +3,7 @@
 
 下图对 Sorted Set 相关的命令进行了一个简单的分类，本节也将按照这个分类进行介绍。
 
-![未标题-1.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c0377b2047c44cfbac9744629b1db23b~tplv-k3u1fbpfcp-watermark.image?)
+![未标题-1.png](./_assets/remote-c14e207388fa.png)
 
 ## Sorted Set 命令详解
 
@@ -239,7 +239,7 @@ Sorted Set 相关的集合操作与上一讲中 Set 结构相关的集合操作�
 
 介绍完 Sorted Set 的基础命令之后，我们接下来一起看一下 Sorted Set 在实战中的应用场景。下图汇总了即将要介绍的`积分排名功能`和`权重排序功能`两个 Sorted Set 常见的功能。
 
-![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/fb845ebc3e2c4b569de652f7979afea6~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-16c43c43951d.png)
   
 ### 1. 积分排名
 

@@ -54,7 +54,7 @@ zsetAdd() 函数根据 Sorted Set 的编码方式进入不同的处理分支。
 
 `如果底层存储是 listpack 的话`，zsetAdd() 函数的关键逻辑如下图所示，其中免不了对 listpack 的迭代、查找、元素比较、插入和删除等操作，这些功能都封装在了 zzlFind()、zzlDelete() 、zzlInsert() 这些函数中，这些函数底层都是通过组合 listpack API 函数实现的。
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7c6a24f9faf640439a4b0a39ecf9d98d~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-66510d3a8f2e.png)
 
 例如，zzlFind() 函数就是在迭代 listpack 的时候，不断比较元素值的方式查找元素位置以及关联 score 的位置；zzlInsert() 函数也是在迭代 listpack 的过程中，比较 score 值来确认插入位置的，找到插入位置之后，通过 zzlInsertAt() 函数完成新元素和 score 的插入。这些 listpack 的函数，小伙伴们可以回顾[前面的 listpack 小节](https://juejin.cn/book/7144917657089736743/section/7147529450140205056)，这里不再重复介绍了。
 
@@ -62,7 +62,7 @@ zsetAdd() 函数根据 Sorted Set 的编码方式进入不同的处理分支。
 
 `另一个是在插入新元素之后`，如果要触发 OBJ_ENCODING_LISTPACK 到 OBJ_ENCODING_SKIPLIST 编码的转换，需要调用 zsetConvert() 函数来完成这一转换。zsetConvert() 函数的代码框架如下图所示:
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f91bb9cfa3774c10b15e065b4c554196~tplv-k3u1fbpfcp-zoom-1.image)
+![](./_assets/remote-0a019218f1f3.png)
 
 具体转换逻辑其实并不复杂，以 OBJ_ENCODING_LISTPACK 转换为 OBJ_ENCODING_SKIPLIST 编码方式为例，其中核心的功能就是迭代原有 listpack 实例中的元素和 score 写入到新创建的 zset 实例中。zset 结构体中包含了 dict 和 zskiplist 两种数据结构，如下所示：
 
@@ -419,7 +419,7 @@ void genericZrangebyscoreCommand(zrange_result_handler *handler,
 
 下面用一张流程图简单总结一下 genericZrangebyscoreCommand() 函数执行的核心流程，genericZrangebyscoreCommand() 函数规定了范围查询的流程框架，zrange_result_handler 通过函数指针的方式填充了具体命令的差异，有种`模板方法模式`的感觉。
 
-![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/03702ad20662466388c73b4f4840c4db~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-fa52bea8a17d.png)
 
 分析到这里，ZRANGE 命令的核心逻辑就介绍完了。Sorted Set 中其他范围查询命令的实现逻辑与 ZRANGE 命令的实现大同小异，这里就不再一一展开分析了。
 

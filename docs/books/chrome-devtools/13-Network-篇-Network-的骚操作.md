@@ -13,7 +13,7 @@
 
 我赌你是后者，如果是这样，那么 `Overview` 的部分就没有任何理由占用 `Network` 接近一半的空间。隐藏它！
 
-![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2019/1/22/168745fc910fdc73~tplv-t2oaga2asx-image.image)
+![](./_assets/remote-6d7a4c2e4221.png)
 
 ## 2. Request initiator 显示了调用堆栈信息
 
@@ -23,7 +23,7 @@
 
 除了这些外部库之外，如果你希望查看代码的哪一部分触发了请求。 将鼠标悬停在显示的 `initiator`（例如 外部库）上，你将看到完整的调用堆栈，包括你的文件：
 
-![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/12/29/167f8282477941b8~tplv-t2oaga2asx-image.image)
+![](./_assets/remote-ac9f353fa0b8.gif)
 
 ## 3. 请求过滤
 
@@ -31,7 +31,7 @@
 
 只需输入 例如 `method` 或者 `mime-type` :
 
-![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/12/29/167f8282534dfe59~tplv-t2oaga2asx-image.image)
+![](./_assets/remote-7188fa6a654b.gif)
 
 如果想要显示所有可能的关键字，在空白的输入框按下 `[ctrl] + [space]`
 
@@ -39,7 +39,7 @@
 
 在请求表中，你可以看到有关每个请求的几条信息，例如：`Status`， `Type`， `Initiator`， `Size` 和 `Time`。但是你同样可以添加更多(例如 我经常添加 `Method`)。更多：
 
-![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/12/29/167f82824d09c68d~tplv-t2oaga2asx-image.image)
+![](./_assets/remote-bdd072373625.png)
 
 > 你可以添加所有 `Network` 面板里展示出来的信息。
 
@@ -47,13 +47,13 @@
 
 > 请注意，`Response Headers` 是一个有更多选项的完整的子菜单，甚至可以定义你自己的选项。
 
-![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/12/29/167f828279b0b397~tplv-t2oaga2asx-image.image)
+![](./_assets/remote-09bd96ed6d64.gif)
 
 ## 5. 重新发送 `XHR` 的请求
 
 如何重新发送 `XHR` 的请求？刷新页面？太老套了，试试这么做：
 
-![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/12/20/167c99ea1c267c2b~tplv-t2oaga2asx-image.image)
+![](./_assets/remote-458fdbe35b55.png)
 
 ## 6. XHR/fetch 断点
 
@@ -64,4 +64,4 @@
 
 你可以添加部分 `URL` 作为触发器或监听任何请求：
 
-![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2019/1/22/16874662814db12c~tplv-t2oaga2asx-image.image)
+![](./_assets/remote-ccc71914a4dd.png)

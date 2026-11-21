@@ -10,7 +10,7 @@
 
 了解了 Redis 如何处理时间事件之后，我们再来看 Redis 中有哪些时间事件。下图展示了 aeCreateTimeEvent() 函数的调用位置：
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6aa9f0a09fbf47d3bcf72c971d766f59~tplv-k3u1fbpfcp-zoom-1.image)
+![](./_assets/remote-dffcb7931c7b.png)
 
 从上图中我们看出，Redis 里面创建时间事件的地方只有两个：startEvictionTimeProc() 函数与 Redis 的数据淘汰机制相关，我们会在后面拿一节的篇幅详细介绍；**本节将重点介绍 initServer() 里面创建的这个时间事件**。
 
@@ -58,7 +58,7 @@ void updateCachedTime(int update_daylight_info) {
 
 由于 serverCron() 函数是周期性调用，还可能会出现延迟，所以这三个值并不是绝对准确，它们只会用在日志打印、LRU 时钟更新、决定是否进行持久化、进行某些不精确的统计操作等精度要求不高的地方。对于时间精度要求很高，或者是两次更新函数调用之间的计时，Redis 还是会进行 `ustime() 获取精确的时间戳`进行计算。比如说，call() 函数里面用来统计一条命令的执行时间，call() 函数的调用是在两次 serverCron() 函数之间完成的，如果用缓存的时间戳，统计出来的命令执行时长始终是 0。
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/adc658c760964d26921e386564c23e1f~tplv-k3u1fbpfcp-zoom-1.image)
+![](./_assets/remote-5409690ac639.png)
 
 既然说到 call() 函数中对时间戳的依赖，这里就说一下其中的知识点，下面先来看 call() 函数中统计命令耗时的时间戳：
 
@@ -202,7 +202,7 @@ unsigned int LRU_CLOCK(void) {
 
 LRU_CLOCK() 函数的调用方如下图所示，一个是 lookupKey() 函数，Redis 在查找任意 Key 的时候，都会使用到 lookupKey() 函数，查找成功时就会更新 value 值中的 lru 字段为当前的 LRU 时钟；另一个是 estimateObjectIdleTime() 函数，该函数是在 Redis 进行内存淘汰的过程中计算 value 值空闲了多久，如下图右侧方框内代码所示，这样 Redis 就可以找到最久没被访问的 Key，并淘汰掉。
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/51cd690d81ab4fc1860c542e712e02ab~tplv-k3u1fbpfcp-zoom-1.image)
+![](./_assets/remote-55572f8fd00b.png)
 
 ### 更新内存使用统计信息
 
@@ -312,7 +312,7 @@ serverCron() 接下来会调用 `clientsCron() 函数`对 server.clients 集合�
 
 处理每个 client 的时候，clientsCron() 函数会依次从 5 个方面对 client 进行周期性管理，分别对应下图展示的 5 个方法：
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/752b164f79e0422c9b19b09e7ff6858f~tplv-k3u1fbpfcp-zoom-1.image)
+![](./_assets/remote-cea67dcc7d34.png)
 
 我们展开说一下这 5 个方法的功能。
 

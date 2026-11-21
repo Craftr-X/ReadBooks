@@ -174,7 +174,7 @@ void clusterFailoverReplaceYourMaster(void) {
 
 最后，我们展开介绍一下 clusterUpdateState() 函数是如何判断当前整个 Redis Cluster 是否可用的，该函数判断的结果会记录到 clusterState->state 字段中。在每次执行命令之前，都需要检查 clusterState->state 字段，也就是如果当前 Redis Cluster 是否可用，如果不可用，那么当前节点不会对外提供任何读写能力，这部分检查 clusterState->state 字段的逻辑位于 getNodeByQuery() 函数中，其如下调用关系图所示：
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e56d5932d7aa41a0afaf8988d5813880~tplv-k3u1fbpfcp-zoom-1.image)
+![](./_assets/remote-8f584bff561b.png)
 
 下面是 getNodeByQuery() 函数检查 clusterState->state 字段的代码片段：
 
@@ -239,7 +239,7 @@ CLUSTER FAILOVER 命令支持 DEFAULT、FORCE、TAKEOVER 三种模式，下面�
 2. 当前 Slave 节点下次调用 clusterSendMFStart() 函数的时候，会向其 Master 节点发送 MFSTART 消息。
 3. Master 节点在收到 MFSTART 消息之后，会暂停所有与 Master 交互的 client（暂停时长为 10 秒），然后向发起手动 failover 的 Slave 节点返回 PING 消息。这次 PING 消息的主要目的是向 Slave 节点返回 Master 当前的 Replication Offset 值。这里处理 MFSTART 消息的逻辑也是位于 clusterProcessPacket() 函数中，具体位置如下图所示：
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/dd6c711322ae4675b8674404813b2608~tplv-k3u1fbpfcp-zoom-1.image)
+![](./_assets/remote-2251ab2815ed.png)
 
 4. Slave 节点收到 PING 消息之后，会将其中携带的 Master Replication Offset 记录到 mf_master_offset 字段中。
 

@@ -2,13 +2,13 @@
 
 这一模块中，我们根据 Redis 命令底层实现的相关性，分成了下面几篇进行介绍：
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5ec0604435bc4e19840d580ae9a9e788~tplv-k3u1fbpfcp-zoom-1.image)
+![](./_assets/remote-5d34a936560f.png)
 
 ## 通用命令
 
 在 Redis 命令分类里面， **Generic 分类中的命令并不与任意一种数据结构对应，而是可以操作所有类型的结构**。下图对 Generice 分类中的命令，做了进一步的分类：
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/fb5cdc1f4e40457ba6c263f6261de7fc~tplv-k3u1fbpfcp-zoom-1.image)
+![](./_assets/remote-9492a7347bb4.png)
 
 这里我们就展开介绍实践中比较常用的 Generic 分类中的命令。
 
@@ -25,7 +25,7 @@
 
 在 objectCommand() 函数中，首先根据 c->argv[1] 参数，确定 OBJECT 子命令，然后进入 lookupKeyReadWithFlags() 函数查找目标 Key，其中使用的 flags 值 LOOKUP_NOTOUCH|LOOKUP_NONOTIFY，也就是不会更新 lru 字段，也不会触发 KeySpace 通知，毕竟这只是查询元数据，并不是查询里面键值对的具体值。查找结束之后，根据 OBJECT 子命令读取 Value 值的不同字段，返回即可。整个流程用下面一张图即可完整囊括：
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7547a977587f4596b548374e8842f833~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-ae6a23362cc7.png)
 
 第二条要介绍的 Generic 类型的命令是 `TYPE 命令`，它获取的是 redisObject 中的 type 字段值，具体实现与 OBJECT 命令的实现基本一致，也是依赖 lookupKeyReadWithFlags() 查询目标 Key 值。type 字段指定了 redisObject 包装数据的具体类型，结合 OBJECT ENCODING 返回的编码信息，就可以确定一个 Key 的存储结构。
 
@@ -44,7 +44,7 @@
 
 先来看 EXPIRE、EXPIREAT 以及 PEXPIRE、PEXPIREAT 底层的实现，如下图所示，它们都是依赖 **expireGenericCommand() 函数**设置 Key 的过期时间。expireGenericCommand() 函数正常执行时候的核心实现，我们在前面[第 34 讲《内核解析篇：Redis Key 的过期与删除》](https://juejin.cn/book/7144917657089736743/section/7147529943709122600)介绍 Key 过期的章节中已经详细介绍过了，这里不再重复。
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4c30ec5cb34645bc893a7244c46dbd8e~tplv-k3u1fbpfcp-zoom-1.image)
+![](./_assets/remote-668976cf7cb4.png)
 
 这里关注一个异常情况，就是 EXPIRE 等命令指定的过期时间戳已经过期的场景，下面是 expireGenericCommand() 函数处理这种情况的分支：如果 when 时间戳已经过期了，这里会直接删除 key。
 
@@ -118,7 +118,7 @@ KEYS 的底层实现原理大致如下：首先创建一个 dict 安全迭代器
 
 SCAN 命令以及 SSCAN、HSCAN、ZSCAN 命令对应的入口都是 **scanGenericCommand() 函数**，如下图所示，scanGenericCommand() 函数底层依赖前文介绍的 dictScan() 函数完成 Key 扫描的功能，调用栈如下图所示：
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/fa23fb474ffe4c00bfedf61f0146b489~tplv-k3u1fbpfcp-zoom-1.image)
+![](./_assets/remote-8ae6ae852360.png)
 
 下面我们来看 **scanGenericCommand() 函数**的核心步骤：
 
@@ -466,7 +466,7 @@ do {
 
 Redis 字符串常用的写入命令有三个：SET、SETNX、SETEX、PSETEX 四条命令，它们底层的实现都是 **setGenericCommand() 函数**，调用关系如下图所示：
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/18c85e50f8e94c218bf5e8494ea6aeb3~tplv-k3u1fbpfcp-zoom-1.image)
+![](./_assets/remote-5def3bee50d5.png)
 
 setGenericCommand() 函数的核心逻辑如下。先来看它的第二个参数 flags，该参数用来记录 SET 参数的解析结果，其中可以设置以下标志位：OBJ_SET_NX、OBJ_SET_XX、OBJ_EX、OBJ_PX、OBJ_KEEPTTL、OBJ_SET_GET、OBJ_EXAT、OBJ_PXAT、OBJ_PERSIST。通过名称我们可以大致了解这些标志位的含义，比如 OBJ_SET_NX 标志位就表示在 Key 不存在的时候才能写入，也就是 SET...NX 命令或者 SETNX 命令，其他的标志位含义这里不再一一展开。
 
@@ -552,7 +552,7 @@ void setGenericCommand(client *c, int flags, robj *key, robj *val, robj *expire,
 
 读取字符串的命令相对来说比较简单，都是**调用 lookupKeyReadOrReply() 函数从 DB 里面查数据**，然后根据命令带的参数进行相应的操作，最后再返回查询到的结果。下面的调用栈也说明了这一点：
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5453d691437a484e86526ff54da2b2db~tplv-k3u1fbpfcp-zoom-1.image)
+![](./_assets/remote-f567941d8835.png)
 
 通过这些 get*Command() 函数的名称，相信小伙伴也能够对标到对应的 Redis 命令，比如 getexCommand() 函数就是 GETEX 命令的处理逻辑，里面除了调用 lookupKeyReadOrReply() 函数查询键值对之外，还会调用 setExpires() 给 Key 设置过期时间。
 
@@ -618,7 +618,7 @@ memcpy((char*)o->ptr+offset,value,sdslen(value));
 
 `DECR、DECRBY、INCR、INCRBY 等是用于计算数字类型 Value 的命令`，它们底层实现都是 **incrDecrCommand() 函数**，如下图所示：
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a3b5e2f3c40f43b6a022a95b35e5659e~tplv-k3u1fbpfcp-zoom-1.image)
+![](./_assets/remote-bfb492025eab.png)
 
 incrDecrCommand() 函数的核心逻辑如下：
 

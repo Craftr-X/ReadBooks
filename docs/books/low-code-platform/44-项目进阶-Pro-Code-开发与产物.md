@@ -22,7 +22,7 @@
 
 如下图所示：
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/321b2eb801fd48dfaaa7b7d214af3e3b~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=1500&h=668&s=159033&e=png&b=ffffff)
+![](./_assets/remote-f547b4f15e77.png)
 
 ## 协议转代码
 
@@ -32,11 +32,11 @@
 
 在画布中拖放入一个组件，右侧代码板块是当前**DSL**映射而成的**React**代码，它本质上是通过模板引擎的方式把**DSL**通过一定的模板适配转换成为对应的字符串。
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/914fe095193f4368906598fe3ac05a83~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=3354&h=726&s=142923&e=png&b=fefefe)
+![](./_assets/remote-8e9a9b7bcc96.png)
 
 整体的流程如下图所示：
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/98e1766ce4274720b6fac20dbc087b6e~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=1222&h=442&s=22193&e=jpg&b=ffffff)
+![](./_assets/remote-7dcec7de4f84.jpg)
 
 ## 模板引擎
 
@@ -210,7 +210,7 @@ console.log(str, '当前组件的代码')
 
 到此为止，已经基本上可以将**DSL Schema**渲染成对应的组件代码，在将 **DSL Schema** 转换为组件代码的过程中，为了提升代码的可读性和遵循代码规范，我们还需要对生成的组件代码进行格式化的处理，在**Vs Code**的中可以直接使用**Prettier**直接进行操作，那么在浏览器环境中如何进行代码的格式化呢？
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/788e0a9927284369a85e6cc9a6218f8a~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=1218&h=208&s=41284&e=png&b=28292a)
+![](./_assets/remote-350d4e66b101.png)
 
 **Prettier** 是一个流行的代码格式化工具，用于帮助开发人员自动格式化其代码，以保持一致的代码风格和格式。它不仅提供了**IDE**与**CLI**的插件支持，同样也支持浏览器运行时的代码格式化。
 
@@ -218,7 +218,7 @@ console.log(str, '当前组件的代码')
 
 使用**Prettier** **Standalone** 的 API 能够使用format方法通过其配置的**parse**插件进行对应语言的格式化。接下来就来将模板引擎转换好的代码在进行格式化操作吧。
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/32ad162ecc694540b65d61a5878bf9b5~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=3358&h=1292&s=509693&e=png&b=fefefe)
+![](./_assets/remote-f2722453cb26.png)
 
 首先，执行如下命令先**安装prettier**依赖包：
 
@@ -350,4 +350,4 @@ export const ComponentDoTCode = () => {
 1. 构建结束后此时的工程目录就是我们需要的产物结果了，此时可以选择打成压缩包传递到对应存储当中，比如**OSS**或者是机器的存储磁盘里面，后续前端页面可以通过对应的地址来预览和下载对应的内容。
 1. 基于**ProCode**出码的工程，可以提供**Devops**相关的服务，从而支持运行时预览与源码工程的发布部署预览。
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f92a7c37111748e59338d2576e728c01~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=1338&h=849&s=77541&e=jpg&b=fefdfd)
+![](./_assets/remote-11d77d546c45.jpg)

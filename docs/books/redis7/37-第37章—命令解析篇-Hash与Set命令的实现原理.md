@@ -288,11 +288,11 @@ hsetCommand() 首先会执行 hashTypeLookupWriteOrCreate() 函数从 DB 中查�
 
 上述查找目标 Key 的逻辑，也是先判断底层存储结构，然后根据底层结构的不同，分别进入hashTypeGetFromListpack() 函数以及 hashTypeGetFromHashTable() 函数中，调用栈如下图所示：
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f62b6b5d8cca4df5886fdc15c339422d~tplv-k3u1fbpfcp-zoom-1.image)
+![](./_assets/remote-3357dbd270fc.png)
 
 HGETALL、HKEYS、HVALS 这三条命令，虽然也是获取键值对数据，但是和 HGET 命令不太一样，它们是获取哈希表中`全部的键值对`，底层依赖的是 genericHgetallCommand() 函数实现的，调用栈如下图所示：
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5b94c7caa5e64b2db84d516468ddf501~tplv-k3u1fbpfcp-zoom-1.image)
+![](./_assets/remote-c21ab1587c9b.png)
 
 genericHgetallCommand() 函数在从 redisDb 里面查到目标哈希表之后，会使用 hashTypeIterator 迭代器，迭代哈希表中的全部键值对数据，然后根据命令的要求返回。
 
@@ -370,7 +370,7 @@ void saddCommand(client *c) {
 
 接下来，遍历 SADD 命令的全部参数，对每个参数调用 **setTypeAdd() 函数**，将它们写入到 Set 集合中。下图展示了 setTypeAdd() 函数的关键分支：
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9eeedc037a314ff9952f1d84c7614598~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-56b6db950fa8.png)
 
 这里展开说明一下上图中每个分支的逻辑。
 
@@ -414,7 +414,7 @@ Redis 除了为 Set 结构提供了上述元素读写命令之外，还提供了
 
 先来看 SDIFF、SDIFFSTORE、SUNION、SUNIONSTORE 四条命令，如下图的调用栈所示，它们底层都是依赖 **sunionDiffGenericCommand() 函数**实现的。
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1dcb1fcb31fd4699b420638fdb61b717~tplv-k3u1fbpfcp-zoom-1.image)
+![](./_assets/remote-43812368ccff.png)
 
 sunionDiffGenericCommand() 函数的参数含义如下：
 

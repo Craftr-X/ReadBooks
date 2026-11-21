@@ -11,11 +11,11 @@
 - 在 `Chrome` 的调试打开的情况下 按下 [ `Ctrl]` + `[Shift]` + `[P]` (Mac： `[⌘]` + `[Shift]`+ `[P]` )
 - 或者使用 `DevTools` 的 `dropdown` 按钮下的这个选项:
 
-![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/12/11/1679a2adf8945253~tplv-t2oaga2asx-image.image)
+![](./_assets/remote-fd4fea2f1307.png)
 
 下图中，我整理了可供选择的命令列表，归为几个部分：
 
-![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/12/11/1679a2e13926d71b~tplv-t2oaga2asx-image.image)
+![](./_assets/remote-d6c0656333cb.png)
 
 > 上面这张图同时也证明了 `DevTools` 有多么强力!
 
@@ -25,7 +25,7 @@
 
 不只是这样，你同样可以用这种方式 **全屏截图**  - 通过 `Capture full size screenshot` 命令。请注意，这里说的是全屏，并不是嵌入页面的一部分。一般来说这可是得使用浏览器插件才能做到的事情！
 
-![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/12/11/1679a37dbce34984~tplv-t2oaga2asx-image.image)
+![](./_assets/remote-0d6b9891c1bf.gif)
 
 > 注：**`节点截图有时会失效`**，全屏截图暂时没有遇到问题，建议大家使用后者。
 
@@ -43,7 +43,7 @@
 
 试试看：
 
-![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/12/11/1679a4aa44c58106~tplv-t2oaga2asx-image.image)
+![](./_assets/remote-f277e5a5dfd3.gif)
 
 ## 3.快速切换主题
 
@@ -51,4 +51,4 @@
 
 这个时候 `主题` 就派上了用场了：在 `Commands` 菜单中寻找与 `theme` 相关的选项，实现 `明亮` & `暗黑` 两种主题之间的切换：
 
-![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/12/11/1679a56481366d25~tplv-t2oaga2asx-image.image)
+![](./_assets/remote-a7756dcc42b5.gif)

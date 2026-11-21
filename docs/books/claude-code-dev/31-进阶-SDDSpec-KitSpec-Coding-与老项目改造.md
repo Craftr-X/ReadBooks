@@ -16,7 +16,7 @@
 
 规范工具分四个层次，每层解决的问题不同：
 
-![](https://static001.geekbang.org/resource/image/cb/cd/cb9e873c2bb5176b236e5be02bc1a7cd.png?wh=1428x822)
+![](./_assets/remote-62365c114cc2.webp)
 
 CLAUDE.md的职责边界：这个项目的全局规则。技术栈约束、代码风格、命名规范、禁止事项、模块职责划分。读者是Claude Code，每次启动都读，所以要精简、稳定、不频繁变更。
 
@@ -315,7 +315,7 @@ Spec Coding的适用场景：复杂功能（超过3个文件改动）、有不�
 
 学完这门课，你需要知道Claude Code在整个工具生态里的位置。工具很多，但分清楚每一层解决的是什么问题，选择就不难了。
 
-![](https://static001.geekbang.org/resource/image/2d/0a/2dc1afd52160241b42c17b42a5d6b30a.png?wh=1492x1141)
+![](./_assets/remote-ebb3ea72b97a.webp)
 
 ### 编码助手层：日常怎么用
 

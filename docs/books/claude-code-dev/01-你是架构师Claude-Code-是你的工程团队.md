@@ -50,7 +50,7 @@
 
 Claude Code的输出是：
 
-![](https://static001.geekbang.org/resource/image/26/9e/26b21bce15cedb504961db9b7366099e.png?wh=1232x1508)
+![](./_assets/remote-1edbcc7d7d01.webp)
 
 ### 第二种方式
 
@@ -58,7 +58,7 @@ Claude Code的输出是：
 
 Claude Code的输出是：
 
-![](https://static001.geekbang.org/resource/image/07/5d/071a7a4786bdc3e2d240e9fc2b92ed5d.png?wh=1218x1146)![](https://static001.geekbang.org/resource/image/9b/cc/9b772c62a2f32de0ba9b69ddb0b12acc.png?wh=1284x1474)
+![](./_assets/remote-1bd218746c30.webp)![](./_assets/remote-90b97da1392d.webp)
 
 同一个AI，这两种指令拿到的输出质量完全是两回事。第二种方式的输出结构完整，有错误码、有依赖管理、有连通性测试，是一个成熟项目该有的样子。
 
@@ -96,7 +96,7 @@ Claude Code的输出是：
 
 Claude Code的主要输出是：
 
-![](https://static001.geekbang.org/resource/image/f7/b3/f778753f8ec9a6a2e2922f5a045d59b3.png?wh=1680x1346)
+![](./_assets/remote-4065cee6e469.webp)
 
 Claude Code很快给了代码。核心思路就三步：查存在 → 查引用 → 删除，BizException由GlobalExceptionHandler统一拦截返回对应错误码。现在我们用三步检查法来看。
 

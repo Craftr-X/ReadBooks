@@ -51,7 +51,7 @@
 
 可以看到 **Canvas** 的渲染速度比 **DOM** 是成倍提升的。
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/316a7a24fd00460d87ed4cee78c43c96~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-5dc87760efdb.png)
 
 下面是两者比对的代码：
 

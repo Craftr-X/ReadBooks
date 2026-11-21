@@ -67,19 +67,19 @@ return false;
 
 最后，我们还可以在 redis-cli 后面添加 `--ldb` 参数对 Lua 脚本进行调试，如下图所示：
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/692256d794ff45c2908c90802551d5c8~tplv-k3u1fbpfcp-zoom-1.image)
+![](./_assets/remote-39ad89930f2c.png)
 
 进入 Debug 状态之后，我们可以输入 s 或是 step 单步执行，如下图所示，在单步执行的时候，执行的 Redis 命令以及返回值都会打印出来：
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7e83bc825ca64d88bff20c097bd47a8d~tplv-k3u1fbpfcp-zoom-1.image)
+![](./_assets/remote-9a74f9460ca6.png)
 
 我们还可以使用 break 命令在指定行添加断点，也可以使用 break 命令展示或删除指定行的断点，如下图所示：
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/14f788f652564e88b4fea12b128a58d1~tplv-k3u1fbpfcp-zoom-1.image)
+![](./_assets/remote-baf349d99050.png)
 
 在设置断点之后，我们就可以使用 continue 命令将程序直接运行到下一个断点处，同时，也可以使用 print 命令展示全部局部变量值以及指定的局部变量值，如下图所示：
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/20a1d64453be4e63816cdc4b7f9bc97e~tplv-k3u1fbpfcp-zoom-1.image)
+![](./_assets/remote-b36d9d239bda.png)
 
 到此为止，我们的第一个 Lua 脚本的`编写`、`运行`、`调试`方面的知识就介绍完了。下面我们将开始介绍 Redis 执行 Lua 脚本的相关实现了。
 

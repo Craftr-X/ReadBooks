@@ -23,7 +23,7 @@
 
 相信很多朋友为了提高效率或多或少都封装过一些通用型的组件，比如通过 **JSON** 配置来实现一组表单布局，如下图，是一个简单的表单区块：
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4c5806750f2c4555bedbc98c52168e6c\~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-246757d4e9ad.png)
 
 前端实现的代码如下所示：
 
@@ -98,7 +98,7 @@ const config: FormRenderProps['config'] = [
 
 如下图所示，**Schema 协议**第一个版本先预留了如下几个领域区块，分别是**依赖管理**、**国际化(多语种)**、**状态管理**、**数据源**、**生命周期**以及**页面结构**等耳熟能详的结构定义。
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2549ee2454d243b08a958ab56918b51f\~tplv-k3u1fbpfcp-zoom-1.image)
+![](./_assets/remote-87ab0c2fbac9.jpg)
 
 ### 协议版本(version)
 

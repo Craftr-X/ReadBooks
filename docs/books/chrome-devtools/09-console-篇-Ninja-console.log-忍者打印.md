@@ -15,7 +15,7 @@
 
 如果条件成立，这个断点就会暂停代码的执行：
 
-![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/12/17/167b94b8f36112b7~tplv-t2oaga2asx-image.image)
+![](./_assets/remote-d972b4623494.gif)
 
 ## 2. The ninja（忍者） `console.log`
 
@@ -27,6 +27,6 @@
 与其在你的源码的不同地方去添加 `console.log` / `console.table` / `console.time` 等等，不如你直接使用条件判断来将它们“连接”到 `Source` 面板中。
 这样的话，它们会一直执行，并且当你不再需要它们的时候，在 `Breakpoints section` 会清晰的列出它们。点两下鼠标你就可以把所有的都移除，就像一堆忍者一样突然消失！
 
-![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/12/17/167b955a1f0311fc~tplv-t2oaga2asx-image.image)
+![](./_assets/remote-45463f523518.gif)
 
 > 这个技术在调试生产环境的问题时同样很有用，因为你通过这样的方式轻松将 `console logs` 插入到 `source` 里。

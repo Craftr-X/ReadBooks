@@ -1,6 +1,6 @@
 上一节最后，我们介绍了 Sentinel 中相关的定时任务，其中最核心的逻辑就是检查线上 Redis 实例的状态，这里**检查单个 Redis 实例的状态逻辑位于 sentinelHandleRedisInstance() 函数中**，其流程如下图所示：
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/07c94ac018614c88bb339f0a15931307~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-31b68a8a892e.png)
 
 如上图所示，sentinelRedisInstance() 函数的核心逻辑分为监控、状态检查、故障转移三部分：
 
@@ -502,7 +502,7 @@ void sentinelRefreshInstanceInfo(sentinelRedisInstance *ri, const char *info) {
 
 最后，我们来看 hello 消息的发送，Sentinel 默认情况下会每 2 秒向其监控的主库、从库发送 hello 消息。hello 消息的格式如下图所示，分为 8 个部分，每一部分之间通过逗号分隔：
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c3359e5340c242c6bce8769fb9756e1a~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-de9934a53b62.png)
 
 该 hello 消息是 Sentinel 在前文介绍的 instanceLink->cc 连接（订阅 hello 频道是通过 pc 连接，不要搞混了）上，发送 PUBLISH 命令到 `__sentinel__:hello` 频道中的。
 
@@ -534,7 +534,7 @@ void sentinelRefreshInstanceInfo(sentinelRedisInstance *ri, const char *info) {
 
 首先我们假设现在有三个主从集群，如下图所示：
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e24731656e4644af80353b43565a4e51~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-5cde97dc9dea.png)
 
 接下来我们假设启动了 Sentinel 1~3 三个 Sentinel 服务，每个 Sentinel 的配置文件中都指定了三个主库的地址，如下所示：
 
@@ -682,7 +682,7 @@ void sentinelAskMasterStateToOtherSentinels(sentinelRedisInstance *master, int f
 
 最后，我们通过一张图来简单总结一下 `sentinel is-master-down-by-addr` 请求处理流程：
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/118eb4e46f06456cbf879a896718ebe0~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-fc264fcb469f.png)
 
 ## 总结
 

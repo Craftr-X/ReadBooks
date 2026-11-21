@@ -4,7 +4,7 @@
 
 口说无凭，举个例子把：
 
-![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/12/11/1679a0d3a708ef3e~tplv-t2oaga2asx-image.image)
+![](./_assets/remote-c2dda8b26e33.gif)
 
 我们可以看到，一共有两次打印，一次是打印原始信息，一次是打印我们修改后的信息，并且我们把属性 `a` 从 `0` 改成 `1` ，`name` 属性从 `Tomek` 改成 `Not Tomek`
 

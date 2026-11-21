@@ -13,7 +13,7 @@
 pnpm i openai
 ```
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7d2d49964b73424da85dde212c73bc50~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=1752&h=966&s=122854&e=png&b=0e0e0e)
+![image.png](./_assets/remote-670e126599f5.png)
 
 根据文档直接初始化调用即可：
 
@@ -39,7 +39,7 @@ pnpm i openai
 
 如下是 **GPT** 正常的返回值:
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/49d31b00fe704dd0bd51efed3355431c~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=2307&h=1891&s=234400&e=png&b=eaf7f2)
+![image.png](./_assets/remote-7e1af0b286c1.png)
 
 接下来我们需要对它进行一定的 **prompt** 矫正，拿到我们预期的结果。
 
@@ -69,7 +69,7 @@ pnpm i openai
   ],
 ```
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/15cbfa58d2574238a7f7d3543a271780~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=2793&h=1129&s=305525&e=png&b=333333)
+![image.png](./_assets/remote-968154e3ef91.png)
 
 如上图所示，它确实很棒，已经帮我们返回了一段标准关于用户 **CURD** 的低代码 **Schema**，但仅次并不能够直接使用，因为他的回复是一个自然语言，携带了非常多的其他的内容，这些并不是能转成低代码程序能够直接使用的模块。
 
@@ -94,11 +94,11 @@ messages: [
 
 请注意，我们新增加了一条 **prompt** `以JSON结尾`，当 **GPT** 接收到了带有这条信息结尾的时候，将直接返回它生成好的 **Schema**，无关的内容将会省略，这样方便我们直接拿到结果进行转换。
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/736dd628295d43769f226a06ffe3cda8~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=2851&h=1690&s=275624&e=png&b=333333)
+![image.png](./_assets/remote-96883cc56344.png)
 
 如上所示的返回值，我们将 `/n` 跟 `/"` 进行转换之后，可以得到一份正常的 **Json** 格式的 **Schmea**
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/752e9b025cef47bab9b8a9d6708875b7~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=784&h=1516&s=228518&e=png&b=fafaff)
+![image.png](./_assets/remote-483cf2ab7ce5.png)
 
 但这还是远不能满足我们的需求，已经这个 **Schema** 并非是对应我们的低代码系统。
 

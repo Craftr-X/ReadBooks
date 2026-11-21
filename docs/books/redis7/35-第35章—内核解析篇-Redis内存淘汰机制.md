@@ -36,7 +36,7 @@ Redis 最常见的应用场景就是缓存，我们在使用缓存的时候，�
 
 举个简单的例子，有两个 Key 一段时间内被访问分布如下图所示：
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1e106269f256464eb8f918d9679149cb~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-c6c2b55cfdb2.png)
 
 如果使用 LRU 算法进行淘汰，在 robj->lru 字段中记录的是最近一次访问时间，也就是前面说的 LRU 时钟，Redis 通过这个 LRU 时钟的值，就可以判断出 Key1 是最近使用的 Key，所以 Key2 将会被淘汰。
 
@@ -50,7 +50,7 @@ Redis 最常见的应用场景就是缓存，我们在使用缓存的时候，�
 
 在客户端发送命令访问一个 Key 时，Redis 都会调用 lookupKey(）函数，如下图所示，lookupKeyReadWithFlags() 函数是在读取时使用的，lookupKeyWriteWithFlags() 函数是在写入时使用的。
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/cbd34a430c2545ab9afca81518e42921~tplv-k3u1fbpfcp-zoom-1.image)
+![](./_assets/remote-9e857335c96c.png)
 
 lookupKey() 函数会先去 redisDb->dict 集合中，查找目标 Key，查找成功之后，就会更新 Value 值中的 lru 字段，核心代码如下：
 
@@ -160,7 +160,7 @@ uint8_t LFULogIncr(uint8_t counter) {
 
 下表展示 lfu-log-factor 配置项各个取值下，counter 增长速率，其中第一列是 lfu-log-factor 配置项的取值，表头是调用 LFULogIncr() 函数的次数：
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/247bb8086e134b52802ea420cd429a9d~tplv-k3u1fbpfcp-zoom-1.image)
+![](./_assets/remote-bf4e76737dac.png)
 
 如果 counter 只是单向递增的，那在当前 LDT 周期内，一旦 counter 到达 255，就不会被淘汰了，反映到实际场景中，就是一些过期的热点 Key 不会被及时删除。为了避免这种情况，`Redis 使用 LFUDecrAndReturn() 函数对 counter 做衰减`，在 LFUDecrAndReturn() 函数中会根据 LDT 时间戳的流逝情况以及 lfu-decay-time 配置项（默认值为 1）决定此次调用是否进行 counter 衰减，其中 lfu-decay-time 配置项的含义是 LDT 流逝多久衰减 1。LFUDecrAndReturn() 函数具体实现如下：
 
@@ -235,7 +235,7 @@ if (server.maxmemory && !server.lua_timedout){
 
 明确了内存淘汰的入口和返回值，以及内存淘汰失败时的后续处理逻辑之后，我们下面专注看一下内存淘汰的具体实现，也就是 performEvictions() 函数的实现，下图展示了 performEvictions() 函数的核心流程：
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5df32dca3a014509a60fb870aa05d68c~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-bbd07cc27cb0.png)
 
 我们一步步来看 performEvictions() 函数的核心逻辑。
 
@@ -513,7 +513,7 @@ struct evictionPoolEntry {
 
 EvictionPoolLRU 是一个全局的、有序的、长度固定为 16 的数组，其中的元素会按照 idle 字段值，从小到大排序。EvictionPoolLRU 缓存池用来暂存采样获取的 Key，采样逻辑位于 evictionPoolPopulate() 函数中，其核心流程如下图所示：
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bdaf3a986a2344329962afbf289e642c~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-746c15ef4ec1.png)
 
 evictionPoolPopulate() 函数首先会通过 dictGetSomeKeys() 随机获取几个 dictEntry（具体个数由 maxmemory-samples 配置项指定）。然后，根据不同策略计算一个 idle 值：
 

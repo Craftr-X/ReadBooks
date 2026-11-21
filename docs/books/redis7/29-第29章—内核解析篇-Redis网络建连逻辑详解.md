@@ -172,7 +172,7 @@ CT_Socket 作为我们最常用的实现，在后面介绍的时候，我们就�
 
 这里先帮小伙伴们梳理一下 ConnectionType->ae_handler、connection. write_handler 和 read_handler 以及 aeFileEvent->rfileProc 和 wfileProc 之间的关系，读写请求关键调用链如下图所示：
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7e8fa7bd8ac34f478da569190722dc03~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-9ae7f9d9f488.png)
 
 可以看到，在读取客户端请求的时候，触发的是 rfileProc 函数，它实际指向的 ConnectionType->ae_handler 函数，其中会调用 connection.read_hander 指针指向的函数，也就是 readQueryFromClient() 函数。Redis Server 向连接写回数据的时候，也是类似的调用链，这里就不再多说了。
 
@@ -244,7 +244,7 @@ static void acceptCommonHandler(connection *conn, int flags, char *ip) {
 
 首先，创建一个 client 实例，并对 client 和 connection 进行一系列设置。比如，给 client 初始化一个 id，这个 id 是通过 server.next_client_id 字段的原子操作递增得到的，小伙伴们可以将它理解成 Java 里面的 AtomicLong；将新建连接设置为非阻塞的；将 client 的 conn 字段指向 connection 实例，将 connection.private_data 指向 client 实例，**两者就绑定起来了**。
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/36158c1ce17c45d98fe74dbf97951dbb~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-814c09345b81.png)
 
 之后，就是调用 CT_Socket->set_read_handler，也就是 connSocketSetReadHandler() 函数。它里面主要做了以下两件事。
 

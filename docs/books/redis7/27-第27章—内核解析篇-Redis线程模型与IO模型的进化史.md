@@ -8,7 +8,7 @@
 
 从 4.0 版本开始，Redis 就已经不是纯粹的单线程应用了。除了主线程外，Redis 开始使用后台线程处理一些比较耗时的操作，例如，清理脏数据、释放超时连接、删除大 key 等，但是网络读写、执行命令还是只使用单线程来处理。Redis 4.0 以及之前版本的核心线程模型如下图所示：
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4e9194c37c8c44d69830a70264a7457e~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-e06368ffd12e.png)
 
 Redis 之所以使用单线程是**因为 Redis 执行的是纯内存的操作，Redis 服务的瓶颈不在 CPU，而是在网络和内存**。单线程避免了不必要的上下文切换和竞争条件，也无需考虑锁的问题，整个线程模型比较简单。
 
@@ -16,7 +16,7 @@ Redis 之所以使用单线程是**因为 Redis 执行的是纯内存的操作�
 
 从 Redis 官方介绍中来看，单线程模型下网络 IO 占用了 Redis 大部分的 CPU 时间，网络 IO 的瓶颈随着请求量的增加也逐渐凸显出来。Redis 6.0 开始支持多线程 IO，进而充分利用服务器多 CPU 的优势，提高 Redis 在网络 IO 方面的性能。下图为 Redis 6.0 之后的线程模型：
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/63717ec919ad4f708d16b34767d44ceb~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-8b236ddd900f.png)
 
 简单解释一下这张图的结构：当 Redis Server 收到一个请求的时候，先会进入 IO 队列，多条 IO 线程会从 IO 队列里面读取请求并进行解析，解析之后的命令就会交给 Redis 主线程进行执行；执行后的结果会重新进入 IO 队列，等待 IO 线程将响应返回给客户端。
 
@@ -28,17 +28,17 @@ Redis 6.0 虽然开始支持多线程，但是执行命令的线程还是只有�
 
 既然说到了线程模型，就不得不说另一个非常重要的概念 —— **IO 多路复用**。我们知道传统阻塞 I/O 会阻塞线程执行，如下图所示，但是 Redis 的核心是单线程模型，如果发生阻塞，就会导致整个 Redis 实例不可用。
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7977a35ff1cb4a24911438053ef24648~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-6e5104811fed.png)
 
 Redis 采用 I/O 多路复用来解决这个问题。针对传统的阻塞 I/O 模型的缺点，I/O 复用的模型在性能方面有不小的提升。I/O 复用模型中的多个连接会共用一个 Selector 对象，由 Selector 感知连接的读写事件，而此时的线程数并不需要和连接数一致，只需要很少的线程定期从 Selector 上查询连接的读写状态即可，无须大量线程阻塞等待连接。当某个连接有新的数据可以处理时，操作系统会通知线程，线程从阻塞状态返回，开始进行读写操作以及后续的业务逻辑处理。
 
 I/O 复用的模型如下图所示：
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/93641a6864b443f48ea03dcd38e4056d~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-9f88090454a9.png)
 
 由于多路复用器 Selector 的存在，可以同时并发处理成百上千个网络连接，大大增加了服务器的处理能力。另外，Selector 并不会阻塞线程，也就是说当一个连接不可读或不可写的时候，线程可以去处理其他可读或可写的连接，这就充分提升了 I/O 线程的运行效率，避免由于频繁 I/O 阻塞导致的线程切换。如下图所示：
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/18f5efd099ea4766b37ea6b4e3ef1622~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-ebea0c036b2f.png)
 
 在 I/O 多路复用模型中**最核心就是 selector**，但是 selector 在各个操作系统上的实现机制各不相同，例如，Linux 系统中的实现是 epoll，Solaris 10 系统中的实现是evport，OS X、FreeBSD 等系统中的实现是 kqueue。我们在实际生产中一般会将 Redis 部署到 Linux 系统中，所以我们重点关注 epoll 的使用。
 
@@ -269,7 +269,7 @@ int main(int argc, char *argv[]) {
 
 Redis 通过 Selector 这个多路复用模块同时监听多个网络连接，当监听到 accept、read、write 等事件时，I/O 多路复用模块会将事件通过 Dispatcher 转发给事件处理器进行处理，如下图所示。在整个运行过程中，网络连接也可能会出现连接不可读或不可写等情况，此时主线程会去执行其他 Handler 的逻辑处理其他网络连接的事件或是时间事件，而不是阻塞等待。
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1be535a44f914ff398bb21280a2f8d29~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-55f1e10566ec.png)
 
 单 Reactor 单线程的优点就是线程模型简单，没有引入多线程，自然也就没有多线程并发和竞争的问题。但其缺点也非常明显，那就是性能瓶颈问题，一个线程只能跑在一个 CPU 上，能处理的连接数是有限的，无法完全发挥多核 CPU 的优势，这也是 Redis 从 单个线程转变成`单个主线程 + IO 多线程`的原因。
 

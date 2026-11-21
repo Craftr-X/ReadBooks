@@ -2,7 +2,7 @@
 
 如下图所示：
 基于现有的组件，我们可以很快速的进行容器的布局和大纲树的展示，这些都得益于之前编辑器的章节实现。
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b4ca31c31e1f46b3a11bd13da92ef51a~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=2300&h=1268&s=125102&e=png&b=f0f0f0)
+![image.png](./_assets/remote-d9163243b56f.png)
 
 在本章节就要开始将自己的本地工程与服务端相结合，来完成整个**lowcode**的搭建流程。
 
@@ -20,7 +20,7 @@
 
 目前Demo示例而言是最简单的curd，后续的扩展会往集成化的后端服务上面去靠。具体的可以参考服务端的相关设计。
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/acfba965f1344d12b7e33ef0f04e4b3d~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=1436&h=684&s=49792&e=png&b=ffffff)
+![image.png](./_assets/remote-7d84052b6666.png)
 
 ## 实现过程
 
@@ -32,7 +32,7 @@
 
 在此之前，已经在 **@huos/editor**  项目下的**stores**目录下已经创建好了**useSchema.tsx**的状态管理hook。
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/baebfc7e4f184ec0af4b8996cd958ee9~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=880&h=1474&s=120348&e=png&b=141414)
+![image.png](./_assets/remote-ae314169422f.png)
 
 如下代码所示，在之前已经完成了locales的创建，在这里主要需要关注**serializeNodes**和**schema**。**serializeNodes**是当前页面的协议解析，**schema**是当前的的页面协议，两者数据是一样，区别店在于**schema**是需要保存在本地存储和数据库当中的。其他的属性，比如**jsMoudleCode,depsMap**等都是一些功能指定的字段，在之前协议涉及篇中其实也有提到过，本质上大差不差。
 
@@ -161,7 +161,7 @@ export const useEditorKeyPress = () => {
 
 如下图所示
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/514b891c4ab845598d5c6db91d1f8e35~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=4286&h=1022&s=308038&e=png&b=fcfcfc)
+![image.png](./_assets/remote-cff55f827f5f.png)
 
 ## 接口服务的设计
 
@@ -221,17 +221,17 @@ curl -X 'POST' \
 }
 ```
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2911640d83254c66a1df5402544aa15b~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=1332&h=1338&s=113429&e=png&b=f2f9f5)
+![image.png](./_assets/remote-12ff77780963.png)
 
 如下图所示就是相关的修改的查询接口。
 
 > 通过id查询页面信息
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bca9469f705c4672a1a6d1e3deffd1b5~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=1466&h=752&s=177701&e=png&b=ffffff)
+![image.png](./_assets/remote-beacd3e95d6e.png)
 
 > 通过id修改相关的信息
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a8130dac1d59410ba463eff2e433a5ed~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=1552&h=498&s=148381&e=png&b=fefefe)
+![image.png](./_assets/remote-0b979431b903.png)
 
 ## 接口开发
 
@@ -307,7 +307,7 @@ export default route;
 
 需要注意的是，如下图所示，在数据模型中，有一个**status**的字段枚举分别为**ONLINE**和**OFFLINE**，主要是用于后续区分页面的可见程度，在面向用户时，往往需要经历不同环境的更迭和A/B/灰度的测试才会可见，因此增加一个状态用于区分现实。
 
-![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0fcfba49801a412fbe35796c0c526649~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=1818&h=450&s=95679&e=png&b=081e31)
+![image.png](./_assets/remote-e9fee3889aca.png)
 
 ```tsx
 import { FastifyPluginAsync } from "fastify";
@@ -425,7 +425,7 @@ export default route;
 
 挣个**PUT请求**传递了**pageId**，且当前最新的**state数据**与**status状态**的变更，最终会返回更新后的结果相关数据。
 
-![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/371498af18914d269fb9562e3dd839ea~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=1934&h=444&s=83633&e=png&b=ffffff)
+![image.png](./_assets/remote-5e5b83961cf2.png)
 
 ```tsx
 import { useSchema } from "@/framework/stores/useSchema";
@@ -491,7 +491,7 @@ export const Publish = () => {
 在后续的章节中，将会在这基础之上增加新的页面交互和组件属性面板的补充，目前仅实现了保存协议状态的部分。
 
 整体项目如下所示：
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ceb3c949c79047d582e85c61b8bf305b~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=3354&h=1656&s=258979&e=png&b=fefefe)
+![image.png](./_assets/remote-d70b9f95ae06.png)
 
 ## 资源
 

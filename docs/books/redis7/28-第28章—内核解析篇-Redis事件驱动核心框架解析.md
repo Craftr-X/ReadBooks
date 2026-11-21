@@ -2,7 +2,7 @@
 
 正如前面在 epoll 示例中看到的，我们的程序代码其实是围绕 epoll 监听到的各种事件展开的，也就是我们常说的**事件驱动**。为了统一多种 IO 多路复用器的实现，Redis 构建了一个 **ae 库**，全称叫 `a simple event-driven programming library`，如下图所示：
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/158e7ace52064ca7afda1e7c287ff7eb~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-2b78efe70a00.png)
 
 ## aeApiState 解析
 
@@ -159,7 +159,7 @@ typedef struct socketFds {
 
 在 initServer() 初始化中，完成 aeCreateEventLoop() 调用之后 ，Redis 还会调用 createSocketAcceptHandler(&server.ipfd, acceptTcpHandler) 函数为 ipdf 中所有地址注册监听，最底层依赖 aeApiAddEvent() 函数实现，调用关系如下图所示：
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/12cec2834422454d91be60512ae28aaf~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-e8f7f229296e.png)
 
 aeApiAddEvent() 函数我们在前面介绍 ae 库的时候已经说过了，就是用来添加监听事件。
 
@@ -201,7 +201,7 @@ int aeCreateFileEvent(aeEventLoop *eventLoop, int fd, int mask,
 
 这里首先关注 aeProcessEvents() 函数的第二个参数 flags，我们可以通过指定 flags 的值，控制 aeProcessEvents() 需要处理的事件类型，相关的取值如下：
 
-![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4c145224d19b45c2b78e95b3dc3745e7~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-0c0509fefeb6.png)
 
 下面是 flags 参数中标志位的具体含义。
 
