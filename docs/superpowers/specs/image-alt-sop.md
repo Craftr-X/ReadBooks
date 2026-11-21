@@ -97,6 +97,16 @@ rg -c '!\[\]\(' docs/books --glob '*.md' | awk -F/ '{
 | typescript-intro | 21 | 掘金外链，可下载看图 | 2026-11-21 |
 | docker-guide | 54 | 旧 xitu CDN 不可拉，上下文推断 | 2026-11-21 |
 | attached | 40 | 本地 `_assets`，问卷/流程图/参考文献 | 2026-11-21 |
+| cicd-guide | 1 | 掘金外链，上下文推断 | 2026-11-21 |
+| mingchao-naxieshier | 1 | 封面 | 2026-11-21 |
+| ta-de-guo | 1 | 封面 | 2026-11-21 |
+| wosuo-lijie-de-shenghuo | 1 | 封面 | 2026-11-21 |
+| yizuo-chengchi | 1 | 封面 | 2026-11-21 |
+| build-agent-harness | 4 | 本地架构对比图 | 2026-11-21 |
+| mysql-running | 4 | 旧 xitu CDN，上下文推断；含原 title 升格为 alt | 2026-11-21 |
+| feibaoli-goutong | 6 | 封面折页与观察评论对照表 | 2026-11-21 |
+| how-to-not-die-alone | 10 | 问卷、矩阵、曲线图 | 2026-11-21 |
+| yi-ri-wei-jian | 12 | 篇首照片与统计表 | 2026-11-21 |
 
 （后续按书追加行。）
 

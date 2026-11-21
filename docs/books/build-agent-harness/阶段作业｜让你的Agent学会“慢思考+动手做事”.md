@@ -149,4 +149,4 @@
 
 ——Claude Code + SDD，打造你的自动化 AI 工作流
 
-![](images/972842/761864229e1dd7d30dd9e76dfefed604.jpg)
+![Claude Code 与 SDD 自动化工作流示意](images/972842/761864229e1dd7d30dd9e76dfefed604.jpg)
