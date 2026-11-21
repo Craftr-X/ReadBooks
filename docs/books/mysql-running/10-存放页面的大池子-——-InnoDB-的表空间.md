@@ -659,17 +659,17 @@ mysql> SHOW TABLES LIKE 'innodb_sys%';
 
 在`information_schema`数据库中的这些以`INNODB_SYS`开头的表并不是真正的内部系统表（内部系统表就是我们上边唠叨的以`SYS`开头的那些表），而是在存储引擎启动时读取这些以`SYS`开头的系统表，然后填充到这些以`INNODB_SYS`开头的表中。以`INNODB_SYS`开头的表和以`SYS`开头的表中的字段并不完全一样，但供大家参考已经足矣。这些表太多了，我就不唠叨了，大家自个儿动手试着查一查这些表中的数据吧哈～
 
-  [1]: https://user-gold-cdn.xitu.io/2018/12/14/167ac6442f4e4edd?w=827&h=525&f=png&s=45934
-  [2]: https://user-gold-cdn.xitu.io/2018/12/14/167ac6442f8e6644?w=662&h=547&f=png&s=73092
-  [3]: https://user-gold-cdn.xitu.io/2018/12/14/167ac6443071a286?w=826&h=657&f=png&s=107694
-  [4]: https://user-gold-cdn.xitu.io/2018/12/14/167ac6443128f22f?w=1086&h=473&f=png&s=98468
-  [5]: https://user-gold-cdn.xitu.io/2018/12/14/167ac64431fef247?w=694&h=345&f=png&s=70716
-  [6]: https://user-gold-cdn.xitu.io/2018/12/14/167ac64432dedff7?w=777&h=451&f=png&s=83511
-  [7]: https://user-gold-cdn.xitu.io/2018/12/14/167ac644668c6cd1?w=863&h=535&f=png&s=114114
-  [8]: https://user-gold-cdn.xitu.io/2018/12/14/167ac6446dbf2e3f?w=1136&h=553&f=png&s=150353
-  [9]: https://user-gold-cdn.xitu.io/2018/12/14/167ac6447c1d8805?w=912&h=557&f=png&s=151647
-  [10]: https://user-gold-cdn.xitu.io/2018/12/14/167ac64482356d3e?w=1257&h=599&f=png&s=153052
-  [11]: https://user-gold-cdn.xitu.io/2018/12/14/167ac6448cef481c?w=1272&h=590&f=png&s=175126
-  [12]: https://user-gold-cdn.xitu.io/2018/12/14/167ac644922369a7?w=598&h=325&f=png&s=63645
-  [13]: https://user-gold-cdn.xitu.io/2018/12/14/167ac6449a441ffc?w=824&h=711&f=png&s=150901
-  [14]: https://user-gold-cdn.xitu.io/2018/12/14/167ac6449d8e1436?w=1224&h=653&f=png&s=205912
+  [1]: ./_assets/recovered-167ac6442f4e4edd.png
+  [2]: ./_assets/recovered-167ac6442f8e6644.png
+  [3]: ./_assets/recovered-167ac6443071a286.png
+  [4]: ./_assets/recovered-167ac6443128f22f.png
+  [5]: ./_assets/recovered-167ac64431fef247.png
+  [6]: ./_assets/recovered-167ac64432dedff7.png
+  [7]: ./_assets/recovered-167ac644668c6cd1.png
+  [8]: ./_assets/recovered-167ac6446dbf2e3f.png
+  [9]: ./_assets/recovered-167ac6447c1d8805.png
+  [10]: ./_assets/recovered-167ac64482356d3e.png
+  [11]: ./_assets/recovered-167ac6448cef481c.png
+  [12]: ./_assets/recovered-167ac644922369a7.png
+  [13]: ./_assets/recovered-167ac6449a441ffc.png
+  [14]: ./_assets/recovered-167ac6449d8e1436.png

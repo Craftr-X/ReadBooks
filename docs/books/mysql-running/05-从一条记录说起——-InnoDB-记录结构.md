@@ -568,23 +568,23 @@ Query OK, 1 row affected (0.00 sec)
 
 - 一个页一般是`16KB`，当记录中的数据太多，当前页放不下的时候，会把多余的数据存储到其他页中，这种现象称为`行溢出`。
 
-  [1]: https://user-gold-cdn.xitu.io/2019/2/21/169104f5702043d7?w=783&h=250&f=png&s=43461
-  [2]: https://user-gold-cdn.xitu.io/2019/2/21/169104f570f8ed73?w=1004&h=192&f=png&s=37847
-  [3]: https://user-gold-cdn.xitu.io/2019/2/21/169104f5719c4037?w=742&h=239&f=png&s=43624
-  [4]: https://user-gold-cdn.xitu.io/2019/2/21/169104f5728fdd01
-  [5]: https://user-gold-cdn.xitu.io/2019/2/21/169104f574d5df2e?w=374&h=301&f=png&s=19883
-  [6]: https://user-gold-cdn.xitu.io/2019/2/21/169104f5756f3663?w=346&h=308&f=png&s=22040
-  [7]: https://user-gold-cdn.xitu.io/2019/2/21/169104f5a46c082d?w=332&h=316&f=png&s=21067
-  [8]: https://user-gold-cdn.xitu.io/2019/2/21/169104f5a7c50032?w=729&h=233&f=png&s=39932
-  [9]: https://user-gold-cdn.xitu.io/2019/2/21/169104f5a87e0271?w=1174&h=244&f=png&s=30222
-  [10]: https://user-gold-cdn.xitu.io/2019/2/21/169104f5a964cbf3?w=1078&h=525&f=png&s=153365
-  [11]: https://user-gold-cdn.xitu.io/2019/2/21/169104f5aa08037c?w=1094&h=354&f=png&s=94249
-  [12]: https://user-gold-cdn.xitu.io/2019/2/21/169104f5cfa6ef3d?w=322&h=152&f=png&s=12767
-  [13]: https://user-gold-cdn.xitu.io/2019/2/21/169104f5d047e541?w=545&h=459&f=png&s=44156
-  [14]: https://user-gold-cdn.xitu.io/2019/2/21/169104f5d1399d5f?w=618&h=251&f=png&s=37063
-  [15]: https://user-gold-cdn.xitu.io/2019/2/21/169104f5d357a6e0?w=1046&h=337&f=png&s=93778
-  [16]: https://user-gold-cdn.xitu.io/2019/2/22/16910e3fb544aed7?w=1160&h=627&f=png&s=152562
-  [17]: https://user-gold-cdn.xitu.io/2019/2/21/169104f5ff0a8b3c?w=951&h=213&f=png&s=36684
-  [18]: https://user-gold-cdn.xitu.io/2019/2/21/169104f5ff959467?w=791&h=219&f=png&s=30573
-  [19]: https://user-gold-cdn.xitu.io/2019/2/21/169104f5702043d7?w=783&h=250&f=png&s=43461
-  [20]: https://user-gold-cdn.xitu.io/2019/2/21/169104f5ffe017bf?w=618&h=251&f=png&s=37063
+  [1]: ./_assets/recovered-169104f5702043d7.png
+  [2]: ./_assets/recovered-169104f570f8ed73.png
+  [3]: ./_assets/recovered-169104f5719c4037.png
+  [4]: ./_assets/recovered-169104f5728fdd01.png
+  [5]: ./_assets/recovered-169104f574d5df2e.png
+  [6]: ./_assets/recovered-169104f5756f3663.png
+  [7]: ./_assets/recovered-169104f5a46c082d.png
+  [8]: ./_assets/recovered-169104f5a7c50032.png
+  [9]: ./_assets/recovered-169104f5a87e0271.png
+  [10]: ./_assets/recovered-169104f5a964cbf3.png
+  [11]: ./_assets/recovered-169104f5aa08037c.png
+  [12]: ./_assets/recovered-169104f5cfa6ef3d.png
+  [13]: ./_assets/recovered-169104f5d047e541.png
+  [14]: ./_assets/recovered-169104f5d1399d5f.png
+  [15]: ./_assets/recovered-169104f5d357a6e0.png
+  [16]: ./_assets/recovered-16910e3fb544aed7.png
+  [17]: ./_assets/recovered-169104f5ff0a8b3c.png
+  [18]: ./_assets/recovered-169104f5ff959467.png
+  [19]: ./_assets/recovered-169104f5702043d7.png
+  [20]: ./_assets/recovered-169104f5ffe017bf.png

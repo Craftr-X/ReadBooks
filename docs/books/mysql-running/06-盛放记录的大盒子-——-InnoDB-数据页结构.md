@@ -411,18 +411,18 @@ Records: 12  Duplicates: 0  Warnings: 0
 
 6. 为保证从内存中同步到磁盘的页的完整性，在页的首部和尾部都会存储页中数据的校验和和页面最后修改时对应的`LSN`值，如果首部和尾部的校验和和`LSN`值校验不成功的话，就说明同步过程出现了问题。
 
-  [1]: https://user-gold-cdn.xitu.io/2019/2/22/16910faa7d2c1dfc?w=493&h=494&f=png&s=70700
-  [2]: https://user-gold-cdn.xitu.io/2019/2/22/16910faa7f39b19b?w=1272&h=475&f=png&s=137021
-  [3]: https://user-gold-cdn.xitu.io/2019/2/22/16910faa7fb96a2b?w=1121&h=474&f=png&s=78271
-  [4]: https://user-gold-cdn.xitu.io/2019/2/22/16910faa7fc922e1?w=759&h=347&f=png&s=50721
-  [5]: https://user-gold-cdn.xitu.io/2019/2/22/16910faa7fa53c71?w=948&h=333&f=png&s=84803
-  [6]: https://user-gold-cdn.xitu.io/2019/2/22/16910faaae699d06?w=576&h=395&f=png&s=51648
-  [7]: https://user-gold-cdn.xitu.io/2019/2/22/16910faa7fb8234e?w=1020&h=458&f=png&s=122559
-  [8]: https://user-gold-cdn.xitu.io/2019/2/22/16910faaae5618fb?w=1044&h=549&f=png&s=123443
-  [9]: https://user-gold-cdn.xitu.io/2019/2/22/16910faaae709be3?w=1032&h=528&f=png&s=122514
-  [10]: https://user-gold-cdn.xitu.io/2019/2/22/16910faaae8b46cd?w=1120&h=557&f=png&s=141111
-  [11]: https://user-gold-cdn.xitu.io/2019/2/22/16910faaaea593a4?w=1011&h=540&f=png&s=131292
-  [12]: https://user-gold-cdn.xitu.io/2019/2/22/16910faab125e162?w=1032&h=537&f=png&s=107616
-  [13]: https://user-gold-cdn.xitu.io/2019/2/22/16910faacfbd4080?w=994&h=550&f=png&s=103256
-  [14]: https://user-gold-cdn.xitu.io/2019/2/22/16910faad54ff9e6?w=1034&h=637&f=png&s=190111
-  [15]: https://user-gold-cdn.xitu.io/2019/2/22/16910faad0e37047?w=898&h=365&f=png&s=93102
+  [1]: ./_assets/recovered-16910faa7d2c1dfc.png
+  [2]: ./_assets/recovered-16910faa7f39b19b.png
+  [3]: ./_assets/recovered-16910faa7fb96a2b.png
+  [4]: ./_assets/recovered-16910faa7fc922e1.png
+  [5]: ./_assets/recovered-16910faa7fa53c71.png
+  [6]: ./_assets/recovered-16910faaae699d06.png
+  [7]: ./_assets/recovered-16910faa7fb8234e.png
+  [8]: ./_assets/recovered-16910faaae5618fb.png
+  [9]: ./_assets/recovered-16910faaae709be3.png
+  [10]: ./_assets/recovered-16910faaae8b46cd.png
+  [11]: ./_assets/recovered-16910faaaea593a4.png
+  [12]: ./_assets/recovered-16910faab125e162.png
+  [13]: ./_assets/recovered-16910faacfbd4080.png
+  [14]: ./_assets/recovered-16910faad54ff9e6.png
+  [15]: ./_assets/recovered-16910faad0e37047.png

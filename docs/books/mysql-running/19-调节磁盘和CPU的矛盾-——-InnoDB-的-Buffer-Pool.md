@@ -469,9 +469,9 @@ mysql>
     SHOW ENGINE INNODB STATUS\G
     ```
 
-  [1]: https://user-gold-cdn.xitu.io/2019/3/2/1693e86e2b9d6dd1?w=1004&h=339&f=png&s=48567
-  [2]: https://user-gold-cdn.xitu.io/2019/3/2/1693e86e300173c1?w=1010&h=606&f=png&s=135745
-  [3]: https://user-gold-cdn.xitu.io/2019/3/2/1693e86e2ec4572a?w=1010&h=591&f=png&s=136665
-  [4]: https://user-gold-cdn.xitu.io/2019/3/2/1693e86e2a3fffa3?w=1097&h=460&f=png&s=119309
-  [5]: https://user-gold-cdn.xitu.io/2019/3/2/1693e86e2abd79c1?w=1089&h=444&f=png&s=89286
-  [6]: https://user-gold-cdn.xitu.io/2019/3/2/1693e86e2a5de8f2?w=1112&h=553&f=png&s=128507
+  [1]: ./_assets/recovered-1693e86e2b9d6dd1.png
+  [2]: ./_assets/recovered-1693e86e300173c1.png
+  [3]: ./_assets/recovered-1693e86e2ec4572a.png
+  [4]: ./_assets/recovered-1693e86e2a3fffa3.png
+  [5]: ./_assets/recovered-1693e86e2abd79c1.png
+  [6]: ./_assets/recovered-1693e86e2a5de8f2.png

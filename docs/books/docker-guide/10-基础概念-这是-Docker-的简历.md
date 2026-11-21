@@ -28,7 +28,7 @@
 
 随着互联网的极速发展，应用程序的功能越来越丰富，而需要迭代的速度要求也越来越高，为了实现这些目标，应用的开发逐渐趋向服务化甚至微服务化。每个应用程序都有其对应依赖的操作系统或者其他程序，而在将应用程序细分为不同的微服务或者是其他形式的微小应用模块后，解决这种依赖问题会愈发显得棘手。有的应用运行环境特别复杂，搭建过程也极易出错，这都是让开发、测试、运维人员焦头烂额的地方。更多时候，开发者们肯定更愿意将他们宝贵的时间用在实际的开发中，而不是纠缠着应用运行环境的问题上。
 
-![分布式应用服务体系](https://user-gold-cdn.xitu.io/2018/9/2/165997343db35f56?w=1140&h=869&f=png&s=223317)
+![分布式应用服务体系](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/9/2/165997343db35f56~tplv-t2oaga2asx-image.image)
 
 同时，由于物理硬件的更新迭代速度已经难以追赶互联网的脚步，应用的部署逐渐转向集群化。应用模块的数量乘上每个应用所部署的机器的数量，会是一个非常庞大的数字。相信所有的开发或者运维都不会愿意把时间浪费在逐一搭建服务器环境这种重复的劳动上。
 
@@ -46,7 +46,7 @@
 
 再怎么从理论上说快也是很难服众的，是骡子是马拉出来“跑个分”就知道了。Docker 官方对 Docker 在工作上带来的提升做了调查研究，分别从工作效率的提升和技术设计投入的减少等方面数据化了 Docker 所做出的突出贡献。
 
-![Docker 官方关于效率提升的调研数据图](https://user-gold-cdn.xitu.io/2018/9/2/1659994bbc4225dd?w=826&h=1394&f=png&s=231772)
+![Docker 官方关于效率提升的调研数据图](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/9/2/1659994bbc4225dd~tplv-t2oaga2asx-image.image)
 
 相信看到这些数据，你已经明白为何 Docker 备受关注的原因了。
 
@@ -56,7 +56,7 @@
 
 Docker 的实现，主要归结于三大技术：命名空间 ( Namespaces ) 、控制组 ( Control Groups ) 和联合文件系统 ( Union File System ) 。
 
-![Namespaces、CGroups、UnionFS 三大技术示意](https://user-gold-cdn.xitu.io/2018/9/2/16599a9d7a391ecf?w=1200&h=330&f=png&s=49811)
+![Namespaces、CGroups、UnionFS 三大技术示意](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/9/2/16599a9d7a391ecf~tplv-t2oaga2asx-image.image)
 
 ### Namespace
 
@@ -70,7 +70,7 @@ Docker 的实现，主要归结于三大技术：命名空间 ( Namespaces ) 、
 
 这里我们以进程为例，通过 PID Namespace，我们可以造就一个独立的进程运行空间，在其中进程的编号又会从 1 开始。在这个空间中运行的进程，完全感知不到外界系统中的其他进程或是其他进程命名空间中运行的进程。
 
-![PID Namespace 隔离进程编号空间示意](https://user-gold-cdn.xitu.io/2018/9/2/16599ae7734e4bbd?w=1200&h=520&f=png&s=82060)
+![PID Namespace 隔离进程编号空间示意](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/9/2/16599ae7734e4bbd~tplv-t2oaga2asx-image.image)
 
 利用 PID Namespace，Docker 就实现了容器中隔离程序运行中进程隔离这一目标。
 
@@ -82,7 +82,7 @@ Docker 的实现，主要归结于三大技术：命名空间 ( Namespaces ) 、
 
 之前我们提到了，虚拟化除了制造出虚拟的环境隔离同一物理平台运行的不同程序之外，另一大作用就是控制硬件资源的分配，CGroups 的使用正是为了这样的目的。
 
-![CGroups 控制容器硬件资源分配示意](https://user-gold-cdn.xitu.io/2018/9/3/1659fe616f839787?w=1200&h=500&f=png&s=51915)
+![CGroups 控制容器硬件资源分配示意](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/9/3/1659fe616f839787~tplv-t2oaga2asx-image.image)
 
 需要再强调一次的是，CGroups 除了资源的隔离，还有资源**分配**这个关键性的作用。通过 CGroups，我们可以指定任意一个隔离环境对任意资源的占用值或占用率，这对于很多分布式使用场景来说是非常有用的功能。
 
@@ -96,7 +96,7 @@ Docker 的实现，主要归结于三大技术：命名空间 ( Namespaces ) 、
 
 在 Docker 中，提供了一种对 UnionFS 的改进实现，也就是 AUFS ( Advanced Union File System )。
 
-![AUFS 联合文件系统层叠结构示意](https://user-gold-cdn.xitu.io/2018/9/3/1659ff1c8e6f1c3c?w=1200&h=770&f=png&s=107859)
+![AUFS 联合文件系统层叠结构示意](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/9/3/1659ff1c8e6f1c3c~tplv-t2oaga2asx-image.image)
 
 AUFS 将文件的更新挂载到老的文件之上，而不去修改那些不更新的内容，这就意味着即使虚拟的文件系统被反复修改，也能保证对真实文件系统的空间占用保持一个较低水平。
 
@@ -110,7 +110,7 @@ AUFS 将文件的更新挂载到老的文件之上，而不去修改那些不更
 
 让我们先来从一张 Docker 官方提供的架构图来看看 Docker 对容器结构的设计。
 
-![Docker 官方容器架构设计图](https://user-gold-cdn.xitu.io/2018/9/7/165b2a9bd4a1a1b4?w=1239&h=630&f=png&s=64225)
+![Docker 官方容器架构设计图](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/9/7/165b2a9bd4a1a1b4~tplv-t2oaga2asx-image.image)
 
 与其他虚拟化实现甚至其他容器引擎不同的是，Docker 推崇一种轻量级容器的结构，即一个应用一个容器。
 
