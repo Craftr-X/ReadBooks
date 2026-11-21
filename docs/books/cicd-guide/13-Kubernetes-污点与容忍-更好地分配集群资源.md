@@ -31,7 +31,7 @@ kubectl apply -f ./v3.yaml
 ```
 
 随后，我们用 `kubectl get pods` 命令获取Pod列表，用 `kubectl describe pod` 命令看下 `Pod3` 的运行详情：
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f63e9f2cfc744853b1ad513a4f31c9bf~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-4ccff6f5e5d3.png)
 我们看 `Node` 一栏， `k8s` 将我们新创建的 `Pod` 调度部署到了新增加的 `Node2` 节点上。接下来，我们给 `Node2` 设置污点，让 `Pod` 不会调度到 `Node2` 节点上。
 
 当然，给 `Node` 设置污点是第一步操作，只有设置了污点 `Pod` 才不会被调度上去。给 `Node` 添加污点的命令很简单，我们只需要使用 `kubectl taint` 命令即可给 `Node` 设置一个污点：
@@ -43,7 +43,7 @@ kubectl taint nodes [Node_Name] [key]=[value]:NoSchedule
 其中，`Node_Name` 为要添加污点的 `node` 名称；`key` 和 `value` 为一组键值对，代表一组标示标签；`NoSchedule` 则为不被调度的意思，和它同级别的还有其他的值：`PreferNoSchedule` 和 `NoExecute` （后面我们会写到）
 
 我们给 `Node3` 添加完一个污点后，提示报 `node/node2 tainted` 代表添加成功：
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/580e27742614477a9d157e7fa9bef307~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-4b064b07f542.png)
 我们删除掉已经创建的 `v3` 版本的 `Pod` ，让 `Kubernetes` 重建 `Pod` ，看看新 `Pod` 还会不会被调度到 `node2` 上面去：
 
 ```shell
@@ -51,7 +51,7 @@ kubectl delete pod [POD_NAME]
 kubectl describe pod [POD_NAME]
 ```
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e2bf634c9357442d9c93f0ff47980ecd~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-4a5bd65622a1.png)
 这时候我们看到， `Pod` 被调度到了 `Node1` 上面去。因为 `Node2` 添加了污点，不会被调度到 `Node2` 上面去。此时污点生效。
 
 ## 给 Pod 设置容忍度
@@ -68,13 +68,13 @@ tolerations:
   effect: "NoSchedule"
 ```
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9ed03909024742948ba15ccae74afeff~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-404ef375b4e6.png)
 字段的含义是在给 `Pod` 设置一组容忍度，以匹配对应的 `Node` 的污点。 `key` 和 `value` 是你配置 `Node` 污点的 `key` 和 `value`； `effect` 是 `Node` 污点的调度效果，和 `Node` 的设置项也是匹配的。
 
 `operator` 是运算符，`equal` 代表只有 `key` 和 `value` 相等才算数。当然也可以配置 `exists` ，代表只要 `key` 存在就匹配，不需要校验 `value` 的值
 
 修改保存后，我们使用 `kubectl apply -f` 命令让配置项生效，接着删除已存在的 Pod，查看下新Pod的调度结果：
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e1e698b15ad344338eeb1fad7f0a0661~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-5f1ba99dedb3.png)
 可以看到，在容忍度的作用下， `Pod` 重新被调度到了 `Node2` 节点上。
 
 ## 修改/删除 Node 的污点

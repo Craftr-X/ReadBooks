@@ -63,7 +63,7 @@ spec:
 如果你将 `k8s` 看作是一个大型机场，那么 `deployment` 刚好就是机场内的**停机坪**。
 
 根据飞机的种类进行划分停机坪，不同的停机坪都停着不同类型的飞机。只不过，`deployment` 要比停机坪还要灵活，随时可以根据剩余的空地大小（服务器剩余资源）和塔台的指令，增大/变小停机坪的空间。**这个“增大变小停机坪空间的动作”，在k8s中就是 `deployment` 对它下面所属容器数量的扩容/缩小的操作。**
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/91b6db0c8e0e4471a077a79bec9f452b~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-17a87ca161a5.png)
 
 那么这也就代表，**`deployment`是无状态的，也就不会去负责停机坪中每架飞机之间的通信和组织关系**。只需要根据塔台的指令，维护好飞机的更新和进出指令即可。**这个根据指令维护飞机更新和进出的行为，在k8s中就是 `deployment` 对他下面的容器版本更新升级，暂停和恢复更新升级的动作。**
 
@@ -76,7 +76,7 @@ spec:
 Pod 是 K8S 中最小的可调度单元（可操作/可部署单元），它里面可以包含1个或者多个 Docker 容器。在 Pod 内的所有 Docker 容器，都会共享同一个网络、存储卷、端口映射规则。一个 Pod 拥有一个 IP。
 
 但这个 IP 会随着Pod的重启，创建，删除等跟着改变，所以不固定且不完全可靠。这也就是 Pod 的 IP 漂移问题。这个问题我们可以使用下面的 Service 去自动映射
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0262415836bb44a38120515430f6148f~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-2561fc73d90f.png)
 我们经常会把 Pod 和 Docker 搞混，这两者的关系就像是豌豆和豌豆荚，Pod 是一个容器组，里面有很多容器，容器组内共享资源。
 
 ---
@@ -87,7 +87,7 @@ Pod 是 K8S 中最小的可调度单元（可操作/可部署单元），它里�
 
 了解了 `deployment` 是啥后，我们来看看配置清单中的字段都代表的是啥。我们将配置分成三段去进行阅读：
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f4ea48ceb5c743aa9ef9d7d207209d38~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-7c624bf82462.png)
 最上面的第一段声明了当前资源配置的 API 版本，资源类型和资源名称：
 
 - API 配置版本： `apps/v1`
@@ -98,7 +98,7 @@ Pod 是 K8S 中最小的可调度单元（可操作/可部署单元），它里�
 
 > 该怎么选择 apiVersion 的值: [https://matthewpalmer.net/kubernetes-app-developer/articles/kubernetes-apiversion-definition-guide.html](https://matthewpalmer.net/kubernetes-app-developer/articles/kubernetes-apiversion-definition-guide.html)
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ea51e38cc9b747b3b4cca171728efec5~tplv-k3u1fbpfcp-zoom-1.image) ![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/768f7f7282bc4998b1a36d7ccec68a4a~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-66477e1ea275.png) ![image.png](./_assets/remote-6060f54b22a6.png)
 左边这一段，告诉 `deployment` 我根据规则匹配相应的 `Pod` 进行控制和管理。这里使用 `matchLabels` 字段匹配 `Pod` 的 `label` 值。
 
 右边配置则代表声明一个 Pod 组：
@@ -129,7 +129,7 @@ kubectl apply -f ./v1.yaml ./v1-service.yaml ./v1-ingress.yaml
 ```
 
 当提示下面文字时，代表配置文件执行成功：
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f6d70c6bd0d747efa9f15cd5d440ebae~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-8e321bfde4ef.png)
 
 如果你想看部署完毕后的 `Pod` 运行状态，可以使用 `kubectl get pod` 命令来获取所有 Pod 的信息：
 
@@ -141,7 +141,7 @@ kubectl get pod
 
 其中，name 是Pod的名称；READY 为容器状态，格式为可用容器/所有容器数量；STATUS 为 Pod 的运行状态；RESTARTS 为重启数量；AGE 为 Pod 运行时间；当状态都是 `Running` 时，代表 Pod 运行正常。
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2a350995f2ad4a7282680039e5bdeaa7~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-5821f1453c0a.png)
 
 ### 令人费解的无状态
 
@@ -163,7 +163,7 @@ kubectl get pod
 `deployment` 是停机坪，那么 `Service` 则是一块停机坪的统一通信入口。它**负责自动调度和组织deployment中 Pod 的服务访问。由于自动映射 Pod 的IP，同时也解决了 Pod 的IP漂移问题。**
 
 下面这张图就印证了 `Service` 的作用。流量会首先进入 VM（主机），随后进入 Service 中，接着 Service 再去将流量调度给匹配的 Pod 。
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e39fbabcb3a44842baf5ca379d2b4b7c~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-2d5f085afc12.png)
 
 ### Service 的配置
 
@@ -204,7 +204,7 @@ spec:
 vim ./v1.yaml
 ```
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/69e1aa2469b74e2a94f6e87228958c6e~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-38d70d3b32f4.png)
 编辑保存退出后，使用 `kubectl apply` 命令来更新配置：
 
 ```shell
@@ -224,7 +224,7 @@ kubectl get svc
 ```
 
 执行后，会展示下图。
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2baf399be5a14033b220377665186fdc~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-49acadfec84a.png)
 
 其中， `PORT` 字段代表 `Service` 的访问端口。`:` 前为映射到Pod的端口，31048 为访问端口。
 我们访问 `Master节点IP + 端口`，就可以访问到该服务。
@@ -235,7 +235,7 @@ kubectl get svc
 
 在日常开发中，我们经常会遇到**路径分流**问题。例如当我们访问 `/a` 时，需要返回A服务的页面。访问 `/b`，需要返回服务B的页面。这时候，我们就可以使用 `k8s` 中的 `ingress` 去实现。
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/48da1116e435433abd57d187b16cea0a~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-dd512cff3863.png)
 
 在这里，我们选择 `ingress-nginx`。 `ingress-nginx` 是基于 `nginx` 的一个 `ingress` 实现。当然也可以实现正则匹配路径，流量转发，基于 `cookie header` 切分流量（灰度发布）。
 
@@ -254,7 +254,7 @@ vim ./deploy.yaml
 ```
 
 在下图所示位置添加 `nodePort` 字段为 `31234`  ，https为 `31235` 。
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4a0f9ada785d47fbb17e4190145f0f1f~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-d181b253465b.png)
 
 接着执行命令使 `ingress` 生效：
 
@@ -269,7 +269,7 @@ kubectl get pods -n ingress-nginx -l app.kubernetes.io/name=ingress-nginx --watc
 ```
 
 如果显示以下信息，则代表部署成功。
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5e061552e5764ef5a47d3a191a978f87~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-cfea25968891.png)
 
 输入以下命令，检查配置是否生效：
 
@@ -278,7 +278,7 @@ kubectl -n ingress-nginx get svc
 ```
 
 如果看到以下信息，代表生效：
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/15239d6b9e1f47e1a57fff8f643d134f~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-1a71656bc526.png)
 
 ## 配置 ingress
 
@@ -359,7 +359,7 @@ kubectl apply -f ./base.yaml
 ```
 
 访问 [http://IP:31234](http://172.16.81.170:31234/)，如果能看到服务页面则代表代表成功：
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6d418024caea4af8b148f136168e29e1~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-98d938a932f6.png)
 
 ## 结尾
 

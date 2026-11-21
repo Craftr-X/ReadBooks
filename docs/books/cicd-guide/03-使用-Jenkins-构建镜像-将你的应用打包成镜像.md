@@ -12,20 +12,20 @@
 在这里，我们可以选择第二种方式来安装，既方便又省力。
 
 我们打开 `Jenkins` 首页，找到左侧的**系统配置 => 插件管理 => 可选插件**，搜索 `Node` 。选中 `NodeJS` 后，点击左下角的 `直接安装` 开始安装插件
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/af15b14b65be4b38bf87af45e5d43355~tplv-k3u1fbpfcp-zoom-1.image)
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f3a9417b4dd345e3af0e472c1dbc5382~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-74f1cbfb7812.png)
+![image.png](./_assets/remote-1675e600b9bf.png)
 等待安装完毕后，返回 `Jenkins` 首页。找到 **Global Tool Configuration => NodeJS => 新增NodeJS**
 
 接着回到 `Jenkins` 首页，找到左侧的 `系统配置` ，选择 `全局工具配置`
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b4d011a030654fdcba23410206ceb96b~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-61562e982faf.png)
 
 找到下面的 `NodeJS` ，点击 `NodeJS` 安装，选择相应的版本填写信息保存即可。
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c88a0f1aca984f4e8d7a48c275444a13~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-3587d8d09888.png)
 
 ### 如何使用
 
 那我们在任务中如何使用呢？我们只需要在任务的**配置**中，找到**构建环境**，选中 `Provide Node & npm bin/ folder to PATH` ，选择刚才配置好的 `NodeJS` 即可。
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/18178ea08b724669b9138035e970b0cd~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-c63322531c29.png)
 
 第一次执行会下载对应的 `Node` 版本，后续不会下载。
 
@@ -44,7 +44,7 @@ ssh-keygen -t rsa -C "janlay884181317@gmail.com"
 执行后，会遇到第一步步骤： `Enter file in which to save the key` 。
 
 这一步是询问你要将公钥私钥文件放在哪里。默认是放在 `~/.ssh/id_rsa` 下，当然也可以选择输入你自己的路径。一路回车即可。
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e18113ddac8546fd853909226c3e420c~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-f9bc9eb2e10d.png)
 结束后，你会得到两个文件。分别是 xxx 和 xxx.pub。
 
 其中，xxx 是私钥文件，xxx.pub 是对应的公钥文件。**我们需要在 `Git` 端配置公钥，在 `Jenkins` 端使用私钥与 `Git` 进行身份校验。**
@@ -54,7 +54,7 @@ ssh-keygen -t rsa -C "janlay884181317@gmail.com"
 在 `Gitee` 中，如果你要配置公钥有2种方式：仓库公钥 和 个人公钥。**其中，如果配置了仓库公钥，则该公钥只能对配置的仓库进行访问。如果配置了个人公钥，则账号下所有私有仓库都可以访问。**
 
 这里我们就以配置个人公钥为例子。首先打开右上角的**设置** ，点击下面的 **安全设置 => SSH公钥**
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/95182328abdf49aa939f064f32adcd48~tplv-k3u1fbpfcp-zoom-1.image)![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/dae8c76538eb4ea982da0a8b728a2506~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-ed963e4a2164.png)![image.png](./_assets/remote-ec68cbd63752.png)
 在下方有个添加公钥，填入信息即可。
 
 其中的标题为公钥标题，这里可以自定义标题；公钥则为刚才生成的 xxx.pub 文件。使用 `cat` 命令查看下文件内容，将内容填入输入框并保存。接着去 `Jenkins`  端配置**私钥**
@@ -63,17 +63,17 @@ ssh-keygen -t rsa -C "janlay884181317@gmail.com"
 cat xxx.pub
 ```
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5f1ea3af56074ddca2c63f6d96140f55~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-003b35b6d42f.png)
 
 ### 2.3 在 Jenkins 配置私钥
 
 回到 `Jenkins`。在 `Jenkins` 中，`私钥/密码` 等认证信息都是以 `凭证` 的方式管理的，所以可以做到全局都通用。
 我们可以在配置任务时，来添加一个自己的凭证。点击项目的 配置，依次找到 **源码管理 => Git => Repositories**
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bbb0b11f177948399833587cf654f260~tplv-k3u1fbpfcp-zoom-1.image)
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c159aff675614ba2b23009ca1db7ee2d~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-e53da51b9369.png)
+![image.png](./_assets/remote-001007d9a796.png)
 
 这里的 `Repository URL` 则是我们的仓库地址， `SSH` 地址格式为 `git@gitee.com:xxx/xxx.git` 。可以从仓库首页中的 克隆/下载 => SSH 中看到
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b95a6aa8166d40978008dd0d2503c026~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-72b32cc2c766.png)
 
 重点是 **Credentials** 这一项，这里则是我们选择认证凭证的地方。我们可以点击右侧 `添加 => Jenkins` 按钮添加一条新的凭证认证信息。
 
@@ -86,12 +86,12 @@ cat xxx.pub
 
 接着点击添加按钮，保存凭证。
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/45dd2d9f71d3461a9dc3056fe8f3ece5~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-4d237818f0fc.png)
 
 保存后，在 `Credentials` 下拉列表中选择你添加的凭证。
 
 如果没有出现红色无权限提示，则代表身份校验成功，可以正常访问。
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8c2dd6fd36f84405bc21ae40e1753eb3~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-89283d91435a.png)
 
 ## 3. 构建镜像
 
@@ -164,7 +164,7 @@ docker build -t jenkins-test .
 ## 4. 执行任务
 
 保存后我们去手动触发执行下任务。当未抛出错误时，代表任务执行成功
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/42601c020857402aab4d1e16bbafc6e2~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-50e524152a27.png)
 
 ## 本章总结
 

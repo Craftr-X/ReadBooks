@@ -111,12 +111,12 @@ systemctl enable docker
 
 执行 `docker -v` ，如果显示以下 `docker` 版本的信息，代表 `docker` 安装成功。
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/222a2a0b50414b77909cfde5050373dc~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-b4cf7a818ffc.png)
 
 我们拉取 `Docker` 镜像时，一般默认会去 `Docker` 官方源拉取镜像。但是国内出海网速实在是太慢，所以我们更换为 `阿里云镜像仓库` 源进行镜像下载加速
 
 登录阿里云官网，打开 [阿里云容器镜像服务](https://cr.console.aliyun.com)。点击左侧菜单最下面的 `镜像加速器` ，选择 `Centos` （如下图）
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4b0ba7bb836e4ead8aef34a0ac29166d~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-3dece04d4ec1.png)
 按照官网的提示，执行命令，即可实现更换 `Docker` 镜像源地址。
 
 还记得我们前面安装私有镜像库时的使用提示吗？在安装完 `Docker` 后，**如果你的私有镜像库是 HTTP 而不是 HTTPS的话，需要在**`/etc/docker/daemon.json` **里配置一下你的私有库地址。**
@@ -229,7 +229,7 @@ kubeadm init --config init-kubeadm.conf
 ```
 
 在静等运行一会后，终端会给出以下提示：
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/db8feb814d8549478e7589862b0a9e50~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-a01e310bbef6.png)
 
 其中，红框命令为在 `Master` 节点需要执行的初始化命令，其作用为将默认的 `Kubernetes` 认证文件拷贝进 `.kube` 文件夹内，才能默认使用该配置文件。
 
@@ -252,7 +252,7 @@ wget https://raw.githubusercontent.com/coreos/flannel/v0.18.1/Documentation/kube
 
 接着我们手动拉取下 `flannel` 镜像。找到编写镜像名称和版本的地方，使用 `docker pull` 手动拉取一下镜像：
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a9845d5d48e9482d9cd2d8fe39d6a159~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-433ab98917f0.png)
 
 ```shell
 docker pull quay.io/coreos/flannel:v0.13.0-rc2
@@ -272,7 +272,7 @@ kubectl apply -f kube-flannel.yml
 kubectl get nodes
 ```
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f34db98ce655498f859569afce848c14~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-69ab6e2119b6.png)
 
 ## Node节点配置
 
@@ -316,7 +316,7 @@ kubeadm join 172.16.81.164:6443 --token abcdef.0123456789abcdef \
 kubeadm token create --print-join-command
 ```
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9b71c8a1c2734e2ba87867270357302d~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-24dac1d1c502.png)
 
 ### 安装 Flannel
 
