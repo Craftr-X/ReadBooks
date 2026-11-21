@@ -14,7 +14,7 @@ npm i lodash
 
 然后导入它，此时你会发现 VS Code 给出了这么个提示：
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bd612634a972462cbd716e9322b1229a~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=1040&h=384&s=111989&e=png&b=22252a)
+![导入 lodash 时缺少类型声明的编辑器提示](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bd612634a972462cbd716e9322b1229a~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=1040&h=384&s=111989&e=png&b=22252a)
 
 对应的是，我们使用 Lodash 这个导入时，没有任何提示。而先不管其他的，我们再安装一个模块 axios 看看：
 
@@ -24,7 +24,7 @@ npm i axios
 
 你会发现，此时 axios 导入是包括了完整的类型声明的：
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7a2c71802fbc45ffb74051d9c7642e99~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=874&h=674&s=85414&e=png&b=21252a)
+![导入 axios 时自带完整类型声明与提示](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7a2c71802fbc45ffb74051d9c7642e99~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=874&h=674&s=85414&e=png&b=21252a)
 
 为什么同样是 npm 包，一个无法提供类型提示，另一个却拥有非常完善的类型提示呢？回到 Lodash 导入给我们的报错，尝试按照提示安装下 @types/lodash 这个 npm 包：
 
@@ -34,7 +34,7 @@ npm i @types/lodash
 
 此时我们的类型提示就出现了！
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/74b55373eafb44acbcfd144ede417d67~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=868&h=668&s=85023&e=png&b=22252b)
+![安装 @types/lodash 后出现的类型提示](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/74b55373eafb44acbcfd144ede417d67~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=868&h=668&s=85023&e=png&b=22252b)
 
 现在我们可以来解释下这两个包存在的差异了。Lodash 就是我们上面说的那个下载量非常高，却缺少了 TypeScript 支持的 npm 包。而 @types/lodash 就是 TypeScript 提供的黑魔法之一，我们先不需要理解这个 @types 开头的 npm 包到底是做什么的，只需要知道这个包内包含了提供给 Lodash 的「类型声明」，当你安装这个包时，TypeScript 会自动地识别其中的类型声明，并在你导入 Lodash 这个包时使用这些类型声明作为提示。也就是说，类型声明提供了一种独立于 JavaScript 代码之外，为 JavaScript 代码提供类型信息的方式。
 
@@ -42,7 +42,7 @@ npm i @types/lodash
 
 而类型声明又是什么？打开 node_modules 中的 @types/lodash，你会发现其中包含了一个个 .d.ts 文件：
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b6000851f3f34f0ba78f37ae26fe80f0~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=486&h=1326&s=122155&e=png&b=212429)
+![@types/lodash 包内各类 .d.ts 声明文件列表](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b6000851f3f34f0ba78f37ae26fe80f0~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=486&h=1326&s=122155&e=png&b=212429)
 
 这些文件是什么，看起来像 TS 文件，但又不完全像？实际上，类型声明这个概念在 TypeScript 中，需要专门的 .d.ts 文件来进行书写，这里的 d 即是 declaration 声明之意。我们打开 @types/lodash/common/string.d.ts，其中包含了 Lodash 中所有字符串相关方法的类型声明，简化后看起来是这样的：
 
