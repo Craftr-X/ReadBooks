@@ -4,7 +4,7 @@
 
 **Goal:** 按设计文档质量优先补全图片 alt：先试点三本并沉淀 SOP，再分批全站。
 
-**Architecture:** 不改主题/导入器；只改各书 Markdown 中的 `![](url)` → `![说明](url)`。试点期人工/Agent 看图+上下文写说明；SOP 稳定后再考虑清单脚本。
+**Architecture:** 不改主题/导入器；只改各书 Markdown 中的空 alt 图片语法（`![]` + 路径）为带说明的写法。试点期人工/Agent 看图+上下文写说明；SOP 稳定后再考虑清单脚本。
 
 **Tech Stack:** Markdown、rg 验收、可选临时下载外链图供视觉审阅。
 
