@@ -13,10 +13,10 @@ const realBooks = JSON.parse(readFileSync(join(here, '../books.json'), 'utf-8'))
 test('real books.json: total equals registry size and per-genre counts match', () => {
   const stats = categoryStats(realBooks)
   assert.equal(stats.total, realBooks.length)
-  assert.equal(stats.total, 44)
+  assert.equal(stats.total, 43)
 
   const groupCounts = Object.fromEntries(stats.group.map(r => [r.key, r.count]))
-  assert.deepEqual(groupCounts, { ai: 4, frontend: 4, backend: 2, devops: 3, career: 4 })
+  assert.deepEqual(groupCounts, { ai: 4, frontend: 4, backend: 2, devops: 3, career: 3 })
   const topCounts = Object.fromEntries(stats.top.map(r => [r.key, r.count]))
   assert.deepEqual(topCounts, { literature: 8, history: 7, cognition: 9, finance: 2 })
   const linkCounts = Object.fromEntries(stats.link.map(r => [r.key, r.count]))
@@ -34,10 +34,14 @@ test('rows follow registry order and carry registry label/icon', () => {
   assert.equal(stats.link[0].label, '文章收藏')
 })
 
-test('显式 genre 跨 category：置身钉内(ebook) 计入 career 组', () => {
-  const stats = categoryStats(realBooks)
+test('显式 genre 跨 category：ebook + group genre 计入 group 侧而非 top', () => {
+  const stats = categoryStats([
+    { slug: 'x', title: 'X', category: 'ebook', genre: 'career' },
+    { slug: 'y', title: 'Y', category: 'booklet', genre: 'career' },
+  ])
   const career = stats.group.find(r => r.key === 'career')
-  assert.equal(career.count, 4) // 3 本 booklet + 1 本 ebook
+  assert.equal(career.count, 2)
+  assert.deepEqual(stats.top, [])
 })
 
 test('三侧计数之和等于 total（一本书不多算不少算）', () => {
@@ -86,5 +90,5 @@ test('formatMinutes 与首页口径一致', () => {
   assert.equal(formatMinutes(60), '1 小时')
   assert.equal(formatMinutes(90), '1½ 小时')
   assert.equal(formatMinutes(91), '2 小时')
-  assert.equal(formatMinutes(15852), '264½ 小时') // 当前全站总阅读时长
+  assert.equal(formatMinutes(16070), '268 小时') // 当前全站总阅读时长
 })
