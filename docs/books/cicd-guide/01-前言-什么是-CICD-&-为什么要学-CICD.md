@@ -8,7 +8,7 @@
 1. 将制品上传到服务器。
 1. 在服务器将编译后的文件，手动可用的容器服务内（例如 `Nginx，Tomcat，Apache` 等服务）
 
-![传统手动打包上传部署流程示意](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/43e0a040cebb4bc8a611ffb46002db18~tplv-k3u1fbpfcp-zoom-1.image)
+![传统手动打包上传部署流程示意](./_assets/remote-a9e2185aab91.png)
 
 显而易见，这种流程不仅繁琐，且容易出错，是非常影响开发效率的。开发人员要花一些时间浪费在这上面。那么有没有高效率，简单便捷一些的方式呢？
 
@@ -33,7 +33,7 @@ CD 则有2层含义： `持续部署（Continuous Deployment）` 和 `持续交�
 ## 小册整体架构设计
 
 在开始学习之前，我们先来了解下小册的整体内容技术架构设计：
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/87eada87807a46a0a98159633274b5cf~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-c2d0984ba2d6.png)
 
 上面是一张全景架构图，小册内容和章节将围绕该图展开编写内容。其中不包含单元测试和代码扫描环节，只关注构建和部署环节。
 

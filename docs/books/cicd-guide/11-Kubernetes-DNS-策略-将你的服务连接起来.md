@@ -18,7 +18,7 @@
 
 是不是有点懵？我们思考一下：当我们通过域名访问一个网站时，浏览器不会直接访问域名。而是先将域名发送至 `DNS` 服务器，获取到域名对应的IP后，再通过IP去访问真实服务器（如下图）。
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/73a0215f8b1749a7b5f71a71f121fa3c~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-29ce2095dd2f.png)
 
 其实**我们日常上网，DNS服务器 将域名映射为真实IP的过程，就是一个服务发现的过程**。而我们再也不需要记住每个网站的IP，只需要记住永远不会更改的**域名**即可。
 
@@ -38,16 +38,16 @@
 kubectl -n kube-system get all  -l k8s-app=kube-dns -o wide
 ```
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d12d01a50c7c4edda89b8f0f9f2bd677~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-53d6fb614fec.png)
 
 ## 服务发现规则
 
 在了解了 `CoreDNS` 的背景后，我们开始来验证下服务发现的规则。
 
 首先，我们先进入一个 `Pod` 进行测试。我们先使用 `kubectl get pods` 命令来看下当前运行了哪些 `Pod`：
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b6ae6300c4ed4e8593364d53e5cbd2ee~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-845a5af75e1a.png)
 接着使用 `kubectl get svc` 看下运行了哪些 `Service` ：
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/06713e01d43140b99a6407a90e4d2110~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-ea9f00c3ea34.png)
 可以看到，我们自己创建的 `Service` 有2个：`front-service-v1` 和 `front-service-v2` 。稍后我们就使用这两个 `Service` 来测试。
 
 这里我们选择其中一个 `Pod` 进入看下。在这里，我们可以使用 `kubectl exec` 命令进入 `Pod` 内的容器。
@@ -84,7 +84,7 @@ wget -q -O- http://front-service-v1
 curl http://front-service-v1
 ```
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bb041153a7a941b9b72fa6d39725bd04~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-ae1713042475.png)
 这里我们可以看到，是可以访问到同级服务的。当然我们上面也写到，还有一种是**跨`namespace`的发现规则**。不过即使是同 `namespace` ，也可以使用**跨namespace的发现规则。**
 
 在 `Kubernetes DNS` 中，跨 `namespace` 的规则略为复杂。格式如下：
@@ -101,7 +101,7 @@ curl http://front-service-v1
 curl http://front-service-v1.default.svc.cluster.local
 ```
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/159f730772a140109afab82e091c1822~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-4f2f48decedd.png)
 经过验证，可以访问到。
 
 ## 结束语

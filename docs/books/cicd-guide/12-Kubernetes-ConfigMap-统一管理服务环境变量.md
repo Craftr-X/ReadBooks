@@ -36,10 +36,10 @@ kubectl create configmap mysql-config \
 > [a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*')
 
 创建成功后，我们可以使用 `kubectl get cm` 查看我们创建过的 `configmap`：
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/302314d80baa4d3dabff6e7a0e525460~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-248ecd14a6fe.png)
 
 可以看到，上面的就是我们刚创建的 `ConfigMap`。里面的 `DATA` 为 `2` ，代表有 `2` 条数据存在。我们直接使用 `kubectl describe cm mysql-config` 即可查看下这个 `ConfigMap` 的具体信息：
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/695b43d9bdd74108a27be87d2bd848b9~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-0e4d80f96d66.png)
 
 这里可以看到刚才我们存放的数据，代表该 `configmap` 创建成功。
 
@@ -70,7 +70,7 @@ kubectl apply -f ./mysql-config-file.yaml
 ```
 
 生效后，我们直接使用 `kubectl describe cm mysql-config-file` 查看下配置结果
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/67c109552ffe4b589a7c964915dfaa21~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-0529251b83ec.png)
 可以看到，要保存创建的内容成功存入。
 
 ### 文件创建
@@ -97,7 +97,7 @@ kubectl create configmap env-from-file --from-file=env=./env.config
 ```
 
 接着，我们直接使用 `kubectl get cm env-from-file -o yaml` 来查看下保存进入的内容
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/07cdcf8dd4a74400b2236557dffd093d~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-d5672b687980.png)
 这里我们看到， `configmap` 直接将我们整个文件内容都保存了进去。 `env` 则是这个文件的 `key` 值。
 
 ### 目录创建
@@ -126,7 +126,7 @@ kubectl create configmap env-from-dir --from-file=./
 ```
 
 创建完成后，我们使用 `kubectl get cm env-from-dir -o yaml` 查看下保存进去的文件内容：
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4babab7086e44746911d540950ad9b14~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-fb82e1b3d0a6.png)
 我们看到，文件夹下的文件内容被批量存放了进去。
 
 ## 使用方式
@@ -160,7 +160,7 @@ kubectl apply -f ./v1.yaml
 kubectl exec -it [POD_NAME] -- env | grep MYSQL_HOST
 ```
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9e5a829bfdf649ddb2a1bb3c90ecc8d7~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-6fa143f90dd4.png)
 此时可以看到，我们的环境变量成功的注入了进去。
 
 ---
@@ -181,14 +181,14 @@ envFrom:
 这里我们的 `name` 值为已配置好的 `configmap`， `optional` 代表如果没有该 `configmap` ，容器是否能够正常启动。
 
 接着我们编辑下 `front-v1` 的 `deployment` 配置文件，加入这项配置
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/cf7bbb7bedc3438ea277ebf37ebc3079~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-78ba1e76792e.png)
 添加后，保存并生效该 `deployment`，此时 `Pod` 会杀死重建。新 `Pod` 启动后，我们使用 `kubectl exec` 命令看下 `Pod` 内环境变量注入情况：
 
 ```yaml
 kubectl exec -it [POD_NAME] -- env | grep MYSQL
 ```
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ba42462afbca46399861708e03d35e07~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-10920cd7a9bf.png)
 此时我们可以看到，环境变量被批量注入了进去。
 
 ### 存储卷挂载
@@ -206,7 +206,7 @@ volumes:
     name: env-from-dir
 ```
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8509f822779545b5a8519c5360594f2a~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-c57b2fd182f0.png)
 
 **第二步：在容器镜像层面配置存储卷。 `name` 的值来源于第一步配置的 `name` 值； `mountPath` 为要挂载的目录；`readonly` 则代表文件是不是只读。位置如图所示：**
 
@@ -217,7 +217,7 @@ volumeMounts:
   readOnly: true
 ```
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e779ce57c4494f828829e49c6af75dc6~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-5248dc713b81.png)
 
 编辑完后，保存并退出。使用 `kubectl apply -f` 命令生效下配置文件。
 
@@ -231,7 +231,7 @@ kubectl apply -f ./v1.yaml
 kubectl exec -it [POD_NAME] -- ls /root
 ```
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/21968932d27c4802874d409a97a33580~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-ff98900df296.png)
 可以看到，三个文件都成功地挂载了进去。
 
 ---
@@ -255,7 +255,7 @@ volumes:
 其中，`key` 是 `ConfigMap` 中的字段名称；`path`则是要挂载的路径（相对于在容器镜像层面配置存储卷配置的 `mountPath` 字段）。填写保存后退出生效
 
 接着我们用 `kubectl exec` 命令验证下挂载结果
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/06dd0340a2304f8d917fdb10e8951619~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-32baffb51caa.png)
 结果如我们所愿，只挂载进去我们配置的2个文件。
 
 ## 结束语

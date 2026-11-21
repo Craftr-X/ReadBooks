@@ -17,7 +17,7 @@
 
 当然，如果中间切换出现问题，也应该将流量迅速地切换到老应用上。
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7d5513b9e9e7410e959b99ccac9a2765~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-27d99462bc92.png)
 
 ## 实现方案
 
@@ -130,15 +130,15 @@ kubectl -n ingress-nginx get svc
 > -n: 根据资源名称进行模糊查询
 
 其中，`PORT` 字段是我们可以访问的外部端口。80为 `ingress` 内部端口，31234 为外部端口。
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ab31c3f403854ccdac118e9c3068a15a~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-354d98f4be29.png)
 
 我们访问 [http://IP:31234/](http://172.16.81.170:31234/) 可以正常访问到页面：
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/671136d95607469aaa1dbd061a1f247e~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-46ca09325d8d.png)
 接下来，我们在chrome控制台中手动设置一个 cookie。key为 `users_from_Beijing` ，值为 `always`
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ff73757bd88941ba83f1a87f754fdc3e~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-82841f5ca052.png)
 
 刷新页面，发现我们访问的是v2。灰度发布环境搭建成功
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5b91c07762b24d48a14a6c0f02bb8d87~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-9481c819bfdf.png)
 
 #### 基于 Header 切分流量
 
@@ -167,7 +167,7 @@ curl --header 'header的key:header的value' 127.0.0.1:端口值
 
 通过对比发现，当 `janlay` 不是 `isme` 时，灰度失效。验证成功
 
-#### ![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/82679dba06094a6f98f3e1d699817112~tplv-k3u1fbpfcp-zoom-1.image)
+#### ![image.png](./_assets/remote-c072d21a6ceb.png)
 
 #### 基于权重切分流量
 
@@ -189,7 +189,7 @@ kubectl apply -f ./gray.yaml
 for ((i=1; i<=10; i++)); do curl 127.0.0.1:端口值;echo; done
 ```
 
-### ![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/841f48ea47db4531af410b5395f94bbc~tplv-k3u1fbpfcp-zoom-1.image)
+### ![image.png](./_assets/remote-19abd2fc6276.png)
 
 通过轮询10次发现，其命中概率大概在 `4-6` 次左右。这个命中概率只是相对于单词请求而言，拥有50%的概率。所以批量执行存在误差是正常的。
 
@@ -223,7 +223,7 @@ for ((i=1; i<=10; i++)); do curl 127.0.0.1:端口值;echo; done
 第一步，我们准备一组服务器。这组服务器当前服务的版本是 V1。
 
 接下来，我们将会使用滚动策略，将其发布到 V2 版本。
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6b82db5b76244f708cf4cbd259bf854a~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-77af1468b082.png)
 
 ### 升级第一个 Pod
 
@@ -232,16 +232,16 @@ for ((i=1; i<=10; i++)); do curl 127.0.0.1:端口值;echo; done
 首先，会增加一个 V2 版本的 Pod1 上来，**将 V1 版本的 Pod1 下线但不移除。此时，V1版本的 Pod1 将不会接受流量进来，而是进入一个平滑期等待状态（大约几十秒）后才会被杀掉。**
 
 第一个 Pod 升级完毕
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/91075d4256184ddfb01508d2431e48b5~tplv-k3u1fbpfcp-zoom-1.image)
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/16bdb14d3c6e472a8ae39ac7bb24e3db~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-654b3a72add7.png)
+![image.png](./_assets/remote-dbe6541fd6a4.png)
 
 ### 升级剩下的 Pod
 
 与上同理，同样是**新增新版本Pod后，将旧版本Pod下线进入平滑期但不删除。等平滑期度过后再删除Pod：**
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f86ed4f6c02344a8ab1b1854fa372dc0~tplv-k3u1fbpfcp-zoom-1.image)
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2ec1d08fa6ba4e29953372c5148a9426~tplv-k3u1fbpfcp-zoom-1.image)
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/19cb25fe400c4cc2bc053a8a4cec2689~tplv-k3u1fbpfcp-zoom-1.image)
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/fa048085bd644b409686878da1d024d5~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-d6afddc0369e.png)
+![image.png](./_assets/remote-bc35e88f955b.png)
+![image.png](./_assets/remote-4a1769adbf2a.png)
+![image.png](./_assets/remote-d118af59f8e8.png)
 
 ## 优缺点
 
@@ -269,7 +269,7 @@ vim ./v2.yaml
 ```
 
 在图示的位置添加以下字段：
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ea59e732f97544568a4e28e302c7943c~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-ae0c9011a9bd.png)
 
 ```yaml
 minReadySeconds: 1
@@ -298,7 +298,7 @@ minReadySeconds: 1
 kubectl apply -f ./v2.yaml && kubectl rollout status deployment/front-v2
 ```
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/cb12d03e60ed40fa93cfa97c9ff9cf96~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-df5aeccd9555.png)
 
 我们通过日志可以看到，3个 `replicas` 的更新逻辑逻辑为：**单个逐个地去进行更新 Pod。而不是一次性将旧的Pod 全部杀死后，再启动新的 Pod。**
 
@@ -323,7 +323,7 @@ vim ./v2.yaml
 kubectl apply -f ./v2.yaml && kubectl rollout status deployment/front-v2
 ```
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a4112d46b9d4409e9e592fc2440111c8~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-4f3507a4b002.png)
 我们看到， `k8s` 会将所有旧的 `Pod` 杀死，随后再批量启动新的 `Pod` 。
 
 这种发布方式相对滚动发布偏暴力。**且在发布空窗期（杀死旧Pod，新Pod还没创建成功的情况下）服务会不可用。**
