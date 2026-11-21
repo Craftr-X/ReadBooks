@@ -16,9 +16,11 @@ CraftX Books 是一个基于 VitePress 构建的在线阅读站点，发布到 G
 - 💬 评论讨论：章节页接入 Giscus，基于 GitHub Discussions 承载读者交流。
 - 🌓 主题切换：沿用 VitePress 深色/浅色模式，评论主题跟随系统偏好。
 - 🔤 字号调节：章节页右下角 A−/A+ 浮动控件（14–22px），localStorage 持久化，点击中间数字恢复默认。
+- 📊 阅读进度：章节顶栏进度条、预计阅读时长、书籍目录页进度；数据存 localStorage，无后端。
 - 📖 继续阅读：首页展示最近在读的章节卡片（复用章节阅读进度数据），一键回到上次位置；无记录时不显示。
+- 📈 站点统计：独立 `/stats/` 页汇总各展示分类书籍数量、章节总数与预计阅读时长；顶部导航「统计」与首页底部均有入口。
 - 🧩 内容预处理：构建前自动处理 Markdown 兼容问题和缺失资源占位。
-- 🚀 自动部署：推送到 `main` 分支后通过 GitHub Actions 构建并发布到 GitHub Pages。
+- 🚀 自动部署：推送到 `main` 分支后通过 GitHub Actions 构建并发布到 GitHub Pages（增量发布 + 构建确定性）。
 
 ## 📖 内容目录
 
@@ -139,14 +141,17 @@ docs/.vitepress/theme/components/BookComment.vue
 ```text
 repo: Craftr-X/ReadBooks
 category: Announcements
-mapping: pathname
+mapping: specific
+term: <base 标签 + 解码后的逻辑路径>
 theme: preferred_color_scheme
 lang: zh-CN
 ```
 
+示例：`base='/ReadBooks/'` 且页面为 `/books/money-dog/26-童话与理财` 时，term 为 `ReadBooks/books/money-dog/26-童话与理财`。不用 `pathname` 映射，是因为浏览器对中文路径会百分号编码，Discussion 标题会变成乱码。
+
 评论默认在普通章节页渲染，首页、页面型内容以及各小册首页不会显示评论区。评论能力依赖目标仓库开启 GitHub Discussions，并正确安装或启用 Giscus。
 
-> ⚠️ **改仓库名/域名时务必同步迁移评论**：`mapping: pathname` 的匹配键是 `location.pathname`（含 VitePress `base` 前缀，去掉开头 `/`）。base 路径一旦变化（例如仓库改名导致 `base` 从 `/Craftx-books.github.io/` 改为 `/ReadBooks/`），term 就和旧 discussion 标题对不上，评论区会整体变空（**评论数据并未丢失**，仍在仓库的 Discussions 里）。恢复方式：把对应 discussion 的标题前缀（以及正文里的旧 URL）从旧前缀改成新前缀即可。本仓库从 `Craftx-books.github.io` 改名为 `ReadBooks` 时，曾通过迁移 discussion 标题前缀（`Craftx-books.github.io` → `ReadBooks`）恢复评论关联。
+> ⚠️ **改仓库名/域名/章节文件名时务必同步迁移评论**：匹配键是组件算出的 `term`（含 VitePress `base` 标签 + 解码路径）。base 或章节路径一旦变化，新 term 和旧 discussion 标题对不上，评论区会整体变空（**评论数据并未丢失**，仍在仓库的 Discussions 里）。恢复方式：把对应 discussion 标题改成新 term 即可。本仓库曾两次迁移：`Craftx-books.github.io` → `ReadBooks` 改名前缀；以及从「编码 pathname」切到「解码 term」时，把相关 discussion 标题改为中文解码形式。
 
 ## 🖼️ 页面截图
 
@@ -171,12 +176,14 @@ lang: zh-CN
 ├── docs/                         # VitePress 文档站点源码
 │   ├── .vitepress/               # VitePress 配置、主题和组件
 │   ├── books/                    # 技术小册与电子书正文
+│   ├── stats/                    # 站点统计页
 │   ├── public/                   # 静态资源
 │   └── index.md                  # 首页入口
-├── scripts/                      # 构建前处理脚本
-├── sidebar-generated.json        # 侧边栏配置
+├── scripts/                      # 导入、校验、构建辅助脚本
+├── sidebar-generated.json        # 侧边栏配置（gitignore，构建期生成）
+├── content-stats.json            # 内容统计（gitignore，构建期生成）
 ├── package.json                  # npm 脚本与依赖
-└── .github/workflows/deploy.yml  # GitHub Pages 自动部署流程
+└── .github/workflows/            # CI 校验 + GitHub Pages 部署
 ```
 
 根目录下的原始中文书籍文件夹只作为本地素材保留，已经在 `.gitignore` 中排除，不会随站点源码提交。
@@ -223,31 +230,16 @@ lint 与构建隔离：`npm run lint:fix` 会就地修改源 Markdown，应在�
 
 ## 🚢 GitHub Pages 部署
 
-部署流程已经写在 `.github/workflows/deploy.yml` 中。每次推送到 `main` 分支后，GitHub Actions 会自动：
+PR 合入前，CI（`.github/workflows/ci.yml`）会按顺序跑：`npm run lint` → `npm run build` → `npm run check:deadlinks` → `npm test`。
 
-1. 安装 Node.js 20
-2. 执行 `npm ci`
-3. 执行 `npm run build`
-4. 上传 `dist/`
-5. 发布到 GitHub Pages
+推送到 `main` 后，部署流程（`.github/workflows/deploy.yml`）会构建静态站并以 **gh-pages 增量发布**（仅推变化文件；本地搜索索引经确定性规范化，避免无改动时全站重写）。概要步骤：
 
-日常发布命令：
+1. 安装 Node.js 20，执行 `npm ci`
+2. 执行 `npm run build`（含 `prebuild` 生成侧边栏与统计）
+3. 将 `dist/` 增量同步到 `gh-pages` 并发布到 GitHub Pages
+4. 用线上首页的 `app.*.js` 指纹校验部署是否生效（失败时自动重试）
 
-```bash
-git status
-npm run build
-git add .
-git commit -m "Update site"
-git push
-```
-
-首次部署或排查部署时，到 GitHub 仓库中确认：
-
-1. 进入 `Settings -> Pages`
-2. Source 选择 `GitHub Actions`
-3. 打开 `Actions` 查看 `Deploy VitePress to GitHub Pages` 是否成功
-
-站点发布地址以 GitHub Pages 页面显示的 URL 为准。
+首次部署或排查时，到仓库确认：`Settings -> Pages` 的 Source 为 `GitHub Actions`，并在 Actions 中查看部署工作流是否成功。站点地址以 Pages 页面显示的 URL 为准。
 
 ## 🔧 维护说明
 
@@ -255,9 +247,10 @@ git push
 - 修改主题样式：`docs/.vitepress/theme/custom.css`
 - 修改 VitePress 配置：`docs/.vitepress/config.mts`
 - 修改内容目录：`docs/books/`
-- 修改侧边栏：`sidebar-generated.json`
+- 侧边栏 / 内容统计：由 `prebuild` 自动生成（勿手改 gitignore 产物）
 - 修改内容元数据：`books.json`
 - 修改评论组件：`docs/.vitepress/theme/components/BookComment.vue`
+- 站点统计页：`docs/stats/index.md` + `docs/.vitepress/theme/components/StatsPage.vue`
 
 本地导入技术小册或电子书时，使用 CLI：
 
@@ -266,7 +259,22 @@ npm run import:book -- ./path/to/markdown-folder --slug my-book
 npm run import:book -- ./path/to/book.epub --slug my-book
 ```
 
-导入工具仅支持 Markdown 文件夹或无 DRM 的 EPUB 文件。默认禁止覆盖已有 `docs/books/<book-slug>/`，需要覆盖时显式添加 `--force`；只预览不写入时添加 `--dry-run`。导入完成后会写入 `docs/books/<book-slug>/`，并更新 `books.json` 和 `sidebar-generated.json`。
+导入工具仅支持 Markdown 文件夹或无 DRM 的 EPUB 文件。默认禁止覆盖已有 `docs/books/<book-slug>/`，需要覆盖时显式添加 `--force`；只预览不写入时添加 `--dry-run`。导入完成后会写入 `docs/books/<book-slug>/`，并更新 `books.json` 和本地 `sidebar-generated.json`。
+
+下架书籍（一行入口，完整规范见 [`AGENTS.md`](./AGENTS.md) 的 Book Removal Spec）：
+
+```bash
+npm run remove:book -- --find <书名关键词> --dry-run   # 先预览
+npm run remove:book -- --slug <slug>                   # 确认后再删
+```
+
+常用校验（导入 EPUB / 发 PR 前）：
+
+```bash
+npm run check:deadlinks                  # 全站本地链接与图片
+npm run audit:content -- <slug> <epub>   # EPUB 源与导入正文对账（有源文件时）
+node scripts/verify-import.mjs <slug>    # 单书导入后自检
+```
 
 分类规则：
 
