@@ -20,6 +20,7 @@
 ### Task 1: 设计文档入库并标为已批准
 
 **Files:**
+
 - Modify: `docs/superpowers/specs/2026-11-21-image-alt-quality-design.md`（状态 → 已批准）
 
 - [x] 将文首状态改为「已批准」
@@ -28,6 +29,7 @@
 ### Task 2: 试点精修 `typescript-intro`（~21）
 
 **Files:**
+
 - Modify: `docs/books/typescript-intro/**/*.md` 中所有 `![](` 行
 
 - [x] `rg -n '!\[\]\(' docs/books/typescript-intro` 列出清单
@@ -39,6 +41,7 @@
 ### Task 3: 试点精修 `docker-guide`（~54）
 
 **Files:**
+
 - Modify: `docs/books/docker-guide/**/*.md`
 
 - [x] 同 Task 2 流程
@@ -47,6 +50,7 @@
 ### Task 4: 试点精修 `attached`（~40）
 
 **Files:**
+
 - Modify: `docs/books/attached/**/*.md`
 
 - [x] 同 Task 2；本地 `_assets` 用 Read 直接看图
@@ -55,6 +59,7 @@
 ### Task 5: 沉淀 SOP 文档
 
 **Files:**
+
 - Create: `docs/superpowers/specs/image-alt-sop.md`
 
 - [x] 写入清单→写 alt→装饰图规则→自检命令→分支/PR 约定→已完成 slug 表
@@ -64,6 +69,7 @@
 ### Task 6: 按 SOP 分批剩余书籍
 
 **Files:**
+
 - Modify: 各 `docs/books/<slug>/**/*.md`（每书一 PR）
 
 - [ ] 按空 alt 数量从少到多处理；大户靠后
@@ -72,6 +78,7 @@
 ### Task 7: 全站收尾（全部清零后）
 
 **Files:**
+
 - Modify: `.markdownlint-cli2.yaml`、`README.md`
 
 - [ ] 评估启用 MD045
