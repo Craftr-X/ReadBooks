@@ -17,7 +17,7 @@
 
 Redis Server 在接收并解析完 EXPIRE、PEXPIRE 等命令之后，会通过从 server.commands 中查找到对应的 redisCommand 实例，执行其对应的处理函数，这些逻辑在前面[第 31 讲《内核解析篇：命令解析与执行》](https://juejin.cn/book/7144917657089736743/section/7147529868001935360)中已经详细分析过了，这里就不再重复。这些命令对应的处理函数底层，调用的都是 `expireGenericCommand() 函数`，调用栈如下图所示：
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/22b963ca775c45a5b6f58db190d332ed~tplv-k3u1fbpfcp-zoom-1.image)
+![](./_assets/remote-f6b359215af0.png)
 
 expireGenericCommand() 函数的核心原理分析如下：
 
@@ -169,11 +169,11 @@ void expireGenericCommand(client *c, long long basetime, int unit) {
 
 在命令执行完成之后，就会走 freeClientArgv() 函数把 argv 数组都释放掉，调用栈如下图所示。如果EXPIRE 命令直接用这个 Key 写入到 redisDb->expires 里面，在 argv 数组释放的时候，就会出现空指针。
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2ec993c360c749e9b80b5cbfa99566c6~tplv-k3u1fbpfcp-zoom-1.image)
+![](./_assets/remote-aa224ef12735.png)
 
 回到 setExpire() 函数，它之所以还需要再执行一次 redisDb->dict 的查询，就是为了拿到 redisDb->dict 中的 Key 字符串，然后在 redisDb->expires 中进行复用，让两个不同 dictEntry 的 key 指针，指向同一个 Key 字符串实例，如下图所示：
 
-![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0ec9742772174d88bb4208c10e184878~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-4800a5f2eeb7.png)
 
 有的小伙伴可能还会问：既然 dbDictType 的 keyDup 是 NULL，那我们执行 SET 命令的时候，Key 也是被解析到 argv 数组里面的，命令执行完了也会被释放，那 SET 命令的 Key 是怎么保留下来的呢？
 
@@ -195,7 +195,7 @@ void dbAdd(redisDb *db, robj *key, robj *val) {
 
 明确了过期时间的存放位置和设置过程之后，我们来看 Redis 中惰性过期策略，其相关实现位于 `expireIfNeeded() 函数`中。Redis 在执行所有需要访问 Key 的命令时，都会调用该函数，如下图所示的调用栈，几乎所有的 Redis 命令都会调用到 expireIfNeeded() 函数。
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1e61a502bff44c58b9bff577f337cb41~tplv-k3u1fbpfcp-zoom-1.image)
+![](./_assets/remote-8d461a569f3d.png)
 
 下面我们展开 expireIfNeeded() 函数的核心逻辑：
 
@@ -351,7 +351,7 @@ DEL 命令使用的这个 lazy 参数值，其实就是 redis.conf 文件中的 
 
 除了 DEL 命令之外，我们还可以使用 UNLINK 命令来删除 Key，其底层也是调用的 delGenericCommand() 函数，如下图所示：
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/237ea9c68cb44ddaab030873ecd6ef4a~tplv-k3u1fbpfcp-zoom-1.image)
+![](./_assets/remote-daaa676b7938.png)
 
 在 UNLINK 命令执中使用的 lazy 参数值始终为 1，也就是走 dbAsyncDelete() 函数，由后台线程异步删除 Key。如果将 lazyfree-lazy-user-del 配置项修改为 no，那么 DEL 和 UNLINK 命令的效果就完全一样了。
 
@@ -389,7 +389,7 @@ else
 
 下图是 dbDelete() 函数的调用栈，可见有很多命令在一些特殊条件下，都会有删 Key 的逻辑：
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/75841546d082448c93aa1f37066f7e30~tplv-k3u1fbpfcp-zoom-1.image)
+![](./_assets/remote-77ec66fd1a37.png)
 
 这种场景中，Redis 会根据 lazyfree-lazy-server-del 配置值决定是否进行异步删除，这部分逻辑封装在 db.c 文件中的 dbDelete() 函数中，核心代码片段如下（它底层依赖的 dbGenericDelete() 函数我们会在下面的实现部分进行详细说明）：
 
@@ -405,7 +405,7 @@ int dbDelete(redisDb *db, robj *key) {
 
 一个子场景是在主从复制中，从节点重新全量同步主库数据之前，会清空整个 DB，此时，会根据 replica-lazy-flush 配置项（默认值为 no）决定是否异步清空 DB 中数据。该逻辑封装在 emptyDbAsync() 函数中，下图展示了该场景中 emptyDbAsync() 的调用栈：
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f899a564102745a6bfd2e0d751801b31~tplv-k3u1fbpfcp-zoom-1.image)
+![](./_assets/remote-77d7d3868d74.png)
 
 另一个子场景是在 Redis Server 收到 FLUSHALL 等清空数据命令的时候，Redis 会根据 lazyfree-lazy-user-flush 配置项（默认为 no），决定是否异步清空数据库中的全部数据。在 db.c 中的 getFlushCommandFlags() 函数中，Redis 从库会根据 lazyfree-lazy-user-flush 配置项设置一个标志位，代码片段如下：
 
@@ -429,7 +429,7 @@ int getFlushCommandFlags(client *c, int *flags) {
 
 了解了 lazy free 特性的使用场景和大致原理之后，我们接下来看 dbSyncDelete() 函数同步删除的具体实现，它底层依赖了 dbGenericDelete() 这个公共函数，它不仅支持同步删除，还支持异步删除，唯一的区别就是 async 参数的值不同，如下图所示：
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3853632f7fee49f194a8dde05af71311~tplv-k3u1fbpfcp-zoom-1.image)
+![](./_assets/remote-771156065866.png)
 
 下面是 dbGenericDelete() 这个函数的具体实现以及详细的注释说明：
 
@@ -511,7 +511,7 @@ static int dbGenericDelete(redisDb *db, robj *key, int async) {
 
 如下图调用栈所示，除了 freeObjAsync() 函数异步删除键值对、emptyDbAsync() 函数异步清空整个 redisDb 之外，还有很多异步回收空间的操作，比如 freeReplicationBacklogRefMemAsync() 函数，它就是在提交一个异步回收 backlog 缓冲区的任务 ，backlog 缓冲区是在主从复制中使用的一个缓冲区。
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/36f43158ec69483db98b0d0d739f8649~tplv-k3u1fbpfcp-zoom-1.image)
+![](./_assets/remote-776c978e5b17.png)
 
 前面我们已经明确了dbAsyncDelete() 这个异步删除的函数，与 dbSyncDelete() 同步删除逻辑的底层，都是依赖于 dbGenericDelete() 函数，`区别集中在 freeObjAsync() 函数里面`。
 
@@ -597,7 +597,7 @@ struct bio_job {
 
 下面我们来看看后台线程的相关内容，在 Redis 启动的时候，会调用 bioInit() 函数启动 bio 后台线程，调用栈如下图所示：
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bdda1a81d6c14423870be1040a01977c~tplv-k3u1fbpfcp-zoom-1.image)
+![](./_assets/remote-ca97e6113f25.png)
 
 在 bioInit() 函数中会启动三个后台线程，分别处理 BIO_CLOSE_FILE、BIO_AOF_FSYNC、BIO_LAZY_FREE 三种类型的任务。三个 bio 线程执行的都是 bioProcessBackgroundJobs() 函数，同时还会创建下面 4 个数组（长度都是 3）。
 
@@ -609,7 +609,7 @@ struct bio_job {
 
 bio 后台线程与 IO 线程的设计基本类似，如下图所示，唯一的区别是，IO 线程用自旋的方式来等待新的读写任务，而 bio 后台线程使用 condition 阻塞的方式来等待新的后台任务，这其实也和任务提交频率有关系，IO 任务显然是要比后台任务更加频繁，用自旋等待，可以减少线程切换的成本。
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f577a8ab281f44ce86cccf1a195d1014~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-dc194a31fe10.png)
 
 明确了 bio 后台线程的模型之后，我们再来看每个 bio 后台线程执行了什么逻辑，也就是 bioProcessBackgroundJobs() 函数。其中最核心的逻辑就是从相应的 bio_jobs 队列中，取出相应的 bio_job 任务，然后执行其中的 free_fn 函数，核心代码片段如下：
 
@@ -695,7 +695,7 @@ void *bioProcessBackgroundJobs(void *arg) {
 
 下图展示了 activeExpireCycle() 函数的调用栈：
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/cee150078e57438d8fd0ff2a5aa96bee~tplv-k3u1fbpfcp-zoom-1.image)
+![](./_assets/remote-fcdb540bd993.png)
 
 - 慢速模式的特点是：执行频率低，每次执行的时间长，能够扫描到的 Key 也多。在慢速模式中，activeExpireCycle() 函数会控制自身的执行时长，保证每次执行时长不超过 25ms，默认 serverCron() 执行频率为 10 的时候，也就是默认情况下，每秒 activeExpireCycle() 函数占用主线程的时长不超过 250 ms。
 
@@ -703,7 +703,7 @@ void *bioProcessBackgroundJobs(void *arg) {
 
 下面来看 activeExpireCycle() 函数的核心逻辑，如下图所示：
 
-![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f88a892a543e492f8a02bd161bb780c9~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-a328508b7d1b.png)
 
 这里我们展开一步步介绍，首先来看初始化变量的部分，这里会初始化很多控制 activeExpireCycle() 函数执行流程的变量。
 

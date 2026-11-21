@@ -14,7 +14,7 @@
 
 在 Redis Cluster 中各个节点之间相互握手之后，我们可以通过 CLUSTER NODES 命令查看它们的状态。下面就是 CLUSTER NODES 在一个 6 节点组成的 Redis Cluster 上的返回：
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7ec8bcaf0a7145feb630c0eddd555fac~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-e2ebb2ad94d6.png)
 
 从这张图中每个 Cluster 节点的 flags 状态信息我们可以看到，这些节点之间没有主从关系，全部都是 Master 类型节点，此时，我们可以通过 `CLUSTER REPLICATE <node-id>` 命令将一个节点变为另一个节点的 Slave 节点。
 
@@ -63,7 +63,7 @@ void clusterSetMaster(clusterNode *n) {
 
 我们在上述 6 个 Redis 实例的 6380 实例上，执行 `CLUSTER REPLICATE d8b8f1cd26f1ceaa91914c7604dd7e691aa1d1a2` 命令之后，再次执行 `CLUSTER NODES` 命令查看集群状态，就会看到下图主从状态的变化，其中红色部分为发生变更的地方：
 
-![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4f271d942cef45d3aa32f7a9451043f5~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-d13684ed8976.png)
 
 有个小细节，虽然是一组主从节点中使用同一个 configEpoch，我们通过 CLUSTER NODES 命令看到 Slave 节点的 configEpoch 值也确实和 Master 节点一致了，也就是上图中标红的 4 这个值。但是实际上是 Slave 获取 configEpoch 值时变为了 clusterNode->slaveof->configEpoch，其 clusterNode->configEpoch 值并没有发生变化，我们可以在 clusterGenNodeDescription() 函数中，看到这个判断逻辑：
 
@@ -93,7 +93,7 @@ sds clusterGenNodeDescription(clusterNode *node, int use_pport) {
 
 这部分处理逻辑位于 **clusterProcessPacket() 函数**中，具体位置如下图所示，感兴趣的同学可以参考源码进行学习。
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/fe059e8f7b784a0291e05e4d1df9576a~tplv-k3u1fbpfcp-zoom-1.image)
+![](./_assets/remote-0d25f7308f1d.png)
 
 ### slot 的分配与同步
 
@@ -124,7 +124,7 @@ UPDATE 消息与 PING 消息不同之处主要在于 data 字段的取值，UPDA
 
 我们转换到 UPDATE 消息接收节点的视角，当它在接收到 UPDATE 消息之后，会进入 clusterProcessPacket() 函数中，处理 UPDATE 消息的分支，具体位置如下图所示。其中会解析消息中的 clusterMsgDataUpdate，确认其中携带的 configEpoch 值大于当前节点的 configEpoch 值之后，会更新其 configEpoch 值，并调用上面介绍的 clusterUpdateSlotsConfigWith() 函数更新 slot 变化，具体流程不再重复了。
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c40084db18c64854a7a2acabaf599e22~tplv-k3u1fbpfcp-zoom-1.image)
+![](./_assets/remote-2684fb195b3d.png)
 
 ## 定时 PING 消息
 

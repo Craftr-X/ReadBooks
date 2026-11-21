@@ -10,7 +10,7 @@
 nest generate app user
 ```
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8d988337b5e349cbb7da34590b6a97fb~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-2fed63b90318.png)
 
 2. 为了兼容给 **MnnoRepo**，`app/user` 目录下新增虚拟 `package.json` 文件：
 
@@ -38,11 +38,11 @@ nest generate app user
   },
 ```
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a4f2042841da4b1ab5a03e95306cc7c7~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-b24ed34e01b2.png)
 
 4. 其他通用的内容，照搬之前的 **low-code-test** 子工程即可，但将其他的业务模块去掉，最终获取的目录结构如下所示：
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1d0288e39c1545779f67098fbce6eda2~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-261a1ab30fe7.png)
 
 > 此时并不要急于运行项目，因为我们加了 **Doc** 模块，其中依赖了 **package.json**，会导致构建目录异常，所以并不必着急启动，我们继续引入其他模块后即可正常启动。
 
@@ -54,7 +54,7 @@ nest g resource user --project user
 
 > --project 记得加，不然会在根项目生成
 
-![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/10d8d4d69a08463599184c3b2da4e901~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-d0692c4c9f0d.png)
 
 可以看到借助于 **CLI** 工具，不仅仅生成了整个 **User** 的 **CURD** 模块，同时也帮我们在 `app.module.ts` 中注册了对应的 **Module**。
 
@@ -136,7 +136,7 @@ export const UserProviders = [
 ];
 ```
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f236440e2fc54491b6d46205d50ad6e8~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-12f3acb63839.png)
 
 完毕之后在 `user/user.module.ts` 导入 `UserProviders` 以及 `DatabaseModule`：
 
@@ -162,7 +162,7 @@ export class UserModule { }
 
 完成上述步骤就可以使用 `pnpm start:user` 正常启动项目了:
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a442eb84520c4a73b5958a860c3f56c6~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-3a824a70f807.png)
 
 正如之前所说的一样，我们在测试环境开启了同步的配置。
 
@@ -175,7 +175,7 @@ MYSQL_CONFIG:
 
 所以在每一次启动的时候，**TypeORM** 都会进行实体类与 **Mysql** 数据库表结构的同步，所以可以在 **Mysql workbench** 中看到 **material_test** 数据库创建了一张 **User** 表。
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4509ad99537540ad944285e81ede06e4~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-1e98a5aebf3d.png)
 
 细心的同学应该注意到了，数据库存储的字段与我们的实体类有区别，大驼峰格式被转换成为了下划线格式，这是上一章提到的 `naming.strategies.ts` 的转换结果。
 
@@ -263,15 +263,15 @@ export class UserService {
 
 3. 打开 **doc** 链接 http://localhost:3002/api/doc#/default/UserController_create
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6b49d42e2d59442e8bf1aa61500cd48a~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-d4181754e59d.png)
 
 4. 测试执行此方法得到如下返回结果则代表插入成功
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1aa06681c47941bd802ca6db8ce7d560~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-217617c99278.png)
 
 同时数据库应该也支持新增了对应的数据字段
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/42a97aa39c234ddcb737dae8a087b682~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-b601709bace5.png)
 
 #### 查
 
@@ -289,11 +289,11 @@ export class UserService {
 
 查询所有：
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0789d039cdc443fab13dd030bfd215b8~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-9911bc6d0339.png)
 
 查询单个：
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/90f0ff87ccf84da9a52be12b3acf05d0~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-9f2c01cde574.png)
 
 #### 删
 
@@ -307,11 +307,11 @@ export class UserService {
 
 删除 `id=1` 的用户，返回数据如下所示则代表成功：
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d715416a88044879bd6307212142894b~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-14ff0aac5cf6.png)
 
 直接查询数据库可以看到 **id** 为 **1** 的数据已经确实被删除了。
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6f5c7bfef96d43fca84c3a27d8c60be1~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-8aa3869d4b71.png)
 
 #### 改
 
@@ -340,13 +340,13 @@ return this.userRepository.update({ id }, updateUserDto)
 }
 ```
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6a633134f68b450ab47e2487fdabb1a6~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-8bd0638fea2e.png)
 
 > 注意，这里的 demo 使用的是 patch 方法，所以我并没有加 id 属性。
 
 正常请求之后，数据库自然也会更新成功：
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e94f14b6ad384bef9e8674a1e754bf15~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-e95893f0a951.png)
 
 ## 一对多
 
@@ -356,7 +356,7 @@ return this.userRepository.update({ id }, updateUserDto)
 
 整体结构如下所示：
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b93acd3b9bda4e49b6fd54fe9f081f72~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-c4f2d94c4e39.png)
 
 1. 修改 `department/department.mysql.entity.ts` 文件为：
 
@@ -466,18 +466,18 @@ export class User {
 
 预先新增一个部门：
 
-![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1bfb1703c1334557b5daeb6226d997b6~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-48feca0be1ac.png)
 
 新增用户：
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/50e965a5ee1c4946bcb8ceabf92da9bf~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-fcaea9afa0b6.png)
 
 查询部门：
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/338611525e3142e9ba4d90f29137d73e~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-56fc48a95c07.png)
 
 查询用户：
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/31e33c5317854f7fad5cdf918b47276e~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-f665b0815516.png)
 
 ## 写在最后
 

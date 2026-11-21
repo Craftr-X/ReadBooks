@@ -44,7 +44,7 @@ RUN npm link
 docker build -f ./Dockerfile -t ig-base-cli:0.0.1 .
 ```
 
-![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f4927c0e122e45388dbeafbc06602a47~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=1378&h=938&s=861412&e=png&b=fefefe)
+![image.png](./_assets/remote-054a8ae70055.png)
 
 构建完毕基础镜像之后，我们可以通过如下脚本进入容器查看是否正常挂载到了全局环境。
 
@@ -54,7 +54,7 @@ docker run -it ig-base-cli:0.0.1 /bin/sh
 
 正常情况下，输入 **ig --hlep** 的结果如下图所示：
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9396ad2e2d054d5d8e444cee6e1096c7~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=1346&h=754&s=342201&e=png&b=fdfdfd)
+![image.png](./_assets/remote-006d7ffd8230.png)
 
 #### 构建打包镜像
 
@@ -62,7 +62,7 @@ docker run -it ig-base-cli:0.0.1 /bin/sh
 
 我们使用的是一个简单的 **vite** 项目作为 **demo**，首先要在项目根目录下创建 `ig.config.ts`
 
-![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/84d905be3c124cc6bffa6d448802fa96~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=2186&h=930&s=211604&e=png&b=1b1b1b)
+![image.png](./_assets/remote-4d7d96990694.png)
 
 然后修改 **flow** 的脚本命令:
 
@@ -114,7 +114,7 @@ CMD ["buildFlow"]
 docker build -f ./Dockerfile -t ig-build-space:0.0.1 .
 ```
 
-![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/604c416982ee429ba320cab5751e6a00~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=1140&h=742&s=454636&e=png&b=fdfdfd)
+![image.png](./_assets/remote-e24653d57098.png)
 
 然后我们直接运行 **ig-build-space** 镜像：
 
@@ -122,7 +122,7 @@ docker build -f ./Dockerfile -t ig-build-space:0.0.1 .
 docker run ig-build-apace:0.0.1
 ```
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c7d76c81232d40658b8c9ef7a2f93951~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=1448&h=1498&s=801046&e=png&b=fefefe)
+![image.png](./_assets/remote-ec08c4c8a3ea.png)
 
 如上图所示，正如我们预料的情况一样，**ig-build-space** 按照我们的流程编排的顺序正确执行了每一个步骤。
 
@@ -136,9 +136,9 @@ docker run -it -v /Users/botycookie/test/hello-world:/home/work ig-base-cli:0.0.
 
 > 实际的项目路径需要自行调整，这里只是示例。
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e6f4802bbfde4ae5b9f547833afc9065~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=1588&h=994&s=594614&e=png&b=fefefe)
+![image.png](./_assets/remote-6a4cc0aa397c.png)
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/717e20d548f14653a5967822aa702e23~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=1560&h=1358&s=860617&e=png&b=fefefe)
+![image.png](./_assets/remote-281bc09b3dd9.png)
 
 但这种也是有一定的缺憾，如图所示，我们并没有借助于 **docker** 的缓存来解决重复下载依赖更新的问题，所以每次的构建都会走一遍安装依赖的过程，如果想使得构建速度更快的话，则需要重写定制一下 **devops** 的流程，不过这也是一种空间换时间的路子，如果**项目过多**、**资源吃紧**的情况下，不必在意多这一两分钟安装依赖的时间。
 
@@ -146,7 +146,7 @@ docker run -it -v /Users/botycookie/test/hello-world:/home/work ig-base-cli:0.0.
 
 基础模板与搭建产物其实都是类似的结构，大部分场景都是一份 **JSON** 格式的数据，所以没有什么太多可以讨论的场景，但除此之外还有一种 **ProCode** 的产物需要构建，这里我们使用之前提到过的 **Nunjucks** 来实现。
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/256c915c218c4fd6a3215733ba3e69c8~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=3765&h=1897&s=511512&e=png&b=fefdfc)
+![image.png](./_assets/remote-768614901a3f.png)
 
 正如之前的搭建服务所示，右边的是根据 **swagger** 提供的 **json schema** 生成的代码片段，但是这种代码片段如果不经过编译肯定是无法使用的，至少也要在 **Html** 中引入 **React** 跟 **AntD** 等依赖才能使用。
 
@@ -222,19 +222,19 @@ docker run -it -v /Users/botycookie/test/hello-world:/home/work ig-base-cli:0.0.
 </html>
 ```
 
-![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/decaa29ba41c4d9bb2c9f62d75bfda63~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=1306&h=585&s=39280&e=png&b=ffffff)
+![image.png](./_assets/remote-883798537f64.png)
 
 > 正常打开的话页面如上所示，如果打不开，可以替换一下 **CND** 的链接。
 
 如上所示，我们需要将他转为一个 **Nunjucks** 的模板，方便我们将之前生成好的 **AntD** 的数据插入进去。
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/631253b2a9b248bf9cb8f0a589e0fb39~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=1953&h=921&s=160987&e=png&b=1f1f1f)
+![image.png](./_assets/remote-d473ed6ebbf9.png)
 
 模板的数据会做一些简单的压缩，**Nunjucks** 的模板语法的变量替换为 `{​{ pageInfo |safe }​}`，所以其他的一些 `{​{}​}` 的需要自行做一些转移。
 
 如下就是成功替换了模板之后的页面展示样式：
 
-![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/63245806731c40c3892429d6451f89f6~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=1318&h=1120&s=100823&e=png&b=fefefe)
+![image.png](./_assets/remote-f73ba7dec07e.png)
 
 这样一个简单的单页面的出码功能即完成了，但仅仅只是一个 **demo** 级别的，后续还有很多微调的功能需要完善，这就需要老王的设计器配合在一起进行调试，所以这并非是完全体的样式。
 

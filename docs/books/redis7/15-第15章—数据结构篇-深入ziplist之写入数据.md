@@ -4,13 +4,13 @@
 
 打开 ziplist.h 这个头文件，这里可以看到操作 ziplist 的全部函数：
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/811d9ec4e82448678301ef07e13f2b06~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-28a9d30508ac.png)
 
 要用 ziplist，第一步肯定是要创建一个 ziplist 实例，对应的就是这里的 **ziplistNew() 函数**，它里面会创建一个空 ziplist 实例，返回的这个 char* 指针呢，指向的就是这个空 ziplist 实例的首地址。
 
 新建的 ziplist 不包含任何 entry，只有队首和队尾这两个部分，就是下图的状态：
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ce201c2814e549e2b67e55d91ac1e505~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-7ebd0658aff2.png)
 
 创建好 ziplist 之后，我们就要开始往里添加元素了。下面这两个函数都涉及到了往 ziplist 里添加元素的功能，我们一个个来说。
 
@@ -32,7 +32,7 @@ unsigned char *ziplistInsert(unsigned char *zl,
 
 我们再深入一下，看看这两个方法是怎么给 ziplist 添加元素的，会发现它们底层都是调用这个带下划线的 `__ziplistInsert() 函数`实现的，如下图所示。Redis 的代码里面带这种下划线的函数，就和我们 Java 里面写个公共的 private 方法一样，然后，其他 public 方法调它实现对外的接口。
 
-![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b2c8da2627e94b75bfe0f07cde1d9267~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-6837fd419621.png)
 
 既然核心实现都是一个函数，那我们只以 ziplistPush() 或是 ziplistInsert() 中的一条实现路线来分析，就可以弄懂 ziplist 写入的核心逻辑了。本节会按照 `ziplistPush() 函数`这条实现路线来展开分析，总共分为下面 `9 个关键步骤`。
 
@@ -50,7 +50,7 @@ unsigned char *ziplistPush(unsigned char *zl, unsigned char *s, unsigned int sle
 
 ZIPLIST_HEAD 这个宏其实就是 0 这个值， ZIPLIST_ENTRY_HEAD 这个宏就是 zl 指针后移两个 int32 和一个 int16 的长度，恰好是后移了 ziplist 的头，就如下图：
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/57b44d5ef5f54dde9afc4ce435034596~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-8f1a4756d20b.png)
 
 要是往 ziplist 的队尾插入，就执行 ZIPLIST_ENTRY_END 这个宏，其定义如下：
 
@@ -60,7 +60,7 @@ ZIPLIST_HEAD 这个宏其实就是 0 这个值， ZIPLIST_ENTRY_HEAD 这个宏�
 
 它的功能是把 zl 指针后移了 ziplist 的长度 -1 个字节数，这个减一，就是因为 zlend 部分固定为一个字节，如下图所示：
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1171bddadd2540a297e7fbf3f2a62856~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-6ea8fc8df873.png)
 
 这是我们第一次看这种嵌套的宏，这里会展开一步步进行分析。
 
@@ -96,13 +96,13 @@ if (p[0] != ZIP_END) { // 非队尾插入（在队头位置插入或是队中位
 
 先来看在`非队尾插入`（在队头位置插入或是队中位置插入）的分支（毕竟 __ziplistInsert() 是个公共的函数，还是会有队中插入的情况）这个场景的话，看下面这个图会比较清晰，entry2 里面的 prevlen 其实存的是 entry1 的长度。新插入的这个 prevlen 也是要存 entry1 的 prevlen 长度，所以新 prevlen 直接复制 entry2 的 prevlen 值就完事了。
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/834d0eec5d324575a6cf330ff76737cb~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-0b75f92cad86.png)
 
 ZIP_DECODE_PREVLEN 这个宏，里面的逻辑大概就这样，具体实现我就不展开说了。
 
 再来看 else 这个分支，这个分支是要`在 ziplist 尾部插入新元素`的场景，如下图：
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/97d299ab0f4445ce9fecc8c8aaabf427~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-b11cd859eab7.png)
 
 ZIPLIST_ENTRY_TAIL 这个宏里面，会根据 zltail 值，得到最后一个 entry 的首地址，也就是图里面的 ptail 指针。然后，zipRawEntryLengthSafe() 函数就会按照前面说的编码规则，解析 ptail 指向的这个 entry，其中就会拿到 prevlen、len 这些值，这样的话，我们就能算出新 entry 的 prevlen 值了。
 
@@ -148,7 +148,7 @@ int zipTryEncoding(unsigned char *entry, unsigned int entrylen, long long *v, un
 
 举个简单例子，看下面这张图，正常情况下，ziplist 只需要增加 500 字节，来存新 entry 就行了。但是 prevlen2 要存的值超过了 254，也是需要扩容的，这个时候呢，扩容的字节数就变成了 504 。
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d772149304b04df1ba94f456908eb567~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-d764f85bc093.png)
 
 那 entry2 的扩容，是不是还有可能导致后面的 entry3 的扩容？entry3 的扩容可能再导致 entry4 的扩容……就像是多米诺骨牌一样，不停扩容下去，一直到 ziplist 的最后一个 entry，这也就是 ziplist 里面常说的`“连锁更新”`。最差的情况就是，在 ziplist 头部插入一个新元素，然后一路触发连锁更新，到最后一个 entry，这样的话， ziplist 插入效率就会很差。
 
@@ -171,7 +171,7 @@ if (nextdiff == -4 && reqlen < 4) { // 注意：需要同时满足这两个条�
 
 紧接着的这个 if 判断为什么要检查 nextdiff 是否等于 -4 呢？它主要是处理下图展示的 prevlen2 缩容这种场景：
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5877bdf741624cff92bcefa4fe2fbcb3~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-e31f9fb85b8f.png)
 
 正如这个 if 代码块的逻辑所示，它就把 nextdiff 重置成了 0，其实是个优化，就是为了减少 ziplist 的数据拷贝，为了节省 4 个字节，把后面的数据全部往前挪一遍，也不是特别高效。所以这个地方，用 forcelarge 标记一下，强行使用 5 字节来存储 prevlen2 。
 
@@ -192,15 +192,15 @@ p = zl+offset;
 
 简单说明一下 realloc() 这个函数扩容的逻辑，它优先会直接在 ziplist 后面拼接一块空闲区域，来满足 newlen 的空间需求，就和下图一样，这个场景里面，realloc() 前后，ziplist 的起始内存地址是不变的。
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c260650746d44548b3785c8b055c66a1~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-587d7d3947b6.png)
 
 但是呢，并不是每次都这么凑巧 ziplist 后面有空闲空间，那就会有第二种场景，就下面这个图的场景，C 语言的编译器会申请一块 newlen 字节的新空间，然后把原来 ziplist 里面的数据拷贝过来。
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9d9c932d54aa4e5bbe578a9c10a691b5~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-0b30899cf92a.png)
 
 **realloc() 不仅能用于扩容，还能用于缩容**。就比如我们这里 newlen 小于原来 ziplist 的长度，但是缩容就可能导致我们的 ziplist 结尾的一部分数据丢失，如下图所示，这也是前面 nextdiff 在 reqlen 小于 4 的时候，需要重置为 0 的原因之一。
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e5b3ae5b35724949aa245fe9ab3f6701~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-a9f2fd7cf5dd.png)
 
 也正是由于 realloc() 扩容之后，ziplist 的首地址可能发生变化，所以这里就需要 offset 记录 p 指针相对于 zl 指针的字节偏移量，在 realloc 返回新的 ziplist 首地址之后，重新计算 p 的位置。稍微注意一下就行。
 
@@ -220,11 +220,11 @@ if (p[0] != ZIP_END) { // 非队尾插入
 
 这里以 nextdiff 为 0 举例，就是这个图的移动方式，就是从插入点 p 往后的全部数据都拷贝一份，然后放到 p+reqlen 这个地方。
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/aa88ea9c7343493b89da7d39c26cadcd~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-a7283c0094f2.png)
 
 要是 nextdiff 是 4 的话，就是下图的移动方式，这里可能引起误会的地方是：拷贝 entry1 最后的 4 个字节，这 4 个字节里面的数据是什么，其实不重要，重要的是，这 4 个字节后面，会与entry2 原有的 1 字节 prevlen，组合起来，组成新的 5 字节 prevlen。
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8f4b2e17d4ae4223a845d0f45a37e959~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-ad517e704dfc.png)
 
 要是在 ziplist 的队尾插入，就会进入上述关键代码的 else 分支，不会有内存数据的移动了，直接修改一下 zlend 这个结束字符的位置就可以了。
 
@@ -314,13 +314,13 @@ if (nextdiff != 0) {
 
 先说一下这个函数的作用：在前面计算 ziplist 新长度（就是 newlen）的时候，我们是不是只考虑了插入点之后那个 entry，就是下图中 entry2 中的 prevlen2 发生扩容的情况。
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/27c657f6e1684539a10ab777ee044ded~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-695c30b3acf0.png)
 
 前面也说过，entry2 长度的变化，可能也会引起后面 entry3 的长度变化，例如，entry2 长度本来是 251 字节，现在扩容之后，成了 255 字节。这个时候，entry3 的 prevlen 就要扩容，同样地， entry4 的 prevlen 也要扩容，这就导致了连锁扩容。虽然这种连锁扩容发生的概率不大，但是还是有可能发生，一旦发生，不进行解决，就会导致数据混乱。
 
 __ziplistCascadeUpdate() 函数，就是来解决处理连锁更新场景的。先看一下它的参数，传的是 p + reqlen，那就是从 entry2 开始处理，再来看它处理连锁更新的思路，我们结合下图来说：
 
-![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3a46cc4656b346a7805b1f769caa6d62~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-c46a948ac378.png)
 
 首先，__ziplistCascadeUpdate() 函数要找到的就是 entry2 的起始位置，然后，解析 entry2，得到 entry2 的长度，也就是 firstentrylen 和 prevlen 这两个值。这样的话，我们就能拿到 entry3 的起始地址了。
 
@@ -376,7 +376,7 @@ while (p[0] != ZIP_END) {
 
 while 循环最后，就是移动遍历的各个指针，比如，prevoffset、p 指针都会后移一个 entry。cnt 是记录这次连锁更新的涉及到了多少个 entry，extra 是存了这次连锁更新需要增加多少个字节。这个 while 循环一路往下检查 entry4、entry5，直到触发前面的两个 if 分支退出。
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/24fa935c965941a89b5ae97164f1109b~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-5156006be877.png)
 
 再往下来，就是 __ziplistCascadeUpdate() 连锁更新后的收尾工作，关键代码如下：
 
@@ -390,7 +390,7 @@ p += extra;
 
 这里会更新 zltail 的值，要是有扩容的话，把 extra 算进去，然后是 ziplistResize() 给整个 ziplist 扩容，并且把没有被连锁更新波及到的 entry 后移，比如下面这张图，连锁更新只影响了 entry3、entry4，从 entry5 之后的所有 entry都会后移。
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b62a49b95abc40f7a4a5f3f412f2accd~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-3f81a483d604.png)
 
 最后，__ziplistDelete() 函数会执行下面这个 while 循环，就是从 prevoffset 的位置往前遍历，一个个 entry 后移，并调整 prevlen 值。每次 while 循环 prevoffset 会前移，同时 cnt 减一，直到连锁更新波及的全部 entry 处理完。
 

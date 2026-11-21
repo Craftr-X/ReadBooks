@@ -32,7 +32,7 @@
 
 乱了顺序就会返工——结构没对齐就去写行为，行为写完了布局改了，整个组件重来。所以正确的顺序是：先对齐结构，再描述行为，最后打磨细节。这也是本讲的主线。
 
-![](https://static001.geekbang.org/resource/image/c1/c7/c1b20149105f53cc29611548dbc826c7.png?wh=1440x506)
+![](./_assets/remote-de37b9dafe9c.webp)
 
 ## 第一步：草稿图对齐结构
 
@@ -50,7 +50,7 @@
 
 **做法二：手绘草稿。**如果你想要的布局和现有产品不一样，画一张低保真草稿，矩形框标注区域名称就够了，不需要精确尺寸。
 
-![](https://static001.geekbang.org/resource/image/88/6a/88e6c892a603509c6295yy95ee88306a.png?wh=1440x848)
+![](./_assets/remote-4f081cc26896.webp)
 
 无论哪种做法，关键是先让Claude Code描述它的理解，再让它写代码：
 
@@ -76,7 +76,7 @@ Agent配置页同理，参考15讲的字段定义。
 
 如下图所示，正确的方式是按时间线一步一步讲：
 
-![](https://static001.geekbang.org/resource/image/80/7f/8039b79bfb02c0838c97abfc428b4a7f.png?wh=1440x974)
+![](./_assets/remote-44890049cbfc.webp)
 
 所以提示词可以是：
 
@@ -96,7 +96,7 @@ Agent配置页同理，参考15讲的字段定义。
 
 同类需要显式说明的技术约束还有：Markdown渲染（AI回复包含格式化内容，需要引入渲染库）、滚动策略（新消息追加时滚到底，用户手动向上滚时不打断）。这些属于“不说Claude Code不知道，说了它就能处理好”的细节，时间线描述是把它们自然带出来的好时机。
 
-![](https://static001.geekbang.org/resource/image/75/7a/7527d3b2d49b79bbd77492e311yy187a.png?wh=1440x678)
+![](./_assets/remote-3ddc4ce285ad.webp)
 
 ## 第三步：增量调整
 
@@ -120,7 +120,7 @@ Claude Code生成之后跑起来，效果八九成对，但一定有需要调�
 
 每个提示词描述一件事，明确原来是什么、现在改成什么。几轮下来，细节就到位了。
 
-![](https://static001.geekbang.org/resource/image/5c/2b/5c9e4395f033e08d8f49db1f3dca272b.png?wh=1440x636)
+![](./_assets/remote-268d742a30f3.webp)
 
 在之前的课程中，有同学问过，**用其他模型可不可以完成本次课程的内容**。答案是可以的。我的回答是，由于不同的模型能力有差异，产出的结果是不一样的。此时对我们来说，最大的区别就是在这一步增量调整这里，好的模型，这一步不需要经过太多调整，其他模型这一步可能需要反复调整。这就是区别。
 
@@ -151,7 +151,7 @@ curl -N -X POST http://localhost:8080/api/v1/chat/sessions/{sessionId}/messages 
 >
 > 再问几轮，确认多轮对话连贯
 
-![](https://static001.geekbang.org/resource/image/5b/7f/5bd960e4031a8cyycbfa85196ccfa37f.png?wh=3296x1906)![](https://static001.geekbang.org/resource/image/cd/b9/cdcd5a12460feaff34e1dc4c816ef9b9.png?wh=3306x1170)
+![](./_assets/remote-b20c842f1079.webp)![](./_assets/remote-911c848f2d02.webp)
 
 会话管理：
 
@@ -159,7 +159,7 @@ curl -N -X POST http://localhost:8080/api/v1/chat/sessions/{sessionId}/messages 
 > 2. 新建第二个对话，列表有两条，点击切换，右侧记录对应切换  
 > 3. 刷新页面，两个对话都还在（MySQL持久化正常）
 
-![](https://static001.geekbang.org/resource/image/a0/e9/a0749cd7ebb722d9eb0c0d2d3c3315e9.png?wh=3306x1940)
+![](./_assets/remote-8bc1a6cecfd3.webp)
 
 全部通过。Hify基础篇到这里完整了，管理员能在页面上配置Provider和Agent，用户能在浏览器里和智能客服多轮对话，流式回复、上下文连贯、异常有提示。
 

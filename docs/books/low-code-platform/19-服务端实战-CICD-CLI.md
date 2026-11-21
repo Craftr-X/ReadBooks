@@ -56,7 +56,7 @@ program.parse(process.argv);
 
 其中 **internally** 作为内置命令行工具合集，**extra** 则代表拓展命令行合集，此时你的目录结构应该如下所示：
 
-![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/51a85fa168334de290108a2590b57553~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-91d76f1009f0.png)
 
 内置命令行工具比较简单，首先注册一个 `Command`：
 
@@ -152,7 +152,7 @@ export const registerPlugin = () => {
 }
 ```
 
-![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4c7583fa6a314f2094933fd3397032d4~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-20a6d5e2b166.png)
 
 在通过组件命令校验之后，可以通过 `latest-version` 来校验是否已经存在发布的包，以免安装失败，注册 **command** 异常。
 
@@ -169,7 +169,7 @@ export const npmInstall = async (packageName: string) => {
 }
 ```
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/421a649229c74e288a221b244b6529e2~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-5f16e524cf48.png)
 
 同样最后我们需要将注册的插件以文件的形式缓存起来，下一次使用的时候读取配置文件，将插件命令注入，提供给用户使用。
 
@@ -199,7 +199,7 @@ export const updatePlugin = async (params: IPlugin) => {
 
 完成上述所有的开发之后，最后我们来执行命令看看效果：
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8a30f7677782482c9d567818f7a716f3~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-f510400f9e5b.png)
 
 `ig tEslint` 是我们从第三方插件注册得来的，可以从上图看到，已经再注册了第三方 `@ignition-space/ig-plugin-eslint` 插件之后，用户已经可以使用通过插件提供的 `tEslint` 命令了。
 
@@ -230,7 +230,7 @@ export default [
 module.exports = eslintCommand
 ```
 
-![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f2e0b967844f4ff8a09509fc08af09fb~tplv-k3u1fbpfcp-watermark.image)
+![image.png](./_assets/remote-0ef81156b167.png)
 
 这里我是直接迁移了 **CLI** 的命令，`package.json` 里面 `bin` 字段是可以在全局安装完毕之后继续使用 `eslint` 的命令，而在 `main` 的属性中定义了 `lib/index.js` 是为了能在 **CLI** 命令入口的时候 `require` 对应的注册配置。
 
@@ -405,7 +405,7 @@ export const loadTsConfig = (path: string) => {
 ig buildFlow
 ```
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6227ed97c05c4c3aaffad9c400c3f907~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-bc24ca59c40c.png)
 
 > 流程编排的价值在于，可以让用户使用最擅长的语言来执行脚本，并且可以自由组合每一个步骤，当然目前的代码作为实际生产来使用还欠缺很大的火候，后期在整体开发中会逐步完成这个生态结构。
 

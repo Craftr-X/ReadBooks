@@ -18,7 +18,7 @@
 
 Claude Code的输出是：
 
-![](https://static001.geekbang.org/resource/image/81/52/81c6d333fa98321f0b1d500cc6d5bf52.png?wh=2168x1538)
+![](./_assets/remote-8bdadbcf60c9.webp)
 
 你看其实非常清晰了。这个回答帮我建立了清晰的认知：
 
@@ -26,11 +26,11 @@ Claude Code的输出是：
 
 Agent是有目标、能行动的对话主体。它不只是回答问题，而是根据目标调用工具、根据结果决定下一步。核心差异在于有没有Tool Use + 多轮自主决策。
 
-![](https://static001.geekbang.org/resource/image/e3/78/e379b0733f9c65b431f575yyfb7a4478.png?wh=1974x652)
+![](./_assets/remote-a9310177a716.webp)
 
 创建Agent要配三层东西：
 
-![](https://static001.geekbang.org/resource/image/23/0e/232ca9ba99bf2f9403489dfab66f370e.png?wh=1440x762)
+![](./_assets/remote-bf97bb01687b.webp)
 
 - **第一层：身份定义**。名称、描述、System Prompt（角色指令，定义性格、职责、回答风格、边界约束——这是Agent的“灵魂”）。
 - **第二层：能力绑定**。绑定模型（选哪个Provider的哪个model\_config）、绑定工具（选哪些MCP Server）、绑定知识库（选哪些Knowledge Base，后面做RAG时再讲）。
@@ -38,7 +38,7 @@ Agent是有目标、能行动的对话主体。它不只是回答问题，而是
 
 Claude Code还给了一个关键判断——Hify的Agent边界：
 
-![](https://static001.geekbang.org/resource/image/f5/94/f5b128bc7d56ffc7f52e812c8b7b2694.png?wh=1922x624)
+![](./_assets/remote-32cf91b695ab.webp)
 
 - 做：Agent绑模型、绑MCP工具、配System Prompt，Agent发起对话。
 - 不做：不做Agent自主多步推理（ReAct / Function Calling循环，那是Workflow的事）、不做Agent之间互相调用、不做Agent记忆持久化（上下文靠Redis session）。
@@ -105,7 +105,7 @@ CREATE TABLE agent_tool (
 
 几个细节：temperature用DECIMAL(3,2) 不用FLOAT，避免精度问题。max\_context\_turns直接存在agent表上，对话引擎读取时不需要额外查询。agent\_tool加了联合唯一索引防止重复绑定。
 
-![](https://static001.geekbang.org/resource/image/c2/b0/c201732bb05f9e431c5fa7d277bbe1b0.png?wh=1440x848)
+![](./_assets/remote-8b7a9fe90c1c.webp)
 
 ## 从Agent到LLM应用：智能客服
 
@@ -115,7 +115,7 @@ Hify是一个AI Agent平台，它的价值是：你可以在上面创建各种L
 
 我们用智能客服来展开。这是最典型的企业AI落地场景，也是我们后面整个课程的主线——对话引擎做完后用它测试对话，RAG做完后给它加产品知识库，MCP做完后给它绑查订单工具。从这一讲开始，智能客服会贯穿到课程结束。
 
-![](https://static001.geekbang.org/resource/image/45/01/45cc60e76d574d6836eeb845ed4f7001.png?wh=1440x932)
+![](./_assets/remote-ee5ec43bcdcf.webp)
 
 如果你是产品经理，你会怎么定义这个智能客服？智能客服顾名思义，就是根据可以根据不同的问题给出答案的虚拟人。那么它怎么对应到上面的数据结构呢？ 我们来一一对比下。
 
@@ -139,7 +139,7 @@ Hify是一个AI Agent平台，它的价值是：你可以在上面创建各种L
 
 你看，我们已经把智能客服和Agent的数据存储结构对应上了。**你会发现配置不是随便填的，每个值背后都有产品思考**。同样的模型，换一套配置就是完全不同的应用。
 
-![](https://static001.geekbang.org/resource/image/f6/8a/f656d0060f891cf8fa3102dd5c3b878a.png?wh=1834x532)
+![](./_assets/remote-998e7e0904c1.webp)
 
 模型是引擎，Agent配置是方向盘。Hify的价值就是让你可以自由组装这些方向盘。到了这里，你应该对Agent有一个具体的概念了。
 
@@ -169,13 +169,13 @@ PUT /api/v1/agents/{id}/tools     # 全量替换工具列表
 
 总结的流程如下：
 
-![](https://static001.geekbang.org/resource/image/c0/36/c0135b123afe8e39661b86d32b85b836.png?wh=1440x1016)
+![](./_assets/remote-ca4ed895fbc1.webp)
 
 ## 逐步执行
 
 需求拆解清楚了，按13讲建立的标准流程——按层拆，每步可验证。
 
-![](https://static001.geekbang.org/resource/image/0f/4e/0f40340fae416a1524e0b462460c634e.png?wh=2082x880)
+![](./_assets/remote-915e20ef257d.webp)
 
 因为篇幅原因，这里只重点说任务3。
 
@@ -185,13 +185,13 @@ PUT /api/v1/agents/{id}/tools     # 全量替换工具列表
 
 此时你会发现，好像没指令诶，怎么搞？给你看一下我的输入指令：
 
-![](https://static001.geekbang.org/resource/image/79/1c/79006a8833963a12bbb33a0b395fca1c.png?wh=2658x1286)
+![](./_assets/remote-08f4609d7025.webp)
 
 **你会发现是上面的内容的复制，格式混乱，不是一个标准的指令。但是 Claude Code 也能理解，也能完成主体的工作。在 Agent 看来，这种格式的指令和我们人类看起来规范的指令是一样的。这点是很有意思的**。
 
 它的输出是这样子的：
 
-![](https://static001.geekbang.org/resource/image/7c/2a/7c56af8616c3810b20d3d5775fa88c2a.png?wh=1790x488)
+![](./_assets/remote-4f2415f980a9.webp)
 
 此时，我也不知道能不能跑。然后我给了下面这个指令：
 
@@ -199,7 +199,7 @@ PUT /api/v1/agents/{id}/tools     # 全量替换工具列表
 
 然后输出是：
 
-![](https://static001.geekbang.org/resource/image/1f/fd/1f5f26d4003a17c7d1b40cd84f1c42fd.png?wh=1434x956)
+![](./_assets/remote-aa19cc0afdb8.webp)
 
 惊喜发现，第一遍就没错，不用修改。是不是挺厉害的。
 
@@ -227,11 +227,11 @@ Agent模块做完了，后端接口跑通了，前端管理页面也对接了。
 6. max\_tokens：1024
 7. max\_context\_turns：8
 
-![](https://static001.geekbang.org/resource/image/d2/fd/d2600761b878b129db793cf23659d5fd.png?wh=3798x1756)
+![](./_assets/remote-f370ba030bab.webp)
 
 点保存。列表里出现了“Hify智能客服”，模型显示GPT-4o，状态正常。
 
-![](https://static001.geekbang.org/resource/image/7f/01/7fdf3e537783a7203f30079d08f9c601.png?wh=3816x938)
+![](./_assets/remote-338c8d7e73b0.webp)
 
 你也可以试试自己再创建一个“代码审查助手”。同样选GPT-4o，但temperature改0.1，Prompt完全不同。两个Agent并排显示在列表里，同一个模型，完全不同的用途。
 

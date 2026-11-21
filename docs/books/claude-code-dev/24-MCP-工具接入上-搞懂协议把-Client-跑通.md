@@ -64,7 +64,7 @@ Claude Code解释得很直白：**MCP是工具的标准化描述和调用协议
 
 Claude Code用一句话总结了MCP的价值：**MCP之前，M个AI平台 × N个工具 = M×N套适配代码**。MCP之后，工具开发者只写一个Server，任何支持MCP的平台都能接 = M+N。这和USB解决的问题一样。
 
-![](https://static001.geekbang.org/resource/image/3e/43/3e02d98e15bc5b1d3d8ced86a8e90143.png?wh=1440x848)
+![](./_assets/remote-651ee8c06922.webp)
 
 ## 业界真实案例
 
@@ -149,7 +149,7 @@ Hify拿到指令，通过MCP Client调订单服务，拿到真实数据，把�
 
 **第二次LLM调用**，LLM基于工具结果生成最终回答，`finish_reason` 变成 `stop`，这次是真正给用户的回答。
 
-![](https://static001.geekbang.org/resource/image/ee/0e/ee4b793975ac0d765cc610ce5d66800e.png?wh=1440x1144)
+![](./_assets/remote-5597d94ebfe0.webp)
 
 如果用户问的是不需要查数据的问题（你们的退货政策是什么），LLM第一次调用直接返回 `finish_reason=stop`，没有工具调用，没有第二次LLM调用。LLM自己判断要不要调工具，不是硬编码逻辑。
 
@@ -165,7 +165,7 @@ Claude Code先把hify-mcp模块和主pom.xml都读了，基于现有代码给�
 
 调研结果有三个实质选项：
 
-![](https://static001.geekbang.org/resource/image/83/a0/8315275d9957936db155306645b350a0.png?wh=1451x534)
+![](./_assets/remote-8f005e168724.webp)
 
 Claude Code的建议：**用官方Java SDK，不用Spring AI MCP**。
 
@@ -291,7 +291,7 @@ PUT /api/v1/agents/{id}/tools    绑定工具列表（传 toolId 数组，全量
 - 不改 Controller 层，不改 SseEmitter 管理逻辑
 ```
 
-![](https://static001.geekbang.org/resource/image/68/2a/6814590fa12e9f1b4d7f2ed883038e2a.png?wh=1440x974)
+![](./_assets/remote-4c5d85ccba91.webp)
 
 增量开发三步走：
 
@@ -347,7 +347,7 @@ curl -N -X POST http://localhost:8080/api/v1/chat/sessions/4/messages \
 
 下面是我们实现的在MCP工具的管理：
 
-![](https://static001.geekbang.org/resource/image/92/63/9273e4d5fec08811fd6466e9e4421463.png?wh=3316x1488)
+![](./_assets/remote-c57b6aa2bfb4.webp)
 
 ## 总结
 

@@ -12,41 +12,41 @@
 
 最开始当然是注册环节，访问 [Heroku 主页](https://link.juejin.cn/?target=https%3A%2F%2Fwww.heroku.com%2F)，按照要求填写信息：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e3472b1da0ad4e83b172de9459ce8f89~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.awebp)
+![img](./_assets/remote-7ee65e3680cd.webp)
 
 在登录时，如果提示需要 Multi-Factor Auth，可以选择先跳过。完成登录后，它会将你重定向到应用管理页面：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1d110619004e4206970b09f5ccc58352~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.awebp)
+![img](./_assets/remote-582b25dd48a7.webp)
 
 点击右上角的新建，选择创建一个新应用，应用名需要是独一无二的：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4bf682717ec8459d80cdd4d6b30dc8ad~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.awebp)
+![img](./_assets/remote-5aefec91a567.webp)
 
 创建成功后，我们会来到应用界面，以我们已经创建完毕的页面为例：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/71d6ff9e4d094f039b8b02ffbfd6e19a~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.awebp)
+![img](./_assets/remote-bdc8432823f7.webp)
 
 点击 Deploy，我们需要把应用和 github 仓库关联起来，这样就能在每次提交时自动重新部署了：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7a417cbbef4d42d79a8ba9ed7bed5db5~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.awebp)
+![img](./_assets/remote-03faee6f3896.webp)
 
 首先选择 Connect to GitHub，授权完毕后选择你对应的仓库，配置完毕后你会看到这样的界面：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bafba9bd4745406f81ad9816ad252b32~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.awebp)
+![img](./_assets/remote-0ef505066e13.webp)
 
 点击 Enable Automatic Deploys 后，我们的应用就会随着每次 Git 提交而重新部署。
 
 另外，我们此前的环境配置其实就是安装了 Heroku 的 CLI ，现在我们需要通过 CLI 在终端也登录上：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/09019473d3624134ac5b364846e27855~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.awebp)
+![img](./_assets/remote-823f3aff2368.webp)
 
 这里我们不能直接运行 heroku login，因为你现在大概率是通过代理访问的，会出现 IP 地址不匹配的错误，我们需要使用 auth token 进行登录。来到 [全局设置](https://link.juejin.cn/?target=https%3A%2F%2Fdashboard.heroku.com%2Faccount%2Fapplications) 页面，找到授权：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/dfed83b21e3343fe8b018d00d118102f~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.awebp)
+![img](./_assets/remote-87e03454bc83.webp)
 
 点击创建一个新的 token，复制它，回到终端运行 `heroku login -i`，账号名输入你的邮箱，密码输入 token，确认登录：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5c40b8f03ce8412fb6afbeed2238ef09~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.awebp)
+![img](./_assets/remote-8a79e0232e7d.webp)
 
 同时我们仍然可以将 Heroku 的仓库添加为一个单独的远程仓库，这么做的原因是我们可以先 push 到 Heroku 的远程仓库来进行构建与部署的测试，等测试验证完毕了再推送到 GitHub，运行：
 
@@ -54,21 +54,21 @@
 heroku git:remote -a <你的应用名>
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/218f581028b44df8b3708a5093c64ec1~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.awebp)
+![img](./_assets/remote-bf1539866096.webp)
 
 接下来我们需要申请一个可用的数据库，数据库、监控、负载均衡、Redis 等功能在 Heroku 上被称为 add-on ，你可以访问 [add-on 市场](https://link.juejin.cn/?target=https%3A%2F%2Felements.heroku.com%2Faddons) 查看更多。在这里我们直奔 [heroku-postgresql](https://link.juejin.cn/?target=https%3A%2F%2Felements.heroku.com%2Faddons%2Fheroku-postgresql)：
 
-[![image380be9c6e463109c.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9ccf72af7f4f408580d4c977f48d7fa3~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.awebp)](https://link.juejin.cn/?target=https%3A%2F%2Fwww.imagehub.cc%2Fimage%2FGfiN6y)
+[![image380be9c6e463109c.png](./_assets/remote-532677aa75a5.webp)](https://link.juejin.cn/?target=https%3A%2F%2Fwww.imagehub.cc%2Fimage%2FGfiN6y)
 
 点击安装，将安装到我们的应用中：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0b87bc3e13a0450d9c9c0785a97e83dc~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.awebp)
+![img](./_assets/remote-a32e0c9d7eb7.webp)
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/be4728eb4e8d4501aa0d753c675e715d~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.awebp)
+![img](./_assets/remote-c28423c9820b.webp)
 
 数据库的链接会被以环境变量 `process.env.DATABASE_URL`注入进来，来到应用配置页面，点击显示环境变量：
 
-![imagee38ce6a381dc9b3b.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b32f3cf2e9154e68a3aa71a3f16f6e7f~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.awebp)
+![imagee38ce6a381dc9b3b.png](./_assets/remote-1a28282f9162.webp)
 
 有了数据库地址，接下来我们就可以在本地应用里去连接到数据库了。
 
@@ -88,7 +88,7 @@ prisma db push
 
 这一命令会将我们此前定义的 Prisma Schema 推送到数据库，创建对应的数据表。同时这一命令也会再次执行 `prisma generate` 命令来生成 Prisma Client：
 
-![imagedb88d65589f9bb99.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d2d399ff45334686980f119b2e9c6f3b~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.awebp)
+![imagedb88d65589f9bb99.png](./_assets/remote-bf2a1780b69d.webp)
 
 > 通常来说，数据库也会按照环境分为日常、预发、生产、测试等多个版本，但谁让我们只是在写 demo 呢？
 
@@ -143,7 +143,7 @@ export class AppModule {}
 
 现在访问 [http://localhost:3000/seed/create](https://link.juejin.cn/?target=http%3A%2F%2Flocalhost%3A3000%2Fseed%2Fcreate) ，会发现已经有响应了：
 
-![imagee102f1b42e36a82b.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/da58905298d5482984b597c991bf3dda~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.awebp)
+![imagee102f1b42e36a82b.png](./_assets/remote-0321adad03f8.webp)
 
 ## 初次部署
 
@@ -189,9 +189,9 @@ git push heroku main
 
 如果你已经连接到了 GitHub，其实直接推送 GitHub 仓库即可。但这一命令的主要作用是会展示 Heroku 接收到推送以后，拉取代码、安装依赖、构建以及启动过程：
 
-![imagef0c3c4a1ded5150f.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6025bda33b8a4709a9b4dba1b129d064~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.awebp)
+![imagef0c3c4a1ded5150f.png](./_assets/remote-c73eaff78dee.webp)
 
-![imagea22f61b473e93e2c.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c756e5dd4e134fca9cfd32935f70cd1a~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.awebp)
+![imagea22f61b473e93e2c.png](./_assets/remote-3cf489277ccf.webp)
 
 你会发现，似乎缺少了应用程序启动的日志？这时候就需要使用另一个命令了：
 
@@ -201,7 +201,7 @@ heroku logs --tail
 
 logs 命令用于展示这个应用运行过程中的日志，包括 Heroku 的系统日志与我们的应用程序日志。而 `--tail` 参数意为仅展示最新的一部分日志：
 
-![image752c0cd8664a87c4.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0f3ea4d8ac65437a9c80090698003514~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.awebp)
+![image752c0cd8664a87c4.png](./_assets/remote-459ef26da3f5.webp)
 
 这一命令会占据当前的端口，实时展示最新的日志，因此在开发阶段可以通过它来进行调试应用。
 
@@ -507,19 +507,19 @@ export class ArticleController {
 
 `POST /article/create`：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7314b443ae7b47c3872633790b054945~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.awebp)
+![img](./_assets/remote-d65612d5207c.webp)
 
 `GET /article`：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/37eb9b4838754c41b4b197a87ceec6eb~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.awebp)
+![img](./_assets/remote-5f5f75d15179.webp)
 
 `GET /article?id=20`：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c5a7fc13bdce46f49738b00c7f7f2c8d~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.awebp)
+![img](./_assets/remote-a7ff7520fe5c.webp)
 
 `POST /article/update`：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/31fc1d35f6cd4dd9a524dbf2d90f16ed~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.awebp)
+![img](./_assets/remote-8e9bf57c2ec8.webp)
 
 完成了 Article 部分的开发仅仅只是开始，毕竟分类和标签也必不可少。但授人以鱼不如授人以渔，有了这一节的基础，再配合 NestJs 与 Prisma 事无巨细的官方文档，你完全可以独立完成剩下的部分。
 

@@ -3,7 +3,7 @@
 
 quicklist 的结构大概就是下图这样：
 
-![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4f28146edb054a47a587e706099be2ce~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-756084e03efd.png)
 
 可以看到，quicklist 有`头指针`和`尾指针`，分别指向了链表的首节点和尾节点；在每个节点里面，都有 next、prev 两个指针，`next 指针`指向下一个节点，`prev 指针`指向前一个节点。除此之外，每个 Node 里面还有一个 `Value 指针`，指向这个节点存储的具体数据。
 
@@ -33,7 +33,7 @@ ziplist 虽然是一块连续的空间，但是呢，它还是不能像数组那
 
 来，看下面这张图哈，ziplist 分成了`队头`、`队尾`、还有中间的`数据`三部分（我用不同颜色标了一下），ziplist 里面这一个个的 **entry 是真正存储数据的地方**，ziplist 里面结构比较复杂的部分在队头这个地方。
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/70122aaacb2849ff9203eda1d89a98e9~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-86f732ca2e0f.png)
 
 - 首先来看队头里面的 **zlbytes** 值，它里面存了一个 int 值，占了 4 个字节，里面存的是整个 ziplist 占的总字节数。
 
@@ -45,7 +45,7 @@ ziplist 虽然是一块连续的空间，但是呢，它还是不能像数组那
 
 说完了 ziplist 首尾两部分的结构之后呢，我们再来展开说说 ziplist 里面真正存储数据的 entry 部分。这张图展示了一个 entry 的结构：
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d6e401c6c5cd48e8ad169659c6c89040~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-91bf965c8528.png)
 
 可以看到，一个 entry 里面分了 3 部分。
 
@@ -63,7 +63,7 @@ prevlen 这部分会根据前一个 entry 的长度进行变长编码，怎么�
 
 **entry 的第三部分是 data**，其中存储了真正的数据。我们先来说 data 存的是字符串的场景：
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f7a5261f640b4d2ba59f5c29ceb34069~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-650cd14ff720.png)
 
 - 第一个场景里面，len 的第 1 个字节最高两位是 00，这个时候的 len 只有 1 个字节，剩余的 6 位用来记录 data 的长度，也就是说，data 的长度上限是 2^6-1。
 
@@ -77,7 +77,7 @@ prevlen 这部分会根据前一个 entry 的长度进行变长编码，怎么�
 
 **上面这三种场景里面呢，data 部分存储的都是字符串。如果 data 里面存储的是整数，那 len 第一个字节的最高两位始终为 11**。 len 只占一个字节，然后呢，第一个字节的剩余 6 位，来标识 data 存的数字占了多少字节，比如这张图里面：
 
-![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/37791daf436a42238d5a0fbeed440dc3~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-7b5aecce9707.png)
 
 - len 第一个字节的剩余 6 位全部为 0，表示 data 为 int16_t 类型，类似于 Java 里面的 short，占 2 个字节。
 

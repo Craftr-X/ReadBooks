@@ -46,7 +46,7 @@ failover_state 字段的状态机如下图所示：
 
 下图说明了 NONE 状态切换到 WAIT_START 状态的关键变化：
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/504ccc98bb8c45a2a4e9e65c23fd28b9~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-c257b7600b0a.png)
 
 ## WAIT_START→SELECT_SLAVE
 
@@ -77,7 +77,7 @@ failover_state 字段的状态机如下图所示：
 
 选出 Promoted Slave 节点之后，Leader Sentinel 会为 Promoted Slave 节点添加 SRI_PROMOTED 标识，然后将 Master 的 failover_state 状态切换为 SEND_SLAVEOF_NOONE 状态，如下图所示。最后向 +selected-slave、+failover-state-send-slaveof-noone 频道发送通知并执行相应脚本。
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5f80b6bce9e0493782f134df2b7afc20~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-5721d03c73c8.png)
 
 ## SEND_SLAVEOF_NOONE→WAIT_PROMOTION
 
@@ -99,7 +99,7 @@ EXEC                        // 执行事务
 
 发送完上述命令之后，Leader Sentinel 并不关心其返回值，而是通过后续 INFO 命令的响应，判断 SLAVEOF NO ONE 命令是否执行成功。最后，sentinelFailoverSendSlaveOfNoOne() 函数会将 Master 节点的 failover_state 状态推进为 WAIT_PROMOTION，并在 +failover-state-wait-promotion 频道发送通知。核心操作如下图所示：
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/884bdb2bce3d475aafa8b7ee656be819~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-2773112edf04.png)
 
 Leader Sentinel 节点在执行后续定时任务时，发现处于 WAIT_PROMOTION 状态的 Master 节点时，会检查其 failover 操作是否超时，如果超时，会将 failover_state 状态以及相关标记位重置。后续 failover_state 的推进将在 INFO 响应处理函数中完成。
 
@@ -129,7 +129,7 @@ Leader Sentinel 节点在执行后续定时任务时，发现处于 WAIT_PROMOTI
 
 下图展示了 Leader Sentinel 节点得知 Promoted Slave 提升为 Master 的核心操作：
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/cb22bc2c0eb549c4a1bb2ae87acac936~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-7efb72a11217.png)
 
 **第二种情况，检测此次切换是否为异常切换**。Sentinel 会检查对端节点以及其 Master 的状态，如果 Master 一切正常，但是其下一个 Slave 节点突然切换为 Master，即为异常切换。这里检查的条件如下：
 
@@ -149,7 +149,7 @@ sentinelRefreshInstanceInfo() 函数最后还有一个分支，与 failover 后�
 
 下图简单总结了一下这部分的核心操作：
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6ef0fa741f9244cc8759e950bbc9883d~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-f0fa2ec8d911.png)
 
 完成 SLAVEOF 命令的发送之后，我们再跳转到 sentinelRefreshInstanceInfo() 函数（即 INFO 命令处理逻辑）的最后一个分支，这个分支的核心逻辑就是 **Leader Sentinel 用来监控收到 SLAVEOF 命令的 Slave 有没有切换 Master**。
 
@@ -159,7 +159,7 @@ sentinelRefreshInstanceInfo() 函数最后还有一个分支，与 failover 后�
 
 下图简单总结了这部分的核心操作：
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/100c33ccd85e4db6a73f8458db615753~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-15d47198a217.png)
 
 到此为止，整个 INFO 响应处理逻辑我们分三部分全部介绍完了。
 
@@ -179,7 +179,7 @@ sentinelRefreshInstanceInfo() 函数最后还有一个分支，与 failover 后�
 
 在该 Leader Sentinel 后续发送 hello 消息的时候，就会携带新一任 Master 的地址，其他 Sentinel 收到该消息之后，也会执行 sentinelResetMasterAndChangeAddress() 函数完成 Master 的切换以及状态重置逻辑。下图展示了 UPDATE_CONFIG 状态下 Leader Sentinel 的核心操作：
 
-![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/76a84c3d9d8e49f1ba0b01cd66be3649~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-fa088abc77e6.png)
 
 到此为止，Sentinel 的 failover 逻辑就彻底执行完毕了。
 

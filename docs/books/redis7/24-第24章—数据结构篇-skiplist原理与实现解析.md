@@ -13,19 +13,19 @@ ZSet 与我们常见的 Set 有一些类似，比如，Set 和 ZSet 里面存储
 
 我们常见的有序链表结构如下图所示，每个节点里面有两个关键部分，一个是存放的数据，还有一个是指向下一个节点的 next 指针。
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/97d7ca6af97a41e597894001f2ad2a11~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-32f722b9b749.png)
 
 假设要在这个链表里面查询 48 这个节点，我们需要从 header 节点开始向后遍历，每遍历到一个节点，都要比较节点存储的值与 48 是否一致。最差的情况就是遍历完整个链表，时间复杂度也就是 O(N)。
 
 skiplist 在普通有序链表的基础之上，添加多层有序链表，如下图所示：
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f725a7067553425bbc21a6290bdfb2cc~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-4ffcbfeae8ab.png)
 
 使用 skiplist 查找数据的时候，会先从最高层，也就是上图中的 level 2，开始向后遍历，这里发现 level 2 层小于 48 的最大节点是 18 节点，那么向下一层来到 level 1，继续从 18 节点向后遍历。在 level 1 层中发现小于 48 的最大节点是 35，那么再向下一层来到 level 0，继续从 35 节点向后迭代，最终找到 48 这个目标节点。
 
 整个查找路径如下图红色箭头所示：
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/40d9ed287e78482e90a7977626ee0e22~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-fc21b4b7d9b3.png)
 
 通过这个示例，我们可以体会到使用 skiplist 在结构上的特点：**维护多层有序链表的索引，越往上层索引越稀疏**，比如，level 2 就比 level 1 稀疏。在查找过程中，这些稀疏索引可以帮助我们跳过一些不必要的匹配操作。在利用 skiplist 这种稀疏索引进行查找的时候，我们需要使用到 cur 和 next 两个指针，当 next 节点的值比目标值大或是迭代到 NULL 时，则下降一层继续从 cur 开始向后遍历，直至找到目标节点或者返回 NULL。
 
@@ -59,7 +59,7 @@ zskiplistNode 中的 ele、score 字段都比较好理解，存的分别是元�
 
 下图展示了单个 zskiplistNode 的结构示意图：
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ca97e979a2be4a7d9c63fa75c488d7e6~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-f0b2670da38f.png)
 
 分析完 Redis 对单个 skiplist 节点的定义之后，我们再来看整个 skiplist 的实现，**Redis 定义了一个 zskiplist 结构体来抽象 skiplist 这一数据结构**，其具体定义如下：
 
@@ -137,7 +137,7 @@ zskiplistNode *zn = zmalloc(sizeof(*zn)+level*sizeof(struct zskiplistLevel));
 
 - update[] 数组：其中每个元素都是 zskiplistNode * 指针类型，记录了此次插入节点前面的一个节点，每层一个节点，所以是数组类型。举个例子，在下图这个 zskiplist 里面添加 50 这个元素，50 在各个层级的位置是图中粉红色节点的位置，在插入50 的时候，需要 update[] 数组辅助记录 50 前面的节点，比如图中的，update[0] 记录的就是插入节点在 level[0] 层中的前一个节点，也就是 48 这个节点。
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6d50d0f44de4497780ff138193bee48a~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-b13587b8fa06.png)
 
 - rank[] 数组：记录每层从 header 节点遍历到 update[i] 节点所经过的节点个数，也就是 update[i] 节点是 zskiplist 中的第几个节点。这主要是为了设置新插入节点的 span 字段。如上图所示，rank[0] 记录了插入节点从 header 节点开始到插入节点需要经过的节点数。你可以结合 ZRANK 命令的功能，来理解 rank 数组的含义。
 
@@ -189,13 +189,13 @@ for (i = zsl->level-1; i >= 0; i--) { // 从顶层的header节点开始遍历
 
 假设现在要向下图展示的 zskiplist 中插入 score 为 40 的节点，初始化状态如下图所示，x 指向了 zskiplist 的 header 节点，此时 rank[2] 初始化为 0：
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/241cc4a41d3646b4b8c84abda0872782~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-b151f70d3e15.png)
 
 - **level 2 层迭代过程**
 
 开始从 zskiplist 的最高层，也就是示例中的 level 2，向后遍历，此时如下图所示，x 指向 18 这个节点，x->level[2].forward 指向 NULL，同时会更新 rank[2] 为 4。
 
-![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f57b8b03b2b54e34a0d0b7ebdb416415~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-03c9d930c101.png)
 
 由于 x->level[2].forward 为 NULL，不满足条件 1，所以无法在 level 2 这一层上继续遍历了，需要更新 update[2] 指向节点 18。
 
@@ -203,11 +203,11 @@ for (i = zsl->level-1; i >= 0; i--) { // 从顶层的header节点开始遍历
 
 接下来，进入 level 1 的迭代，x 依旧指向节点 18，但是关注的是 level 1 层的内容了，x->level[1].forward 指向节点 35，如下图所示，此时初始化 rank[1] 为 4。
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2a2368564a3c4b849362fec628596456~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-d329dddb2283.png)
 
 继续 level 1 的迭代，x 指向节点 35，x->level[1].forward 指向 NULL，同时更新 rank[1] 为 6，如下图所示：
 
-![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/acf5d427b1b74223ab00124406661f71~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-058058f4a64d.png)
 
 此时，因为 x->level[1].forward 为 NULL，不满足条件 1，所以已经无法在 level 1 继续迭代了，需要更新 update[1] 指向节点 35。
 
@@ -215,7 +215,7 @@ for (i = zsl->level-1; i >= 0; i--) { // 从顶层的header节点开始遍历
 
 最后，进入 level 0 的迭代，x 依旧指向节点 35，x->forward 指向节点 48，如下图所示，此时初始化 rank[0] 为 6。
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3106818c25f249e5a7b72ae7a88b512e~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-fa768a2fef6e.png)
 
 此时，因为 x->level[0].forward-score > 40，不满足条件 2，所以已经无法在 level 0 继续迭代了，需要更新 update[0] 指向节点 35。
 
@@ -305,19 +305,19 @@ for (i = 0; i < level; i++) {
 
 下面我们依旧以插入 score 为 40 节点为示例，分析插入新节点这段逻辑，这里假设 40 这个节点随机生成的 level 为 2。在插入 level 0 时的指针操作，如下图所示：
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/171e0c7f39234348bb3e291c239b46b0~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-9fa4f5c6f88d.png)
 
 这里特别关注一下 span 字段的更新，我们知道 span 字段表示的是当前节点通过 forward 指针往后到下一个节点，扫过的元素个数。所以，新节点 x 插入的时候，不仅要设置新节点 x 的 span 值，还要更新 update[0] 节点的 span 值。在 level 0 中 update[0] 节点，也就是 35 节点，在新节点 x 插入之前，通过 forward 向后走一步，只扫过了 48 这个节点，所以 span 是 1；插入之后，通过 forward 向后走一步，只扫过 40 这个节点，所以 span 还是 1。同理，新节点 x，也就是 40 这个节点，在 level 0 中的 span 也是 1。
 
 接下来看 level 1 这一层中 40 这个新节点的插入逻辑，主要还是 forward 指针的操作，如下图所示：
 
-![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a43343133efc455fb0335434ca961602~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-fb4ea3feb33b.png)
 
 这里我们还是来关注一下，新节点 x 在 level 1 层插入时导致的 span 更新：在 level 1 中，update[0] 节点，也就是 35 节点，在新节点 x 插入之前，通过 forward 向后走一步，到了 NULL，但是还是可以扫过且只扫过 48 这个节点的，所以 span 是 1；插入之后，通过 forward 向后走一步，扫过且只扫过 40 这个节点，所以 span 还是 1。新节点 x 插入之后，在 level 1 中，通过 forward 指针向后走一步，得到 NULL，但扫过且只扫过 48，所以 span 也是 1。
 
 我们抽象一下上述逻辑，转换成统一的 span 更新逻辑，rank[i] 记录了 update[i] 是第几个节点，rank[0] - rank[i] 得到的就是 update[i] 到 x 节点的节点数，如下图所示：
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/90a21bd4a33348e986574bfb4c7f3c62~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-b0bb709da9b9.png)
 
 那么从上图可以直接看出，在 level i 层中，x->level[i].span 是插入前 updater[i]->level[i].span 减去（rank[0] - rank[1]），插入后的 update[i]->level[i].span 是 rank[0] - rank[i] +1。
 

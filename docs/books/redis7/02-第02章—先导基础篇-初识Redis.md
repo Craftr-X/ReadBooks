@@ -2,7 +2,7 @@
 
 本文主要从三个方面来介绍（如下图所示）：Redis 是什么、为什么使用 Redis 以及 Redis 与 Memcached 的对比。其中，第二、第三方面也是`面试的重灾区`，在不同等级的面试中，多多少少都会涉及到这两方面的问题。
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c28d546becc24ec9a26d3ef0d2a5fdf7~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-86b06b3d7d7d.png)
 
 ## Redis 是什么？
 
@@ -10,7 +10,7 @@
 
 一般我们看一个东西是什么的时候，都是去官网上看一下 Introduction， 那我们 Redis 官网（<https://redis.io/>）走起，如下截图：
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/262cb2b86ca146da897900dca10fe73f~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-fc4ebcb750f1.png)
 
 毕竟官网的解释最标准而权威，所以我们就一起解读下官网对于 Redis 的介绍。
 
@@ -34,13 +34,13 @@ Redis 在实践中最常被用作**缓存**，下面我们可以尝试从`服务
 
 服务最开始的时候，是**只有一个 MySQL 存储**，就和下面这张图一样：用户通过浏览器来发一个请求，会打到 Java 服务器上，就是我们用 Spring 、MyBatis 之类的框架写的这个后端的 Java 服务，然后，这个后端的服务会访问 MySQL，去查询数据或者是写入数据。
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8a6a61cc7b3d4132bcf96fc36e410613~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-d87b28e1ff43.png)
 
 之后，随着业务不断发展，会出现`两个情况`。
 
 **第一个情况是单表单库的数据量会不断增大，这个时候就可以考虑分库分表**。如下图：
 
-![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9e0b9a6f97244350bdebb0775abc6ab6~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-673045fb0646.png)
 
 当请求发送过来，Java Server 就会用 MySQL 中间件，比如 MyCAT、Sharding Sphere 之类的框架，根据某个字段进行分库分表的路由，把请求打到不同的 MySQL 实例上面。比如说，用户登录服务里面分了 10 个库，就可以用 userId 对 10 取模，得到的就是那个 MySQL 库的编号，这样的话，我们的服务就知道这个用户的数据存到哪个库里面。另外，还可以降低每一个 MySQL 上面存放的数据量，以及每一个 MySQL 要支撑的请求数和并发量。
 
@@ -48,7 +48,7 @@ Redis 在实践中最常被用作**缓存**，下面我们可以尝试从`服务
 
 MySQL 主从架构如下图所示：
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5484e2cde17e40fca99130f41b269e0e~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-fd2a1cad3422.png)
 
 其实，这种情况也是依赖 Java 里面的数据库中间件，它可以识别出一次数据库操作到底是 select 语句，还是 insert、update 或者 delete 语句。如果是修改数据的话，会把 SQL 语句发到主库上执行；如果是查询数据的话，select 语句就会把请求打到从库上。
 
@@ -58,13 +58,13 @@ MySQL 主从架构如下图所示：
 
 这样就得到了下面这张架构图：在我们`读写数据`的时候，先会去 Redis 中读取，如下图红色 1 所示；如果 Redis 命中，直接返回数据，结束此次查询；如果 Redis 未命中，则执行下图红色 2 步骤，从 MySQL 集群读取目标数据；在将数据返回的同时，Server 会执行下图的红色 3 步骤，将从 MySQL 中获取的数据，写入到 Redis 中缓存，等待下次读取。
 
-![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/264c9612d67f49999aca1a1de485da50~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-891756626a1f.png)
 
 在`修改数据`的时候，会执行上图中蓝色 1 步骤，修改 MySQL 中存储的数据；在 MySQL 事务提交的时候，会产生 binlog 日志，触发上图中的蓝色 2 步骤，修改 Redis 中存储的缓存数据，这样也就是实现了 Redis 和 MySQL 的数据一致性。
 
 不过，Redis 在实际生产中，多是以 `Redis Cluster` 或者`主从复制`这些分布式的模式对外提供服务的，所以我们应该把上面这个 Redis 单机的地方再改成 Redis 分布式存储的模式。（这个后面详细介绍 Redis 主从和 Cluster 的时候，会再详细聊这个东西。）修改情况如下图：
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/83928ed1c9174990b97c984c058c9c65~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-5e7b7d74d6ef.png)
 
 通过上述存储架构演化过程，我们先是使用**数据水平切分**的思想，引入了 MySQL 分库分表的架构；然后采用**流量切分**的思想，引入了 MySQL 读写分离的架构；最后使用**冷热数据切分**的思想，引入了 Redis 作为缓存的架构，并重新应用数据和流量切分的思想，引入了 Redis 集群的架构。同时，使用监听 binlog 的方式，让 MySQL 与 Redis 中的数据保持最终一致。这样就`较为完整地从架构演进的角度回答了“为什么要引入 Redis 缓存”这一问题`。
 

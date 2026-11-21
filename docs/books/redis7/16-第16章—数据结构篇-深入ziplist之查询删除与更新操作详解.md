@@ -4,7 +4,7 @@
 
 首先来看 ziplist 提供的查询函数，如下图所示，我们可以在 ziplist.h 文件中看到红色方框圈出来的这些查询函数：
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2dc969f00454482d9566bee4fc86deee~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-9db4f7c97645.png)
 
 这里先简单列一下这些函数的功能，其实通过函数的名字，也猜个差不多。
 
@@ -30,7 +30,7 @@
 
 这里我们就展开说说解析 entry 的函数。在 ziplist.c 里面，能看到 `zipEntrySafe()` 和 `zipEntry()` 两个函数，如下图所示：
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c9ce56220069458ba3a30f5c334fef27~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-816ce8846be6.png)
 
 这两个函数都是用来解析 entry 的，区别在于 Safe 的这个版本，会做很多额外的检查，保证解析 entry 的时候不会跑到 ziplist 内存区域之外；而 zipEntry() 这个版本，就直接按照 entry 格式硬解。
 
@@ -90,11 +90,11 @@ zipEntrySafe() 这个函数就不再展开说了，基本原理是一样的，�
 
 关于 ziplist 的删除操作，有两个函数需要讲一下（如下截图）：一个是 `ziplistDelete() 函数`，它是删除 p 指针指定的 entry；另一个是 `ziplistDeleteRange() 函数`，它是个范围删除，从指定的 index 开始往后删除，总共删除 num 个 entry。
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a47d2114f9984b03865d54f8275ab33a~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-8b81870289f4.png)
 
 无论是单个 entry 节点的删除还是批量删除，**底层都依赖于 `__ziplistDelete() 函数`**。我们用 CLoin 这个调用关系视图就能看到这个函数的调用关系，如下：
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/260714d9f00c4adca48c711d0421300c~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-c8bf5a558f85.png)
 
 我们接下来就看看这个 __ziplistDelete() 函数的实现。如下所示，我们看到__ziplistDelete() 函数会从 p 这个位置开始解析 entry，解析的结果会通过 zipEntry() 函数填充到 first 这个 zlentry 实例里面。
 
@@ -112,7 +112,7 @@ unsigned char *__ziplistDelete(unsigned char *zl, unsigned char *p, unsigned int
 
 下面这个 for 循环就是往后解析 num 个 entry，这些 entry 都是要删除的。比如说，从 entry3 开始，往后删 8 个 entry，大概就是下图的结构，p 指针会不断后移，first 里面的 p 指针一直指向第一个要删除的 entry。这里的 totlen 就是这些要删除的 entry 占的字节数。
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/444d77f4b695413eb456541304654ba7~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-6bd18f48c876.png)
 
 确认了删除的起止地址之后，下一步就是要把 p 之后的 entry 前移，覆盖掉这些要删除的 entry，关键代码片段如下：
 
@@ -136,7 +136,7 @@ if (totlen > 0) {
 
 接下来就是真正的 memove 前移 entry 11 之后的数据了，如下图所示：
 
-![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5566eb41ab524c9ab6661bb8c8e5efce~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-22ac18079c8b.png)
 
 完成前移的操作之后，就要走 realloc 缩小 ziplist 这块连续空间，然后还要根据删除的字节数、prevlen 扩容的情况，重新计算 ziplist 头里面的值了，这里就不再一个个展开说了。
 
@@ -148,7 +148,7 @@ ziplist 里面的插入、查询以及删除操作都说介绍完之后，最后
 
 这个 `ziplistReplace() 函数`的功能，就是把 p 指向的 entry 的值，改成 s 这个字符串。你回想一下，前面[《实战应用篇：List 命令详解与实战（上）》](https://juejin.cn/book/7144917657089736743/section/7147527279311224832)一文中介绍过一个 LSET 命令，它就是依赖这个 replace 方法实现的。
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5d7f08a33f124cb69193c2343ad290f6~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-95e2a4a83613.png)
 
 我们接着来看 ziplistReplace() 函数的关键代码：
 

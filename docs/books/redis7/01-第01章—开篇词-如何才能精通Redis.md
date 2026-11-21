@@ -8,7 +8,7 @@
 
 那自然是因为 **Redis 是我们实际开发中不可或缺的组件之一**，也是`目前全球最流行的 KV 数据库`。相信小伙伴们在工作中也会频繁接触到 Redis，但可能并没有量化 Redis 到底有多流行，下面我们一起来看一下，DB-Engines 这个全球知名的数据库排名网站对 Redis 的排名：
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/29956894c65e4e3a8d3d33fde060479b~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-a5a7fba5d47b.png)
 
 在 Complete Ranking 列表（不分类的列表）中，Redis 排名第六，排在它前面的都是关系型数据库，可以说 Redis 和它们都不是一个赛道的产品；`在 Key-Value Store 这个类别中，Redis 排名第一`，你可以关注一下 2022 年 9 月份的评分，Redis 的评分已经比第二名到第五名的评分总和还要多，这其中就包括了经常与 Redis 横向对比的 Memcached。
 
@@ -42,7 +42,7 @@
 
 我个人比较喜欢务实的方式来看待技术，对技术的深度分为`四层`（也对应我们简历里面的描述），这也是我们学习一项技术的四个过程，只有知道自己身处何处，才能知道下一步该往哪里走。
 
-![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/405d1343af264fa8964233cd7c11e96d~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-fdac18c27622.png)
 
 **第一层（“知道”层面）：这个技术是什么，干什么用的**。最基本目标就是在跟其他同学或面试官聊天、吹牛的时候，能聊下去。我们对绝大多数的技术，只要了解到这个层级就可以了，尤其是自己岗位涉及不到的技术，比如，一个后端程序员，只要知道前端的 Vue.js、AngularJS 等框架是干什么的，就可以了。**达到了这个层面之后，你就可以在简历上写“知道某某技术”** ，不过简历寸土寸金，一般不会有人写“知道”层面的内容。
 
@@ -98,7 +98,7 @@
 
 我这里画一个思维导图，对应着本小册的课时设置，将 Redis 7 全部的知识点分成了**十大模块**。悄悄说一句，这应该也是 **`国内第一本系统介绍 Redis 7 的课程`** 了。
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a8bcc77bbf944de39193dc9335d3d2c9~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-3bb7e6b55714.png)
 
 > 关于这个模块 0，其实设置的初衷就是，考虑到各个小伙伴对 Redis 掌握程度并不一致，肯定有小伙伴是刚接触 Redis，另外也为了让我们学习起始能有个平缓的学习曲线，这里会介绍一些 Redis 的基础知识作为我们的先导入门。比如，Redis 的由来、经常被面试官问到的 Redis 和 Memcache 这两种常用缓存技术的选型问题；要想读懂 Redis 里面关键的代码实现，需要先有一点 C 语言基础，所以我还帮助不熟悉 C 语言的小伙伴做了一个快速入门讲解；最后还介绍了 Redis 7 环境搭建以及 Redis 7 PR 阅读方式，这对于你后续的理解和上手实践很重要。
 >

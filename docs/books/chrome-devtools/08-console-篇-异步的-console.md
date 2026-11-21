@@ -6,11 +6,11 @@
 
 像下面这样
 
-![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/12/12/1679e0201c187733~tplv-t2oaga2asx-image.image)
+![](./_assets/remote-536a431d91d0.png)
 
 或者这样
 
-![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/12/12/1679e020118e0846~tplv-t2oaga2asx-image.image)
+![](./_assets/remote-36ebe98ec5f8.png)
 
 这样太难用了！不是输入之前就被触发了，就是括号漏写了...
 
@@ -18,7 +18,7 @@
 
 你猜怎么着，还真是这样！你可以直接使用 `await` ：
 
-![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/12/12/1679e0201c5c5fd7~tplv-t2oaga2asx-image.image)
+![](./_assets/remote-cb977e48e576.gif)
 
 事实上,在 `Console` 中使用 `promise` 比在源码中使用起来还要简单！
 
@@ -32,7 +32,7 @@
 await navigator.storage.estimate()
 ```
 
-![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/12/12/1679e02019dbfde7~tplv-t2oaga2asx-image.image)
+![](./_assets/remote-3311ac3f01bc.png)
 
 - 设备的 **电池信息**
 
@@ -40,16 +40,16 @@ await navigator.storage.estimate()
 
 敲黑板：这是一条[不推荐使用的API](https://developer.mozilla.org/en-US/docs/Web/API/Battery_Status_API),尽管看起来这么酷炫...
 
-![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/12/12/1679e09d64ce9285~tplv-t2oaga2asx-image.image)
+![](./_assets/remote-6d7f286d056c.png)
 
 - **媒体能力**
 
-![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/12/12/1679e0201c6930dc~tplv-t2oaga2asx-image.image)
+![](./_assets/remote-db459f0d0d13.png)
 
 - **Cache storage keys**
 
 (注：[Cache storage keys](https://developer.mozilla.org/en-US/docs/Web/API/CacheStorage) 一般用来对 `request` 和 `response` 进行缓存)
 
-![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/12/12/1679e02015fb7bc3~tplv-t2oaga2asx-image.image)
+![](./_assets/remote-15f99b1b795d.png)
 
 更多的例子就不一一举例了。

@@ -62,7 +62,7 @@ RAG检索插在第6步之后、第7步之前，标记为第6.5步：
 
 只有system变了，其余不动。检索结果注入system prompt，对历史消息和当前消息完全无侵入。这是最小侵入的接入方式——改动面小，风险低，旧功能最不容易被破坏。
 
-![](https://static001.geekbang.org/resource/image/a3/3d/a395c356ce64d977d4fb5abcdb5bd33d.png?wh=1440x1524)
+![](./_assets/remote-4cbffa211382.webp)
 
 圈定改动范围：只改ChatService的buildMessages方法，其他八步不动。流式调用、SseEmitter转发、消息存储、Redis上下文管理，全部不碰。把这个约束写进给Claude Code的指令，是防止改动扩散的第一道防线。
 
@@ -177,7 +177,7 @@ NULL表示不启用RAG，有值表示启用。对话链路里判断这个字段�
 
 ### 关系图
 
-![](https://static001.geekbang.org/resource/image/a0/3d/a0762503e9f2d086b1b145f9aa77a33d.png?wh=1440x1016)
+![](./_assets/remote-5dee4059e0c9.webp)
 
 ### mock profile处理
 
@@ -430,11 +430,11 @@ curl http://localhost:8080/api/v1/documents/1/chunks
 
 知识库管理
 
-![](https://static001.geekbang.org/resource/image/b9/36/b967c8bd5affecac7c68a904ee63c036.png?wh=3290x1966)![](https://static001.geekbang.org/resource/image/1f/b5/1fa48136759f31d17fd8e7e64ca8ceb5.png?wh=3300x1422)
+![](./_assets/remote-91517d233405.webp)![](./_assets/remote-104f5563e527.webp)
 
 上传文档，拆解为向量存储
 
-![](https://static001.geekbang.org/resource/image/6e/b3/6e4578bf5875db24bb13090b23b901b3.png?wh=3308x1668)
+![](./_assets/remote-5c7ff24a19e8.webp)
 
 ## 接入对话引擎
 
@@ -610,7 +610,7 @@ curl -N -X POST http://localhost:8080/api/v1/chat/sessions/3/messages \
 
 流式返回正常，日志里没有任何RAG相关的输出。这一步确认的是：RAG的开关在Agent维度，没有绑知识库的Agent完全不受影响，最小侵入的承诺兑现了。
 
-![](https://static001.geekbang.org/resource/image/ae/c7/ae8ec44df5221833f7e56e212130f3c7.png?wh=3314x1974)
+![](./_assets/remote-019dade4a08d.webp)
 
 三个验收维度都过，这个功能才算完整交付：链路通、质量变好、边界守住、旧功能没坏。
 

@@ -1,6 +1,6 @@
 > 本章内容是基于 **DevOps** 体系的精简版本，如果有阅读过之前 **DevOps** 小册的同学，可以快速掠过。
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bb94ed7d1ded4d41b92e64d77630648f~tplv-k3u1fbpfcp-zoom-1.image)
+![image.png](./_assets/remote-641fc99f02de.webp)
 
 开局先放一张镇楼图，上图我在行云集团做的通用型 **CI/CD** 解决方案 **ALL IN DOCKER**，所有的操作构建与发布过程都在 **Docker** 中操作。
 
@@ -18,7 +18,7 @@
 
 **GitFlow** 的核心是通过在项目的不同阶段对 **branch** 的不同操作包括但不限于 **create**、**marge**、**rebase** 等来实现一个完整的高效率的工作流程。
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7eba4786e5ba46d0991dd69fae989937~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-d11ebfeefcda.png)
 
 * **Production**: 这个分支包含最近发布到生产环境的代码，最近发布的 **Release**，并且只能从其他分支合并，不能在这个分支直接修改，一般将 **Matser** 作为 **Production** 分支；
 * **Develop**: 包含所有要发布到下一个 **Release** 的代码，这个主要合并于其他分支，比如 **Feature** 分支；
@@ -28,11 +28,11 @@
 
 整体的分支管理流程如下图所示
 
-![](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e48ee7b35b684ceeb41b0ee2bf875bfa~tplv-k3u1fbpfcp-zoom-1.image)
+![](./_assets/remote-27a966121d90.png)
 
 通过服务端来控制整个 **GitFlow** 流程图如下所示：
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0f22c74bec9b4dbcbea217df7309ab4c~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-ddf1a139921c.png)
 
 服务端需要做的分支管理功能主要如下：
 

@@ -4,7 +4,7 @@
 
 首先，我们需要再次确定你们的工作目录结构是否如下图所示：
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/173fe7200473443291a116703228a54d~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-37309b80f0cb.png)
 
 如果是从第一张开始到现在，目前手上应该是有 **3** 个工程，其中 **User** 工程使用的 **MySQL** 作为 **Demo**，低代码 **low-code-test** 则使用 **MongoDB** 作为底层数据库。
 
@@ -24,11 +24,11 @@ nest g resource page --project low-code-test
 nest g resource pageConfig --project low-code-test
 ```
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b66fb5feac424a448968b3060b1f9e64~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-14f46b5a3404.png)
 
 再将之前测试的 **user** 模块删除（注意是 **low-code-test** 下的 **user** 模块，之前我们做测试使用到的。），然后再次调整一下模块，使得结构更加清晰。
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/730a8b28285c477e8ec0c93808a5a60c~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-f5c0a6e9b9b0.png)
 
 > 将 **PageConfig** 收拢到 **Page** 模块，此外合并两者的 **Controller**，因为 **Config** 一定会依赖于 Page，这个结构看个人的喜好，我个人喜欢这样去设计。
 
@@ -130,9 +130,9 @@ export class AppModule { }
 
 此时解决完常规的模块引入错误之后，就可以使用 `pnpm start:lowcode` 正常启动项目了：
 
-![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/42f667b2639a45a1b2c0360a85b5787d~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-479ec124489d.png)
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/17880f71a1e341b8ac5792d98b70b9a7~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-335becb48d65.png)
 
 如果启动报错的话，则需要替换 `package.json` 中的启动路径（之前应该是默认路径，可以换成指定运行子服务）：
 
@@ -302,11 +302,11 @@ export class SiteService {
 
 完成上述步骤之后，使用 **swagger** 可以直接塞入一条站点数据。
 
-![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0111a925bcf449409638cc276dd3efd1~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-d4df267e514c.png)
 
 对比可以看到 **MongoDB** 新增之后的返回值与 **MySQL** 略有不同，主键 `id` 有变化，同时 **MongoDB** 数据库中也对应插入一条数据：
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/823696e13d804ef0a510526724555ec9~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-9238c618a929.png)
 
 #### 查
 
@@ -330,11 +330,11 @@ export class SiteService {
 
 注意，请不要使用 `number` 来定义 `id` 类型，否则将出现下述错误，因为 **MonngoDB** 的主键是 **ObjectId** 而并不是单纯的 `number` 类型，只能依靠默认推导来绕过 **TS** 的监测。
 
-![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/73f3a2e34f164821bade54711f0b2694~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-443fcb569b94.png)
 
 当然如果使用下述方法是最正确的：
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/12131d2e0c9a448991272d9d0737c1e7~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-3c38c0716ed4.png)
 
 ```typescript
   findOne(id: string) {

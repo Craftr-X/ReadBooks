@@ -9,7 +9,7 @@
 
 如下图左侧所示，Master1 节点处于单点状态，通过将 Slave2 节点漂移成 Master1 节点的 Slave，解除了其单点状态。
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/80bba45a89564c9f8eb0a7da6f52215d~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-2cfb86cc41fb.png)
 
 每个 Slave 节点在定期执行 clusterCron() 函数的时候，都会对每个 Master 节点的 clusterNode->slaves 列表进行检查，计算其可用的 Slave 节点数量。如果发现 Master 节点下没有可用的 Slave 节点，且当前 Master 负责管理多个 slot，则会将其判定为单点 Master。在计算单点 Master 的同时，还会计算 max_slaves、this_slaves 两个辅助变量，max_slaves 记录了当前可用 Slave 节点数的最大值，this_slaves 记录了当前这个主从复制组中的可用 Slave 节点数。
 
@@ -44,7 +44,7 @@
 
 之所以执行设置这两个状态，是为了处理后续 slot 迁移过程中收到的客户端请求。如果我们迁移过程中，一个客户端来请求 slot 100 中的 Key1，当 GET Key1 命令发给节点 A 时，如下图调用栈所示，节点 A 在命令执行之前，会调用 getNodeByQuery() 节点检查 slot 100 的状态：
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4d213785a6da42369dd2d8b69237e8e0~tplv-k3u1fbpfcp-zoom-1.image)
+![](./_assets/remote-dd78ef19fc09.png)
 
 该函数会发现 slot 100 处于 MIGRATING 状态，如果访问的目标 Key 1 还在节点 A 中，则继续后续的访问操作。如果访问的目标 Key 1 已经被迁移到了节点 B 中，则返回 ASK 错误以及节点 B 对应的 clusterNode 实例，最终返回给客户端的是 ASK 错误以及节点 B 的 ip 和端口，客户端在收到 ASK 错误之后，会去节点 B 访问目标 Key1。
 
@@ -168,7 +168,7 @@ if (!(c->flags & CLIENT_MULTI) && prevcmd != askingCommand)
 
 通过下图展示的调用栈可以看出，resetClient() 函数是在命令执行完成之后被立即调用的：
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bf693d32c17349deb9a846aba0c029f3~tplv-k3u1fbpfcp-zoom-1.image)
+![](./_assets/remote-406c9fc072d2.png)
 
 ### 迁移 Key
 
@@ -222,7 +222,7 @@ if (!(c->flags & CLIENT_MULTI) && prevcmd != askingCommand)
 
 另一个导致数据量倾斜的问题就是 **Key 或是 HashTag 的设计不当造成的**，这里我们先来展开介绍一下计算一个 Key 所属 slot 的 keyHashSlot() 函数，其中使用的核心算法是 crc16 算法，默认整个 Key 都会参与到 slot 的计算中，如下图所示第一组 Key 值所示，它们会散落在不同的 slot 中。
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/456d8a60a5264bf7b4c6ff8ae5ff2f51~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-0abf5d843ad0.png)
 
 但是如果 Key 中有被大括号包裹起来的部分，如上所示的第二组的 Key 值所示，则只有大括号之内的部分会参与 slot 的计算，这就是所谓的 HashTag，上图第二组 Key 会落到同一个 slot 中。
 

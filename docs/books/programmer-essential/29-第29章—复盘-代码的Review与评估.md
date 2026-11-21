@@ -120,7 +120,7 @@
 
 最后，我设计了直播间的相关类图，将来如果有其他同学要参与到项目中，可以看下这个类图，逻辑应该就会清晰很多：
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/327e2c0ed2eb44bebb1f5ecef73886f6~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-bfab6386601f.png)
 
 大家应该还记得对象的 UML 图，如果不记得的话，就去复习下第 [24 章](https://juejin.cn/book/7196580339181944872/section/7196592243296501794)。
 

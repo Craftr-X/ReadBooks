@@ -9,7 +9,7 @@
 有时在代码执行的位置也是最容易编辑代码的位置（对于前端来说也就是浏览器）。如果你把项目的文件夹直接拖到 `Source` 面板，`DevTools` 会将你做出的修改同步到系统的文件中。
 
 这对于快速修复代码非常方便！（我真的认识一个喜欢以这种方式做大部分编码的开发者）
-![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/12/29/167f5b37db4e23ac~tplv-t2oaga2asx-image.image)
+![](./_assets/remote-79fd9d2d5e35.gif)
 
 等等，其实它可以更好...
 
@@ -20,7 +20,7 @@
 但是在样式方面它提供了更好的支持。 因为即使你只是在 *“元素”* 面板的 *“样式”* 部分中编辑样式规则，它也会立即同步。
 请注意，是立刻！
 
-![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/12/29/167f5b37d2312b72~tplv-t2oaga2asx-image.image)
+![](./_assets/remote-34e261bc3ea2.gif)
 
 **"黑魔法!"**
 
@@ -30,7 +30,7 @@
 
 当你使用工作区时，新样式规则的默认定位为 - `“inspector-stylesheet：1”` 如果你不想规则在这个位置显示，只需按住 `New Style Rule` 按钮，就可以看到一个列出所有 `CSS` 文件的选项。选择目的地，新规则就会保存在那里！
 
-![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/12/28/167f3538987666fb~tplv-t2oaga2asx-image.image)
+![](./_assets/remote-744c4ee747d4.gif)
 
 ## 4. `Workspace` 允许 `CSS` 注入
 
@@ -38,4 +38,4 @@
 
 敲黑板：我们 `没有使用额外的工具` - 没有 `webpack` 的热更新模块或者其他东西 - 只有一个本地服务以及 `DevTools' workspace` 而已。
 
-![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/12/29/167f5b37d2051cca~tplv-t2oaga2asx-image.image)
+![](./_assets/remote-aea20618c8f1.gif)

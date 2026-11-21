@@ -12,7 +12,7 @@
 
 你可以尝试一些相关操作(例如: `$1.appendChild($0)`)
 
-![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/12/7/16785c75b56d3a80~tplv-t2oaga2asx-image.image)
+![](./_assets/remote-9a4fb65927c9.gif)
 
 ## 1. `$` 和 `?`
 
@@ -28,7 +28,7 @@
 
 这时候 `$_` 就派上了用场，`$_` 是对上次执行的结果的 **引用** ：
 
-![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/12/7/16785d333e7c1d7f~tplv-t2oaga2asx-image.image)
+![](./_assets/remote-bbf25243ef2b.png)
 
 ## 3. `$i`
 
@@ -38,4 +38,4 @@
 
 运行 `$i('lodash')` 或者 `$i('moment')` 几秒钟后，你就可以获取到 `lodash / momentjs` 了:
 
-![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/12/7/16785da0dea963fb~tplv-t2oaga2asx-image.image)
+![](./_assets/remote-2ef69b359c04.gif)

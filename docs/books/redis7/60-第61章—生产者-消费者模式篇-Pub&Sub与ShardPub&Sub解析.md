@@ -5,7 +5,7 @@ Redis 作为一个基于内存的 NoSQL 数据库，在实践中最常作为**�
 
 首先，我们先从整体上了解一下 Pub/Sub 的功能，如下图所示，Redis 中可以创建多个 Channel，一个 Channel 可以有多个 Client 订阅，当其他 Client 向 Channel 中发送消息的时候，订阅了该 Channel 的 Client 就能收到消息。
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e38e8c98ac404d10854dd40eb1af4b57~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-825789c6b564.png)
 
 ## Pub/Sub命令核心实现
 
@@ -13,7 +13,7 @@ Redis 作为一个基于内存的 NoSQL 数据库，在实践中最常作为**�
 
 Redis 在 redisServer 结构体中维护了一个 `pubsub_channels 字典`，其中的 Key 是一个字符串，表示的是 Channel 的名称，Value 是一个 adlist 实例，是订阅了该 Channel 的 Client 列表，整体结构如下图所示：
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/daf4debf088b4e07a8e079ba60a5f6b7~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-f6d5c0ffecee.png)
 
 除此之外，Client 中也维护了一个 pubsub_channels 字典，用来记录当前 Client 实例订阅了哪些 Channel，其中 Key 也是 Channel 的名称，Value 则是 NULL。
 
@@ -177,7 +177,7 @@ void call(client *c, int flags)
 
 该流程可以总结为如下图所示的 1~4 步：
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/70d60f95219d486089fc49b9101e5e2e~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-28f337806945.png)
 
 这部分解析 PUBLISH 类型的 Cluster Message 的逻辑位于 clusterProcessPacket() 函数中，感兴趣的同学可以参考源码进行分析。
 
@@ -223,11 +223,11 @@ Shard Pub/Sub 最后一个引入的新结构是 ClusterState 中的 slots_to_cha
 
 通过 SSUBSCRIBE 完成订阅之后，我们就可以通过 SPUBLISH 命令向 Shard Channel 发送消息了。Redis 在处理 SPUBLISH 命令的时候，首先也是要经过 getNodeByQuery() 函数检查，确定目标 Shard Channel 由当前 Cluster 节点管理。之后，才会执行 spublishCommand() 函数处理 SPUBLISH 命令。spublishCommand() 的实现与 publishCommand() 类似，其调用栈如下所示，它会先调用 pubsubPublishMessageInternal() 函数，向在当前 Cluster 节点上监听目标 Shard Channel 的客户端 push 消息；然后执行的 clusterPropagatePublish() 函数向当前主从复制组的全部节点 push 这条消息，注意，这里不再是广播消息了。
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d37b2bb3a0034bbcae014d5944af9449~tplv-k3u1fbpfcp-zoom-1.image)
+![](./_assets/remote-172d15d8f5f4.png)
 
 最后，我们用一张图，总结一下 `Shard Pub/Sub 的模型`，如下：
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3905add9d452449e93221a50c2df81ed~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-8c38952f8fcb.png)
 
 到此为止，Shard Pub/Sub 的核心原理就介绍完了，Shard Pub/Sub 方案的 PR 是 https://github.com/redis/redis/issues/8029#issuecomment-793160824 ，修改的 PR 是 https://github.com/redis/redis/pull/8621 ，感兴趣的小伙伴可以阅读一下这两个 PR 的内容。
 

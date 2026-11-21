@@ -7,7 +7,7 @@
 
 > 请注意: 在我们写一个之前，需要在 `DevTools` 进行设置 (在 `DevTools` 的 `⋮` 下拉框找到设置，或者按下 `F1` ) 中把对应的设置打开:
 
-![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/12/14/167abc4fc44e3add~tplv-t2oaga2asx-image.image)
+![](./_assets/remote-4f11bbb89d0b.png)
 
 `formatter` 长什么样呢？ 它是一个对象，最多包含三个方法：
 
@@ -17,7 +17,7 @@
 
 一个基础的自定义 `formatter`
 
-![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/12/14/167abc4fbd4b892f~tplv-t2oaga2asx-image.image)
+![](./_assets/remote-7345d72191a7.png)
 
 > 例子里移除了循环的结构的错误处理，让它看起来更加简洁
 
@@ -31,7 +31,7 @@
 
 在输出的时候，这个简单的 `formatter` 对于每一层嵌套，直接以 `7` 个空格的缩进打印这个对象。所以现在我们的输出看起来是这样：
 
-![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/12/14/167abc4fc493cb88~tplv-t2oaga2asx-image.image)
+![](./_assets/remote-a00ba74f0b5b.gif)
 
 ## 1. 自定义格式化转换器的应用实践
 
@@ -85,4 +85,4 @@ console.clown({message: 'hello!'}); // a silly log
 
 对了，`clown` 打印出来了什么东西呢？ 在下面：
 
-![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/12/14/167abc4fbd5ae3f6~tplv-t2oaga2asx-image.image)
+![](./_assets/remote-e38f9ef6fb44.png)

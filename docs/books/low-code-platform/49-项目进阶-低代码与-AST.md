@@ -14,7 +14,7 @@ Babel 是一个工具链，在前端开发的过程中通常都会使用它来�
 
 babel的操作过程就是将我们编写的代码通过词法、语法的解析生成中间层的数据结构与代码，在这个基础上进行标准化的操作后，最终将其生成为我们理想中的目标代码。
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f467a53deb8e48368bab9d4e3634df5d~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=1956&h=288&s=40287&e=jpg&b=ffffff)
+![](./_assets/remote-89e52bc53fbf.jpg)
 
 有兴趣了解的同学可以去学习相关的AST细节知识点，在这里仅仅去做一些简单的概述。
 
@@ -28,7 +28,7 @@ babel的操作过程就是将我们编写的代码通过词法、语法的解析
 
 第二种是运行时方案，通过页面编辑器搭建的DSL私有化协议，使用DSL Render来渲染协议中的组件、状态、国际化、接口请求、全局依赖、函数事件等内容，从而实现页面展示的效果，对此需要牺牲一定的性能来完成sdk的加载和前置操作的执行。
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b065d6fa95e9438eac4eb532c9298617~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=1034&h=818&s=53244&e=jpg&b=ffffff)
+![](./_assets/remote-d1c863785cf7.jpg)
 
 目前而言，大部分低代码平台都是基于私有化的DSL的协议来完成的，实现的思路整体并没有太多的差别，重点在于结合自身业务和产品的趋向性设计好自身的DSL。
 
@@ -44,7 +44,7 @@ babel的操作过程就是将我们编写的代码通过词法、语法的解析
 
 因此在后面后一个无冲突复制数据类型，也就是CRDT做为规划。通过协同编辑的方式，能够让多人来在编辑器工作台中完成lowcode的开发，甚至是procode的开发。
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d6f2de04b1ae400a94a97ef0b93f4dbf~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=1150&h=836&s=40752&e=jpg&b=ffffff)
+![](./_assets/remote-4f57c36ccd94.jpg)
 
 ## 对比
 

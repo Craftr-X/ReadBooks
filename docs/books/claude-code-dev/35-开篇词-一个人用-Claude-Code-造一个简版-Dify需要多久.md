@@ -76,7 +76,7 @@ Claude Code出来之后，我最初的用法和大多数人一样——把它�
 
 > 提示：课程以Claude Code为核心教学工具。建议优先使用Claude Code跟随实践，学习体验更佳。如果没有开通，也可选用其他AI编程工具——方法论是通用的，实现效果有差异而已。
 
-![](https://static001.geekbang.org/resource/image/ed/ea/edaae35df1780ca562b474185d5058ea.jpg?wh=1440x2791)
+![](./_assets/remote-df40a4da0a2d.webp)
 
 ## AI是放大器，不是发动机
 

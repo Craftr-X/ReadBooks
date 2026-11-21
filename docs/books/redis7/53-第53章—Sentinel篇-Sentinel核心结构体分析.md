@@ -111,7 +111,7 @@ sentinel known-sentinel tesMaster 127.0.0.1 26379 acechdeaed...
 
 前文提到 Sentinel 解析配置文件的核心逻辑位于 sentinelHandleConfiguration() 函数中，解析上述三个 sentinel 配置项的时候，它都会调用 createSentinelRedisInstance() 函数创建对应 sentinelRedisInstance 实例，如下图所示：
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e83e457a607c4756a1aecba0ceea1190~tplv-k3u1fbpfcp-zoom-1.image)
+![](./_assets/remote-2b81033cc744.png)
 
 在 `sentinel monitor` 配置项中指定的是 Sentinel 需要监听的 Redis 主库信息，对应到 sentinelRedisInstance 结构体中的字段分别如下。
 
@@ -168,7 +168,7 @@ sentinel failover-timeout testMaster2 180000
 
 解析之后的结果如下图所示，表示主库的 sentinelRedisInstance 实例被存放到 sentinelState.masters 集合中，每个主库关联的从库和 Sentinel 对应的 sentinelRedisInstance 实例被存储到主库 sentinelRedisInstance.slaves 和 sentinels 集合中。
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c23436e688e4444586033920092310ee~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-17bb7f1591f6.png)
 
 sentinelRedisInstance 中还有非常多的字段，这里先按下不表，待后续用到时详细分析。
 

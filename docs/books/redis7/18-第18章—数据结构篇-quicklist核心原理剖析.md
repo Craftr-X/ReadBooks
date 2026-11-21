@@ -8,7 +8,7 @@ Redis List 底层的另一个关键结构是 quicklist，本节我们就来重�
 
 quicklist 是一个类似于 Java 里面 LinkedList 的双向链表，大概结构如下图所示：
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6b46ec38ccd84b2ea76db3c6bdb0cb35~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-0b0f2ebdb207.png)
 
 quicklist 里面的节点是 quicklistNode 类型，quicklistNode 里面维护了 next、prev 指针，指向前后两个 quicklistNode 节点；然后还有一个 entry 指针，指向了一个 listpack 实例。真正的元素是存储在这个 listpack 里面的，那就是说，多个元素存储在一个 quicklistNode 里面。
 
@@ -26,7 +26,7 @@ Redis 为了同时使用双向链表和 listpack 的优点、规避两者的缺�
 
 Redis 中 quicklistNode 中的 listpack 长度阈值并不是固定不变的，在 Redis 里面有一个 `list-max-listpack-size` 参数，它**用于指定每个 quicklistNode 节点里面 listpack 的长度阈值**。来看一下 redis.conf 的配置文件：
 
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/de83c2026c8b471099e31eb914e2bcde~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-75f98932b4e1.png)
 
 可以看到 list-max-listpack-size 参数的注释：要是它取正数时，表示的就是 listpack 里面包含的 element 节点个数；它取负数的时候，只能取 -1 到 -5 这 5 个特殊值。
 
@@ -50,7 +50,7 @@ Redis 中 quicklistNode 中的 listpack 长度阈值并不是固定不变的，�
 
 如下面 redis.conf 里面的 `list-compress-depth 参数`，它就是用来控制 quicklist 两端有多少个 quicklistNode 节点`不被压缩`的。
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f48e2452ed1b4cfcb561b0eab8baeaf4~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-e39efa3a4a30.png)
 
 我们来看一下 list-compress-depth 参数的注释，这里主要说明了它取值的问题。
 
@@ -59,7 +59,7 @@ Redis 中 quicklistNode 中的 listpack 长度阈值并不是固定不变的，�
 
 举个例子，list-compress-depth 参数取值是 1 的时候，quicklist 只有首尾两个 quicklistNode 节点的 listpack 不进行压缩，从首尾的第二个 quicklistNode 节点开始，里面的 listpack 都会被压缩，压缩之后数据用 quicklistLZF 实例保存。如下图所示：
 
-![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3f405511b93e49eb97d8955fff63c9cd~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-81f7b60228aa.png)
 
 Redis 压缩 listpack 的时候，使用的算法是 LZF 算法，这个算法的话，这里就不展开说了，你可以自己搜一下相关资料哈。
 

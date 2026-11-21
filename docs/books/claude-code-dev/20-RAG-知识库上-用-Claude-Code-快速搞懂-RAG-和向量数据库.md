@@ -61,7 +61,7 @@ Claude Code按数据流向拆出了两个阶段、六个组件。
 5. **检索器**，用户提问时把问题也转成向量，在向量数据库里找Top-K最相关的块。
 6. **Prompt组装器**，把检索到的原文块拼进上下文，告诉LLM基于以下资料回答。
 
-![](https://static001.geekbang.org/resource/image/e5/c1/e5b8eede547f241196ebf1650f5e6ac1.png?wh=1280x828)
+![](./_assets/remote-f2a019b66c6a.webp)
 
 拆完之后，我有一个很清晰的判断：六个组件里，真正陌生的只有向量数据库。文档解析是调库，文本分块是纯代码逻辑，Embedding调API和14讲调Chat Completion一样，检索器和Prompt组装器是改ChatService逻辑。
 
@@ -144,7 +144,7 @@ Claude Code的回答点出了一个我没想到的坑：MyBatis-Plus不原生�
 
 从完全没用过pgvector，到Java代码能插入和查询向量，这就是探路陌生技术的节奏，不是把文档从头读完再动手，而是直接问怎么用，拿最小可运行示例，跑通就有手感了。
 
-![](https://static001.geekbang.org/resource/image/a6/75/a657fb0c98049fb7dedb9488c9090275.png?wh=1280x597)
+![](./_assets/remote-cee728a9720d.webp)
 
 ## Embedding模型选型与接入
 
@@ -160,7 +160,7 @@ Claude Code给了清晰的对比：Chat Completion是“文本→文本”，E
 
 模型选哪个？Claude Code给了三个选项的对比：
 
-![](https://static001.geekbang.org/resource/image/94/95/9417d36c2e2c500dcc0602f08dd9e495.png?wh=1741x426)
+![](./_assets/remote-276d9b1fc10c.webp)
 
 我的判断：**选text-embedding-3-small**。同样1536维，pgvector建表不需要改，价格是ada-002的五分之一，效果还更好。选型就是这样，不是最贵的最好，是最符合约束的最好。
 

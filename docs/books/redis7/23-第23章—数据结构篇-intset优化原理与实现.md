@@ -34,7 +34,7 @@ typedef struct intset {
 
 从 intset 结构体的定义可以看出，它与前文介绍的 ziplist 类似，也是通过一块连续的内存空间实现的，如下图所示，其中 encoding 和 length 两部分构成了 intset 的头，总共占 8 字节。
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2af68e437d0b4e9687cbb8e03b014861~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-d8969479c9b8.png)
 
 ## intset 核心函数
 
@@ -120,7 +120,7 @@ static uint8_t intsetSearch(intset *is, int64_t value, uint32_t *pos) {
 
 整个插入过程如下图所示：
 
-![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0599ea04e2c9436ea0198a21bfcf344a~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-19d5590da6bd.png)
   
 在整个添加元素的过程中，需要展开介绍的是 `intsetUpgradeAndAdd() 函数`，其具体实现和详细的注释如下：
 
@@ -155,7 +155,7 @@ static intset *intsetUpgradeAndAdd(intset *is, int64_t value) {
 
 这里有个注意的地方，在升级过程中，要从后向前后移 intset 元素，就如下图所示，其中的编号表示了拷贝操作执行的顺序，如果我们先执行 element 1 的拷贝（也就是图中的操作 3），就可能覆盖原 intset 中 element 2 元素的值。
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2b660b4eb51a493f9ddbca2bba28921a~tplv-k3u1fbpfcp-watermark.image?)
+![image.png](./_assets/remote-3fd435598869.png)
 
 ### 删除数据
 
