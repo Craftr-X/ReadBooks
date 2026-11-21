@@ -22,44 +22,44 @@
 **Files:**
 - Modify: `docs/superpowers/specs/2026-11-21-image-alt-quality-design.md`（状态 → 已批准）
 
-- [ ] 将文首状态改为「已批准」
-- [ ] 确保设计提交在可合入分支上（可与首本试点同 PR 或先合设计）
+- [x] 将文首状态改为「已批准」
+- [x] 确保设计提交在可合入分支上（可与首本试点同 PR 或先合设计）
 
 ### Task 2: 试点精修 `typescript-intro`（~21）
 
 **Files:**
 - Modify: `docs/books/typescript-intro/**/*.md` 中所有 `![](` 行
 
-- [ ] `rg -n '!\[\]\(' docs/books/typescript-intro` 列出清单
-- [ ] 对每张图：读前后文 + 查看图片，写 8–30 字 alt
-- [ ] `rg '!\[\]\(' docs/books/typescript-intro` 无命中
-- [ ] 抽检 ≥3 张说明与图意一致
-- [ ] Commit：`docs: 补全《TypeScript 入门教程》图片 alt（typescript-intro）`
+- [x] `rg -n '!\[\]\(' docs/books/typescript-intro` 列出清单
+- [x] 对每张图：读前后文 + 查看图片，写 8–30 字 alt
+- [x] `rg '!\[\]\(' docs/books/typescript-intro` 无命中
+- [x] 抽检 ≥3 张说明与图意一致
+- [x] Commit：`docs: 补全《TypeScript 入门教程》图片 alt（typescript-intro）`
 
 ### Task 3: 试点精修 `docker-guide`（~54）
 
 **Files:**
 - Modify: `docs/books/docker-guide/**/*.md`
 
-- [ ] 同 Task 2 流程
-- [ ] Commit：`docs: 补全《开发者必备的 Docker 实践指南》图片 alt（docker-guide）`
+- [x] 同 Task 2 流程
+- [x] Commit：`docs: 补全《开发者必备的 Docker 实践指南》图片 alt（docker-guide）`
 
 ### Task 4: 试点精修 `attached`（~40）
 
 **Files:**
 - Modify: `docs/books/attached/**/*.md`
 
-- [ ] 同 Task 2；本地 `_assets` 用 Read 直接看图
-- [ ] Commit：`docs: 补全《关系的重建》图片 alt（attached）`
+- [x] 同 Task 2；本地 `_assets` 用 Read 直接看图
+- [x] Commit：`docs: 补全《关系的重建》图片 alt（attached）`
 
 ### Task 5: 沉淀 SOP 文档
 
 **Files:**
 - Create: `docs/superpowers/specs/image-alt-sop.md`
 
-- [ ] 写入清单→写 alt→装饰图规则→自检命令→分支/PR 约定→已完成 slug 表
-- [ ] 用三本试点经验修订质量条示例（好/坏对照各 2 条）
-- [ ] Commit：`docs: 图片 alt 补全 SOP`
+- [x] 写入清单→写 alt→装饰图规则→自检命令→分支/PR 约定→已完成 slug 表
+- [x] 用三本试点经验修订质量条示例（好/坏对照各 2 条）
+- [x] Commit：`docs: 图片 alt 补全 SOP`
 
 ### Task 6: 按 SOP 分批剩余书籍
 
